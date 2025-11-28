@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Copy, Home } from "lucide-react";
+import { Copy, Home, User2 } from "lucide-react";
 import { usePrivy, User } from "@privy-io/react-auth";
 
 /** The header component for the app */
@@ -40,7 +40,6 @@ function Onboarding({ onClick }: { onClick: () => void }) {
 function UserInfo({ user }: { user: User }) {
     const address = user.wallet?.address;
     const shortAddress = `${address?.slice(0, 8)}...${address?.slice(-8)}`;
-    const avatar = address?.[2] ?? "N/A";
 
     /** Handle the copy of the address */
     const handleCopy = () => {
@@ -57,7 +56,7 @@ function UserInfo({ user }: { user: User }) {
             </div>
             {/* Avatar */}
             <div className="size-10 rounded-full bg-accent flex items-center justify-center">
-                {avatar}
+                <User2 className="size-5" />
             </div>
         </div>
     )
