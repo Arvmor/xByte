@@ -1,3 +1,15 @@
 [workspace]
 resolver = "3"
 members = ["crates/tunity-api"]
+
+[workspace.dependencies]
+# Common dependencies
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.145"
+anyhow = "1.0.100"
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
+
+# API dependencies
+actix-web = { version = "4.12.1", features = ["rustls"] }
+actix-cors = "0.7.1"
