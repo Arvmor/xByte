@@ -8,13 +8,15 @@ export interface ItemProps {
     name: string;
     /** The image of the item */
     image: string;
+    /** The image size */
+    size: number;
 }
 
 /** Item component */
-export default function AppItem({ title, name, image }: ItemProps) {
+export default function TrackItem({ title, name, image, size}: ItemProps) {
     return (
         <div>
-            <Image src={image} alt={title} width={100} height={100} />
+            <Image src={image} alt={title} width={size} height={size} />
             <h2 className="text-md font-bold">{title}</h2>
             <h3 className="text-muted-foreground">{name}</h3>
         </div>
