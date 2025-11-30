@@ -13,3 +13,4 @@ openlibx402-core.workspace = true
 openlibx402-actix.workspace = true
 base64.workspace = true
 serde_json.workspace = true
+ureq.workspace = true

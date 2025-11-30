@@ -18,3 +18,4 @@ actix-cors = "0.7.1"
 # x402 dependencies
 openlibx402-core = "0.0.3"
 openlibx402-actix = "0.0.3"
+ureq = { version = "2.0.0", features = ["rustls", "json"] }
