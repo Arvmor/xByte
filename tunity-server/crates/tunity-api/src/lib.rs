@@ -6,4 +6,4 @@ mod x402;
 pub use health::HealthRoute;
 pub use server::Server;
 pub use utils::ResultAPI;
-pub use x402::ConfigX402;
+pub use x402::{ConfigX402, FacilitatorRequest, FacilitatorResponse};
