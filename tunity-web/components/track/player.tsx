@@ -2,7 +2,7 @@ import TrackItem, { ItemProps } from "@/components/track/item";
 import XPay, { PayProps } from "@/components/privy/pay";
 
 const propPay: PayProps = {
-    url: "http://localhost:80/payable",
+    url: "https://api.example.com/premium",
     action: "Play",
     maxValue: BigInt(1000),
 }
