@@ -5042,9 +5042,11 @@ dependencies = [
  "actix-cors",
  "actix-web",
  "anyhow",
+ "base64 0.22.1",
  "openlibx402-actix",
  "openlibx402-core",
  "serde",
+ "serde_json",
  "tracing",
 ]
 
