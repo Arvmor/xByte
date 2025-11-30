@@ -11,9 +11,11 @@ export interface PayProps {
     action: string;
     /** The amount to pay */
     maxValue: bigint;
+    /** Callback to set the fetched data */
+    setData?: (data: any) => void;
 }
 
-export default function XPay({ url, action, maxValue }: PayProps) {
+export default function XPay({ url, action, maxValue, setData }: PayProps) {
     const {wrapFetchWithPayment} = useX402Fetch();
 
     /** Fetch the premium content */
@@ -23,7 +25,7 @@ export default function XPay({ url, action, maxValue }: PayProps) {
         const response = await fetchWithPayment(url);
         const data = await response.json();
 
-        return data;
+        setData?.(data);
     }
     
     return <Button onClick={fetchPremiumContent}>{action}</Button>;
