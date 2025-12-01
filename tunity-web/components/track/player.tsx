@@ -34,8 +34,18 @@ export default function TrackPlayer({title, name, image, size}: ItemProps) {
 export function PlayIslands({url, maxValue}: PayProps) {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
     const ref = useRef<HTMLAudioElement | null>(null);
     const XPayAsync = useXPayAsync();
+
+    // Function to handle time update of the track
+    const onTimeUpdate = () => {
+        if (ref.current) {
+            setCurrentTime(ref.current.currentTime);
+            setDuration(ref.current.duration);
+        }
+    };
 
     /** Handles paying, playing and pausing the track */
     const handlePlay = async () => {
@@ -64,10 +74,10 @@ export function PlayIslands({url, maxValue}: PayProps) {
             <Button variant="outline" size="icon" onClick={handlePlay}>
                 {isPlaying ? <Pause /> : <Play /> }
             </Button>
-            <Slider defaultValue={[0]} />
+            <Slider defaultValue={[0]} value={[currentTime]} max={duration} />
             <Button variant="ghost" size="icon"><Rewind /></Button>
             <Button variant="ghost" size="icon"><FastForward /></Button>
-            <audio ref={ref} hidden/>
+            <audio ref={ref} onTimeUpdate={onTimeUpdate} hidden/>
         </div>
     )
 }
