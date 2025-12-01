@@ -8,19 +8,18 @@ tunity_api = { path = "crates/tunity-api" }
 tunity_app = { path = "crates/tunity-app" }
 
 # Common dependencies
-tokio = "1.42.0"
+tokio = { version = "1.48.0", features = ["full"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
 anyhow = "1.0.100"
-base64 = "0.22"
-tracing = "0.1.41"
-tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
+base64 = "0.22.1"
+tracing = "0.1.43"
+tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 
 # API dependencies
 actix-web = { version = "4.12.1", features = ["rustls"] }
 actix-cors = "0.7.1"
+url = "2.5.7"
 
 # x402 dependencies
-openlibx402-core = "0.0.3"
-openlibx402-actix = "0.0.3"
-ureq = { version = "2.0.0", features = ["rustls", "json"] }
+ureq = { version = "3.1.4", features = ["rustls", "json"] }
