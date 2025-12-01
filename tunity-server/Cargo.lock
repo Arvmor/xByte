@@ -5036,6 +5036,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "tunity-app"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "tokio",
+ "tunity_api",
+]
+
+[[package]]
 name = "tunity_api"
 version = "0.1.0"
 dependencies = [

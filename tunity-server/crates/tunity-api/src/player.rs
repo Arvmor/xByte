@@ -41,18 +41,18 @@ async fn play(
     let facilitator = FacilitatorRequest::new(payment, request.accepts[0].clone());
     if let Ok(response) = facilitator.verify()
         && Some(true) == response.is_valid
+        && let Ok(audio_sample) = get_audio_sample()
     {
         actix_web::rt::spawn(async move { facilitator.settle() });
 
         // Get Audio Sample
-        let audio_sample = get_audio_sample();
         return ResultAPI::verified_payment(audio_sample);
     };
 
     ResultAPI::payment_required(request)
 }
 
-fn get_audio_sample() -> Vec<u8> {
+fn get_audio_sample() -> anyhow::Result<Vec<u8>> {
     const SAMPLE_DURATION_SECONDS: usize = 3;
     const FRAMES_PER_SECOND: usize = 38;
     const TOTAL_FRAMES: usize = SAMPLE_DURATION_SECONDS * FRAMES_PER_SECOND;
@@ -68,5 +68,5 @@ fn get_audio_sample() -> Vec<u8> {
         }
     }
 
-    sample
+    Ok(sample)
 }
