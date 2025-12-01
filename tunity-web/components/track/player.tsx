@@ -1,40 +1,22 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import TrackItem, { ItemProps } from "@/components/track/item";
-import XPay, { PayProps } from "@/components/privy/pay";
-import { ApiResponse } from "@/types/api";
+import XPay, { PayProps, useXPayAsync } from "@/components/privy/pay";
+import { FastForward, Pause, Play, Rewind } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 
 const propPay: PayProps = {
     url: "http://localhost/play",
-    action: "Play",
     maxValue: BigInt(1000),
 }
 
-const AUDIO_TYPE = "audio/mpeg";
+const type = "audio/mpeg";
 
+/** The track player component */
 export default function TrackPlayer({title, name, image, size}: ItemProps) {
-    const audioRef = useRef<HTMLAudioElement | null>(null);
-    const [data, setData] = useState<ApiResponse<number[], any>>();
-    const { url, action, maxValue } = propPay;
-
-    useEffect(() => {
-        if (!audioRef.current || !data?.data || data.status !== 'Success') return;
-
-        const bytes = new Uint8Array(data.data);
-        const blob = new Blob([bytes], { type: AUDIO_TYPE });
-        const objectUrl = URL.createObjectURL(blob);
-        
-        const previousUrl = audioRef.current.src;
-        audioRef.current.src = objectUrl;
-
-        return () => {
-            URL.revokeObjectURL(objectUrl);
-            if (previousUrl && previousUrl.startsWith('blob:')) {
-                URL.revokeObjectURL(previousUrl);
-            }
-        };
-    }, [data]);
+    const { url, maxValue } = propPay;
 
     return (
         <div>
@@ -42,9 +24,70 @@ export default function TrackPlayer({title, name, image, size}: ItemProps) {
             {/* Track info */}
             <TrackItem title={title} name={name} image={image} size={size} />
             {/* Audio element */}
-            <audio ref={audioRef} controls />
-            {/* Play button */}
-            <XPay url={url} action={action} maxValue={maxValue} setData={setData} />
+            <XPay>
+                <PlayIslands url={url} maxValue={maxValue} />
+            </XPay>
         </div>
     )
+}
+
+/** The play islands component */
+export function PlayIslands({url, maxValue}: PayProps) {
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [isPaid, setIsPaid] = useState(false);
+    const ref = useRef<HTMLAudioElement | null>(null);
+    const XPayAsync = useXPayAsync();
+
+    /** Handles paying, playing and pausing the track */
+    const handlePlay = async () => {
+        if (!ref.current) return;
+
+        // Check if the user has paid for the track
+        if (!isPaid) {
+            const {status, data} = await XPayAsync({url, maxValue});
+            if (status !== 'Success') return;
+            setAudioData(data, ref.current);
+            setIsPaid(true);
+        }
+
+        // Play the track
+        setIsPlaying(prev => {
+            if (!ref.current || !isPaid) return prev;
+            
+            // Toggle the play/pause state
+            prev ? ref.current?.pause() : ref.current?.play();
+            return !prev;
+        });
+    }
+
+    return (
+        <>
+            <div className="flex items-center gap-2">
+                <Button variant="outline" size="icon" onClick={handlePlay}>
+                    {isPlaying ? <Pause /> : <Play /> }
+                </Button>
+                <Slider defaultValue={[0.8]} />
+                <Button variant="ghost" size="icon"><Rewind /></Button>
+                <Button variant="ghost" size="icon"><FastForward /></Button>
+            </div>
+            <audio ref={ref} hidden/>
+        </>
+    )
+}
+
+/** Set the audio data to the player */
+function setAudioData(data: number[], player: HTMLAudioElement) {
+    const bytes = new Uint8Array(data);
+    const blob = new Blob([bytes], { type });
+    const objectUrl = URL.createObjectURL(blob);
+
+    // Set the audio data to the player
+    const previousUrl = player.src;
+    player.src = objectUrl;
+
+    // Revoke the object URL
+    URL.revokeObjectURL(objectUrl);
+    if (previousUrl && previousUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(previousUrl);
+    }
 }

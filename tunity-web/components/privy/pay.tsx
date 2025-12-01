@@ -1,32 +1,42 @@
 "use client"
 
-import { useX402Fetch } from "@privy-io/react-auth";
-import { Button } from "@/components/ui/button";
+import { createContext, useContext, useMemo } from "react";
+import { useX402Fetch, UseX402Fetch } from "@privy-io/react-auth";
 
 /** The pay component props */
 export interface PayProps {
     /** The URL to fetch */
     url: string;
-    /** The action label to perform */
-    action: string;
     /** The amount to pay */
     maxValue: bigint;
-    /** Callback to set the fetched data */
-    setData?: (data: any) => void;
 }
 
-export default function XPay({ url, action, maxValue, setData }: PayProps) {
-    const {wrapFetchWithPayment} = useX402Fetch();
+/** The XPay context */
+const XPayContext = createContext<UseX402Fetch | null>(null);
 
-    /** Fetch the premium content */
-    async function fetchPremiumContent() {
-        const fetchWithPayment = wrapFetchWithPayment({fetch, maxValue});
+/** The XPay wrapper component, to be used for `useXPayAsync` */
+export default function XPay({ children }: { children: React.ReactNode }) {
+    const {wrapFetchWithPayment} = useX402Fetch();
+    const value = useMemo(() => ({ wrapFetchWithPayment }), [wrapFetchWithPayment]);
+    
+    return (
+        <XPayContext.Provider value={value}>
+            {children}
+        </XPayContext.Provider>
+    );
+}
+
+/** The async XPay function */
+export function useXPayAsync() {
+    const context = useContext(XPayContext);
+    if (!context) {
+        throw new Error("useXPayAsync must be used within XPay component");
+    }
+
+    return async function XPayAsync({ url, maxValue }: PayProps) {
+        const fetchWithPayment = context.wrapFetchWithPayment({fetch, maxValue});
 
         const response = await fetchWithPayment(url);
-        const data = await response.json();
-
-        setData?.(data);
-    }
-    
-    return <Button onClick={fetchPremiumContent}>{action}</Button>;
+        return response.json();
+    };
 }
