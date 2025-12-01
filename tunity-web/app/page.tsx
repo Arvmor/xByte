@@ -1,4 +1,5 @@
 import TrackItem, { ItemProps } from "@/components/track/item";
+import Link from "next/link";
 
 const trending: { title: string, items: ItemProps[] }[] = [
   {
@@ -45,7 +46,9 @@ export default function Home() {
           <div key={title} className="flex flex-col gap-4">
             <h1 className="text-2xl font-bold">{title}</h1>
             {items.map(({title, name, image, size}) => (
-              <TrackItem key={title} title={title} name={name} image={image} size={size} />
+              <Link key={title} href="/track">
+                <TrackItem title={title} name={name} image={image} size={size} />
+              </Link>
             ))}
           </div>
         ))}

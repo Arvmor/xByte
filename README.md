@@ -1,8 +1,10 @@
-# Introduction
+# Tunity Introduction
 
 Tunity, the Pay-per-Byte Streaming Platform.
 
 Building an End-to-End Streaming Platform, that takes advantage of x402 and Privy wallets, which allows users to pay as they listen to their favorite music! (aka Pay-per-Byte)
+
+![Tunity Demo](./docs/demo.gif)
 
 ### How to Run
 
