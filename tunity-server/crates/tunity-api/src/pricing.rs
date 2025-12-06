@@ -1,7 +1,8 @@
-use crate::ResultAPI;
+use crate::{Database, MemoryDB, ResultAPI};
 use actix_web::Responder;
 use actix_web::dev::HttpServiceFactory;
-use actix_web::{get, post};
+use actix_web::{get, post, web};
+use serde::Deserialize;
 
 /// The Pricing Routes
 #[derive(Debug)]
@@ -21,12 +22,35 @@ impl HttpServiceFactory for PricingRoute {
     }
 }
 
-#[post("/price")]
-async fn set_price() -> impl Responder {
-    ResultAPI::success("Price set")
+/// The request to set a price
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SetPriceRequest {
+    /// The price to set
+    pub price: u64,
 }
 
-#[get("/price")]
-async fn get_price() -> impl Responder {
-    ResultAPI::success("Price get")
+#[post("/price")]
+async fn set_price(
+    price: web::Json<SetPriceRequest>,
+    db: web::ThinData<MemoryDB>,
+) -> impl Responder {
+    match db.set_price(price.price) {
+        Ok(key) => ResultAPI::okay(key),
+        Err(e) => {
+            tracing::error!("Error setting price: {e:?}");
+            ResultAPI::failure("Price not set")
+        }
+    }
+}
+
+#[get("/price/{key}")]
+async fn get_price(key: web::Path<usize>, db: web::ThinData<MemoryDB>) -> impl Responder {
+    match db.get_price(*key) {
+        Ok(price) => ResultAPI::okay(price),
+        Err(e) => {
+            tracing::error!("Error getting price: {e:?}");
+            ResultAPI::failure("Price not found")
+        }
+    }
 }

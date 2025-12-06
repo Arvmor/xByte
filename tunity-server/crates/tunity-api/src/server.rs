@@ -21,10 +21,14 @@ impl<A: net::ToSocketAddrs> Server<A> {
 
     /// Run the API server
     pub async fn run(self) -> anyhow::Result<()> {
-        let app = || {
+        // Initialize data
+        let db = MemoryDB::default();
+        let config = Data::new(ConfigX402::build());
+
+        let app = move || {
             App::new()
-                .app_data(Data::new(ConfigX402::build()))
-                .app_data(ThinData(MemoryDB::default()))
+                .app_data(config.clone())
+                .app_data(ThinData(db.clone()))
                 .service(PlayerRoute::Play)
                 .service(HealthRoute::Status)
                 .service(HealthRoute::Index)
