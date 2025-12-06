@@ -1,6 +1,4 @@
-use crate::health::HealthRoute;
-use crate::player::PlayerRoute;
-use crate::x402::ConfigX402;
+use crate::{ConfigX402, HealthRoute, PlayerRoute, PricingRoute};
 use actix_web::web::Data;
 use actix_web::{App, HttpServer};
 use std::net;
@@ -29,6 +27,8 @@ impl<A: net::ToSocketAddrs> Server<A> {
                 .service(PlayerRoute::Play)
                 .service(HealthRoute::Status)
                 .service(HealthRoute::Index)
+                .service(PricingRoute::SetPrice)
+                .service(PricingRoute::GetPrice)
                 .wrap(actix_cors::Cors::permissive())
         };
 
