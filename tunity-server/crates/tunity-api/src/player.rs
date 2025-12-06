@@ -1,6 +1,6 @@
-use crate::ResultAPI;
-use crate::utils;
 use crate::x402::{ConfigX402, FacilitatorRequest, PaymentExtractor, PaymentRequest, X402Response};
+use crate::{Database, utils};
+use crate::{MemoryDB, ResultAPI};
 use actix_web::Responder;
 use actix_web::dev::HttpServiceFactory;
 use actix_web::{HttpRequest, post, web};
@@ -36,12 +36,14 @@ pub struct PlayRequest {
 #[post("/play")]
 async fn play(
     request: HttpRequest,
+    db: web::ThinData<MemoryDB>,
     config: web::Data<ConfigX402<&'static str>>,
     payload: web::Json<PlayRequest>,
     auth: Option<PaymentExtractor>,
 ) -> impl Responder {
     let url = request.full_url();
-    let req = PaymentRequest::new(&config, "1000", "Access to play the track", url);
+    let price = db.get_price(0).unwrap_or(1000);
+    let req = PaymentRequest::new(&config, price.to_string(), "Access to play the track", url);
     let request = X402Response::new(&[req]);
 
     // Check received payment
