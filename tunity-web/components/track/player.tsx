@@ -7,20 +7,22 @@ import { FastForward, Pause, Play, Rewind } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_TUNITY_API_URL ?? "http://127.0.0.1:80";
+
 /** The MIME types */
 const AUDIO_MIME = "audio/mpeg";
 const VIDEO_MIME = "video/mp4";
 
 /** The payment properties for the audio track */
 const propPay: PayProps = {
-    url: "http://localhost/play",
+    url: `${API_BASE_URL}/play`,
     body: {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            file: "./sample.mp3",
+            file: "1",
             offset: 0,
             length: 700_000,
         }),
@@ -34,7 +36,7 @@ const propPay2: PayProps = {
     body: {
         ...propPay.body,
         body: JSON.stringify({
-            file: "./sample_frag.mp4",
+            file: "0",
             offset: 0,
             length: 700_000,
         }),

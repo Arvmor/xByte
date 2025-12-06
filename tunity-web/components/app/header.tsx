@@ -1,8 +1,9 @@
 "use client"
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Copy, Home, User2 } from "lucide-react";
+import { Copy, Home, Upload, User2 } from "lucide-react";
 import { usePrivy, User } from "@privy-io/react-auth";
 
 /** The header component for the app */
@@ -12,11 +13,18 @@ export default function AppHeader() {
     return (
         <div className="flex p-4 justify-between">
             {/* Logo */}
-            <h2 className="text-2xl font-bold">Tunity</h2>
+            <Link href="/">
+                <h2 className="text-2xl font-bold">Tunity</h2>
+            </Link>
 
             {/* Search bar */}
             <div className="flex gap-2">
-                <Button variant="outline" size="icon"><Home /></Button>
+                <Link href="/">
+                    <Button variant="outline" size="icon"><Home /></Button>
+                </Link>
+                <Link href="/publish">
+                    <Button variant="outline" size="icon"><Upload /></Button>
+                </Link>
                 <Input placeholder="What do you want to play?" />
             </div>
 
