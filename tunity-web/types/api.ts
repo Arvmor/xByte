@@ -11,3 +11,15 @@ export interface ApiResponse<T, E> {
     /** The error of the response */
     error?: E;
 }
+
+/**
+ * The request to play a sample
+ */
+export interface PlayRequest {
+    /** The file to play */
+    file: string;
+    /** The offset to start playing from */
+    offset: number;
+    /** The length of the sample to play */
+    length: number;
+}

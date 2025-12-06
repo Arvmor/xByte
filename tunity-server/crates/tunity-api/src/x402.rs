@@ -112,6 +112,16 @@ pub struct FacilitatorResponse {
     pub error_reason: Option<String>,
 }
 
+impl FacilitatorResponse {
+    /// Check if the response is valid
+    pub fn is_valid(&self) -> bool {
+        matches!(
+            (self.success, self.is_valid),
+            (Some(true), _) | (_, Some(true))
+        )
+    }
+}
+
 /// The request to the x402 facilitator
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]

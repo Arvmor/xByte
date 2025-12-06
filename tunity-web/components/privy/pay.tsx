@@ -7,6 +7,8 @@ import { useX402Fetch, UseX402Fetch } from "@privy-io/react-auth";
 export interface PayProps {
     /** The URL to fetch */
     url: string;
+    /** The Fetch body */
+    body: RequestInit;
     /** The amount to pay */
     maxValue: bigint;
 }
@@ -33,10 +35,10 @@ export function useXPayAsync() {
         throw new Error("useXPayAsync must be used within XPay component");
     }
 
-    return async function XPayAsync({ url, maxValue }: PayProps) {
+    return async function XPayAsync({ url, body, maxValue }: PayProps) {
         const fetchWithPayment = context.wrapFetchWithPayment({fetch, maxValue});
 
-        const response = await fetchWithPayment(url);
+        const response = await fetchWithPayment(url, body);
         return response.json();
     };
 }
