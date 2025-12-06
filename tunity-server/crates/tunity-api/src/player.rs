@@ -5,7 +5,7 @@ use actix_multipart::form::MultipartForm;
 use actix_multipart::form::tempfile::TempFile;
 use actix_web::Responder;
 use actix_web::dev::HttpServiceFactory;
-use actix_web::{HttpRequest, get, post, web};
+use actix_web::{HttpRequest, post, web};
 use serde::Deserialize;
 use std::io::Read;
 
@@ -16,8 +16,6 @@ pub enum PlayerRoute {
     Play,
     /// The set content endpoint
     SetContent,
-    /// The get content endpoint
-    GetContent,
 }
 
 impl HttpServiceFactory for PlayerRoute {
@@ -25,7 +23,6 @@ impl HttpServiceFactory for PlayerRoute {
         match self {
             Self::Play => play.register(config),
             Self::SetContent => set_content.register(config),
-            Self::GetContent => get_content.register(config),
         }
     }
 }
@@ -101,14 +98,4 @@ async fn set_content(
     };
 
     ResultAPI::okay(key)
-}
-
-/// The get content endpoint
-#[get("/content/{key}")]
-async fn get_content(key: web::Path<usize>, db: web::ThinData<MemoryDB>) -> impl Responder {
-    let Ok(content) = db.get_content(*key) else {
-        return ResultAPI::failure("Content not found");
-    };
-
-    ResultAPI::okay(content)
 }
