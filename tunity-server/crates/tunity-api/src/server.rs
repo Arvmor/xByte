@@ -1,7 +1,5 @@
-use crate::health::HealthRoute;
-use crate::player::PlayerRoute;
-use crate::x402::ConfigX402;
-use actix_web::web::Data;
+use crate::{ConfigX402, HealthRoute, MemoryDB, PlayerRoute, PricingRoute};
+use actix_web::web::{Data, ThinData};
 use actix_web::{App, HttpServer};
 use std::net;
 
@@ -23,12 +21,20 @@ impl<A: net::ToSocketAddrs> Server<A> {
 
     /// Run the API server
     pub async fn run(self) -> anyhow::Result<()> {
-        let app = || {
+        // Initialize data
+        let db = MemoryDB::default();
+        let config = Data::new(ConfigX402::build());
+
+        let app = move || {
             App::new()
-                .app_data(Data::new(ConfigX402::build()))
+                .app_data(config.clone())
+                .app_data(ThinData(db.clone()))
                 .service(PlayerRoute::Play)
+                .service(PlayerRoute::SetContent)
                 .service(HealthRoute::Status)
                 .service(HealthRoute::Index)
+                .service(PricingRoute::SetPrice)
+                .service(PricingRoute::GetPrice)
                 .wrap(actix_cors::Cors::permissive())
         };
 

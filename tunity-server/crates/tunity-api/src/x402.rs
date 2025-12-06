@@ -41,10 +41,10 @@ impl ConfigX402<&'static str> {
 /// The payment request from x402 server
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct PaymentRequest<S> {
+pub struct PaymentRequest<S, T> {
     pub scheme: S,
     pub network: S,
-    pub max_amount_required: S,
+    pub max_amount_required: T,
     pub resource: Url,
     pub description: Option<S>,
     pub mime_type: S,
@@ -54,14 +54,14 @@ pub struct PaymentRequest<S> {
     pub asset: S,
 }
 
-impl<S> PaymentRequest<S>
+impl<S, T> PaymentRequest<S, T>
 where
     S: AsRef<str> + Copy,
 {
     /// Create a new PaymentRequest
     pub fn new(
         config: &ConfigX402<S>,
-        max_amount_required: S,
+        max_amount_required: T,
         description: S,
         resource: Url,
     ) -> Self {
@@ -82,14 +82,14 @@ where
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct X402Response<S> {
+pub struct X402Response<S, T> {
     pub x402_version: u32,
-    pub accepts: Vec<PaymentRequest<S>>,
+    pub accepts: Vec<PaymentRequest<S, T>>,
 }
 
-impl<S: Copy> X402Response<S> {
+impl<S: Copy, T: Clone> X402Response<S, T> {
     /// Create a new X402Response
-    pub fn new(payment_requests: &[PaymentRequest<S>]) -> Self {
+    pub fn new(payment_requests: &[PaymentRequest<S, T>]) -> Self {
         let x402_version = 1;
         let accepts = payment_requests.to_vec();
 
@@ -125,15 +125,18 @@ impl FacilitatorResponse {
 /// The request to the x402 facilitator
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct FacilitatorRequest<S> {
+pub struct FacilitatorRequest<S, T> {
     pub x402_version: u32,
     pub payment_payload: PaymentExtractor,
-    pub payment_requirements: PaymentRequest<S>,
+    pub payment_requirements: PaymentRequest<S, T>,
 }
 
-impl<S: Copy + Serialize> FacilitatorRequest<S> {
+impl<S: Copy + Serialize, T: Clone + Serialize> FacilitatorRequest<S, T> {
     /// Create a new FacilitatorRequest
-    pub fn new(payment_payload: PaymentExtractor, payment_requirements: PaymentRequest<S>) -> Self {
+    pub fn new(
+        payment_payload: PaymentExtractor,
+        payment_requirements: PaymentRequest<S, T>,
+    ) -> Self {
         Self {
             x402_version: payment_payload.x402_version,
             payment_payload,

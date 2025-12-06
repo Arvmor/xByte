@@ -34,6 +34,14 @@ impl<E> ResultAPI<(), E> {
 }
 
 impl<D, E> ResultAPI<D, E> {
+    /// Create a Ok result
+    pub fn okay(data: D) -> Self {
+        Self::Success(data)
+    }
+    /// Create an error result
+    pub fn failure(error: E) -> Self {
+        Self::Error(error)
+    }
     /// Create a successful result
     pub fn verified_payment(data: D) -> Self {
         Self::Success(data)
