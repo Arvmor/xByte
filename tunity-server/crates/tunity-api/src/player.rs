@@ -1,22 +1,31 @@
+use crate::utils;
 use crate::x402::{ConfigX402, FacilitatorRequest, PaymentExtractor, PaymentRequest, X402Response};
-use crate::{Database, utils};
-use crate::{MemoryDB, ResultAPI};
+use crate::{Database, MemoryDB, ResultAPI};
+use actix_multipart::form::MultipartForm;
+use actix_multipart::form::tempfile::TempFile;
 use actix_web::Responder;
 use actix_web::dev::HttpServiceFactory;
-use actix_web::{HttpRequest, post, web};
+use actix_web::{HttpRequest, get, post, web};
 use serde::Deserialize;
+use std::io::Read;
 
 /// The Player Routes
 #[derive(Debug)]
 pub enum PlayerRoute {
     /// The play endpoint
     Play,
+    /// The set content endpoint
+    SetContent,
+    /// The get content endpoint
+    GetContent,
 }
 
 impl HttpServiceFactory for PlayerRoute {
     fn register(self, config: &mut actix_web::dev::AppService) {
         match self {
             Self::Play => play.register(config),
+            Self::SetContent => set_content.register(config),
+            Self::GetContent => get_content.register(config),
         }
     }
 }
@@ -64,4 +73,42 @@ async fn play(
     };
 
     ResultAPI::payment_required(request)
+}
+
+/// The request to set a content
+#[derive(Debug, MultipartForm)]
+pub struct SetContentRequest {
+    /// The content to set
+    pub content: TempFile,
+}
+
+/// The set content endpoint
+#[post("/content")]
+async fn set_content(
+    form: MultipartForm<SetContentRequest>,
+    db: web::ThinData<MemoryDB>,
+) -> impl Responder {
+    let mut content = form.content.file.as_file();
+    let mut buffer = vec![0u8; form.content.size];
+
+    if let Err(e) = content.read_exact(&mut buffer) {
+        tracing::error!("Failed to read content: {e:?}");
+        return ResultAPI::failure("Failed to read content");
+    };
+
+    let Ok(key) = db.set_content(buffer) else {
+        return ResultAPI::failure("Content not set");
+    };
+
+    ResultAPI::okay(key)
+}
+
+/// The get content endpoint
+#[get("/content/{key}")]
+async fn get_content(key: web::Path<usize>, db: web::ThinData<MemoryDB>) -> impl Responder {
+    let Ok(content) = db.get_content(*key) else {
+        return ResultAPI::failure("Content not found");
+    };
+
+    ResultAPI::okay(content)
 }

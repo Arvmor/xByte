@@ -30,6 +30,8 @@ impl<A: net::ToSocketAddrs> Server<A> {
                 .app_data(config.clone())
                 .app_data(ThinData(db.clone()))
                 .service(PlayerRoute::Play)
+                .service(PlayerRoute::SetContent)
+                .service(PlayerRoute::GetContent)
                 .service(HealthRoute::Status)
                 .service(HealthRoute::Index)
                 .service(PricingRoute::SetPrice)
