@@ -18,6 +18,7 @@ tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 
 # API dependencies
 actix-web = { version = "4.12.1", features = ["rustls"] }
+actix-multipart = "0.7.2"
 actix-cors = "0.7.1"
 url = "2.5.7"
 
