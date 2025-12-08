@@ -57,7 +57,7 @@ interface StreamingPlayerProps {
 /** Streaming player with chunk-based payment */
 export function StreamingPlayer({ mimeType }: StreamingPlayerProps) {
     const [contentKey, setContentKey] = useState("");
-    const [chunkSize, setChunkSize] = useState(DEFAULT_CHUNK_SIZE.toString());
+    const [chunkSize, setChunkSize] = useState("");
     const [chunkState, setChunkState] = useState<ChunkState | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
@@ -78,7 +78,7 @@ export function StreamingPlayer({ mimeType }: StreamingPlayerProps) {
     const fetchNextChunk = useCallback(async () => {
         if (!contentKey || isLoading) return;
         
-        const size = Number(chunkSize) || DEFAULT_CHUNK_SIZE;
+        const size = Number(chunkSize) * DEFAULT_CHUNK_SIZE;
         const currentOffset = chunkState?.offset ?? 0;
         
         setIsLoading(true);
@@ -231,21 +231,19 @@ function formatBytes(bytes: number): string {
     return `${(bytes / Math.pow(k, i)).toFixed(1)} ${sizes[i]}`;
 }
 
-interface ContentKeyInputProps {
-    contentKey: string;
-    chunkSize: string;
-    onKeyChange: (key: string) => void;
-    onChunkSizeChange: (size: string) => void;
-    onReset: () => void;
-}
-
 function ContentKeyInput({ 
     contentKey, 
     chunkSize, 
     onKeyChange, 
     onChunkSizeChange,
     onReset 
-}: ContentKeyInputProps) {
+}: {
+    contentKey: string;
+    chunkSize: string;
+    onKeyChange: (key: string) => void;
+    onChunkSizeChange: (size: string) => void;
+    onReset: () => void;
+}) {
     return (
         <div className="flex flex-col gap-2">
             <Input
@@ -257,7 +255,7 @@ function ContentKeyInput({
             <div className="flex items-center gap-2">
                 <Input
                     type="number"
-                    placeholder="Chunk size (bytes)"
+                    placeholder="Chunk size (MB)"
                     value={chunkSize}
                     onChange={(e) => onChunkSizeChange(e.target.value)}
                 />
