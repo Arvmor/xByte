@@ -1,5 +1,5 @@
 {
-  "extends": "./tsconfig.base.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -24,6 +24,6 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "packages/**/*"],
-  "references": [{ "path": "packages/tunity-sdk" }]
+  "exclude": ["node_modules", "../tunity-sdk/**/*"],
+  "references": [{ "path": "../tunity-sdk" }]
 }

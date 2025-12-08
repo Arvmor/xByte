@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo } from "react";
-import { TunityClient } from "@/packages/tunity-sdk";
+import { TunityClient } from "../../../tunity-sdk/src";
 import PublishForm from "@/components/publish/form";
 
 export default function PublishPage() {
