@@ -11,7 +11,7 @@ import { Upload, DollarSign, CheckCircle, XCircle, FileAudio, FileVideo, Trash2 
 type UploadState = "idle" | "uploading" | "success" | "error";
 type PriceState = "idle" | "setting" | "success" | "error";
 
-export default function PublishForm(client: TunityClient) {
+export default function PublishForm({ client }: { client: TunityClient }) {
     const [file, setFile] = useState<File | null>(null);
     const [contentKey, setContentKey] = useState<string>("");
     const [price, setPrice] = useState<string>("");
@@ -48,11 +48,11 @@ export default function PublishForm(client: TunityClient) {
 
         const response = await client.uploadContent(file);
         
-        if (response.success && response.data) {
+        if (response.status === "Success") {
             setContentKey(response.data);
             setUploadState("success");
         } else {
-            setErrorMessage(response.message ?? "Failed to upload content");
+            setErrorMessage(response.data);
             setUploadState("error");
         }
     };
@@ -64,12 +64,12 @@ export default function PublishForm(client: TunityClient) {
         setPriceState("setting");
         setErrorMessage("");
 
-        const response = await client.setPrice(price);
+        const response = await client.setPrice({ price: price });
 
-        if (response.success) {
+        if (response.status === "Success") {
             setPriceState("success");
         } else {
-            setErrorMessage(response.message ?? "Failed to set price");
+            setErrorMessage(response.data);
             setPriceState("error");
         }
     };
@@ -124,7 +124,7 @@ export default function PublishForm(client: TunityClient) {
                     )}
                 </CardContent>
                 <CardFooter className="flex justify-between items-center">
-                    <UploadStatus state={uploadState} contentKey={contentKey} />
+                    <UploadStatus state={uploadState} />
                     <Button 
                         onClick={handleUpload} 
                         disabled={!file || uploadState === "uploading" || uploadState === "success"}
@@ -204,7 +204,7 @@ export default function PublishForm(client: TunityClient) {
     );
 }
 
-function UploadStatus({ state, contentKey }: { state: UploadState; contentKey: string }) {
+function UploadStatus({ state }: { state: UploadState }) {
     if (state === "success") {
         return (
             <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
