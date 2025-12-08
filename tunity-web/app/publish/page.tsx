@@ -1,47 +1,11 @@
 "use client"
 
 import { useMemo } from "react";
-import { usePrivy } from "@privy-io/react-auth";
 import { TunityClient } from "@/packages/tunity-sdk";
 import PublishForm from "@/components/publish/form";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload } from "lucide-react";
 
 export default function PublishPage() {
-    const { user, ready, connectOrCreateWallet } = usePrivy();
     const client = useMemo(() => new TunityClient(), []);
-
-    if (!ready) {
-        return (
-            <div className="flex min-h-screen items-center justify-center">
-                <div className="animate-pulse text-muted-foreground">Loading...</div>
-            </div>
-        );
-    }
-
-    if (!user) {
-        return (
-            <div className="flex min-h-screen items-center justify-center p-4">
-                <Card className="w-full max-w-md">
-                    <CardHeader className="text-center">
-                        <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10">
-                            <Upload className="size-6 text-primary" />
-                        </div>
-                        <CardTitle>Publisher Panel</CardTitle>
-                        <CardDescription>
-                            Connect your wallet to start publishing content on Tunity
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex justify-center">
-                        <Button onClick={connectOrCreateWallet} size="lg">
-                            Connect Wallet
-                        </Button>
-                    </CardContent>
-                </Card>
-            </div>
-        );
-    }
 
     return (
         <div className="flex min-h-screen items-center justify-center p-4">
@@ -57,3 +21,4 @@ export default function PublishPage() {
         </div>
     );
 }
+
