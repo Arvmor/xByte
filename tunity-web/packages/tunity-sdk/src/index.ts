@@ -1,4 +1,5 @@
-import { ApiResponse, PlayRequest, PlayResponse, SetPriceRequest, X402PaymentPayload } from "./types";
+import { UUID } from "crypto";
+import { ApiResponse, PlayRequest, SetPriceRequest, X402PaymentPayload } from "./types";
 
 /** The default Tunity URL */
 const DEFAULT_TUNITY_URL = "http://localhost:80";
@@ -29,7 +30,7 @@ export class TunityClient {
   async play(
     body: PlayRequest,
     payment: X402PaymentPayload
-  ): Promise<ApiResponse<PlayResponse, X402PaymentPayload>> {
+  ): Promise<ApiResponse<number[], X402PaymentPayload>> {
     const paymentHeader = btoa(JSON.stringify(payment));
     const options: RequestInit = {
       method: "POST",
@@ -43,7 +44,7 @@ export class TunityClient {
     return this.request("/play", options);
   }
 
-  async uploadContent(content: Blob | File): Promise<ApiResponse<string, string>> {
+  async uploadContent(content: Blob | File): Promise<ApiResponse<UUID, string>> {
     const formData = new FormData();
     formData.append("content", content);
 

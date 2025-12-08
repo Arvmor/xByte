@@ -14,3 +14,4 @@ serde_json.workspace = true
 ureq.workspace = true
 url.workspace = true
 actix-multipart.workspace = true
+uuid.workspace = true

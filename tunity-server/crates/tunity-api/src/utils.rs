@@ -5,6 +5,8 @@ use std::path::Path;
 
 /// The version of the API
 pub const API_VERSION: &str = std::env!("CARGO_PKG_VERSION");
+/// One MB in bytes
+pub const ONE_MEGA_BYTE: u64 = 1024 * 1024;
 
 /// The result of an API call
 #[derive(Debug, Serialize)]
@@ -84,4 +86,10 @@ pub fn get_chunk<F: AsRef<Path>>(file: F, offset: u64, length: usize) -> anyhow:
     reader.read_exact(&mut bytes)?;
 
     Ok(bytes)
+}
+
+/// Calculate the price for a given length
+pub fn calculate_price(price: f32, length: f32) -> u64 {
+    let price_per_mb = length / ONE_MEGA_BYTE as f32;
+    (price * price_per_mb) as u64
 }

@@ -1,15 +1,14 @@
+import { UUID } from "crypto";
+
 export interface PlayRequest {
-  file: string;
+  key: UUID;
   offset: number;
   length: number;
 }
 
-export interface PlayResponse {
-  data: number[];
-}
-
 export interface SetPriceRequest {
-  price: string;
+  key: UUID;
+  price: number;
 }
 
 /**

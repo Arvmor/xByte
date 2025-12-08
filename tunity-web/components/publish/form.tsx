@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { formatAmount, formatFileSize } from "@/lib/utils";
 import { Upload, DollarSign, CheckCircle, XCircle, FileIcon, Trash2 } from "lucide-react";
+import { UUID } from "crypto";
 
 type UploadState = "idle" | "uploading" | "success" | "error";
 type PriceState = "idle" | "setting" | "success" | "error";
@@ -24,6 +25,7 @@ export default function PublishForm({ client }: { client: TunityClient }) {
 
 function UploadCard({ client }: { client: TunityClient }) {
     const [file, setFile] = useState<File | null>(null);
+    const [key, setKey] = useState<UUID | null>(null);
     const [uploadState, setUploadState] = useState<UploadState>("idle");
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -49,6 +51,7 @@ function UploadCard({ client }: { client: TunityClient }) {
         
         const response = await client.uploadContent(file);
         if (response.status === "Success") {
+            setKey(response.data as UUID);
             setUploadState("success");
         } else {
             setUploadState("error");
@@ -97,7 +100,7 @@ function UploadCard({ client }: { client: TunityClient }) {
             </CardContent>
             {/* Card Footer */}
             <CardFooter className="flex justify-between items-center">
-                <UploadStatus state={uploadState} />
+                <UploadStatus state={uploadState} contentKey={key} />
                 <Button 
                     onClick={handleUpload} 
                     disabled={!file || uploadState === "uploading" || uploadState === "success"}
@@ -112,16 +115,17 @@ function UploadCard({ client }: { client: TunityClient }) {
 
 function PriceCard({ client }: { client: TunityClient }) {
     const [price, setPrice] = useState<string>("");
+    const [key, setKey] = useState<UUID | null>(null);
     const [priceState, setPriceState] = useState<PriceState>("idle");
 
     const handleSetPrice = async (e: FormEvent) => {
         e.preventDefault();
-        if (!price) return;
+        if (!price || !key) return;
         setPriceState("setting");
         
         // Format the price to 6 decimals
-        const formattedPrice = formatAmount(price, 6).toString();
-        const response = await client.setPrice({ price: formattedPrice });
+        const formattedPrice = formatAmount(price, 6);
+        const response = await client.setPrice({ key, price: formattedPrice });
         if (response.status === "Success") {
             setPriceState("success");
         } else {
@@ -145,8 +149,19 @@ function PriceCard({ client }: { client: TunityClient }) {
             <form onSubmit={handleSetPrice} className="flex flex-col gap-4">
                 <CardContent className="flex flex-col gap-4">
                     <div className="flex flex-col gap-2">
+                        <label htmlFor="key" className="text-sm font-medium">
+                            Key
+                        </label>
+                        <Input
+                            id="key"
+                            value={key ?? ""}
+                            onChange={(e) => setKey(e.target.value as UUID)}
+                            required
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2">
                         <label htmlFor="price" className="text-sm font-medium">
-                            Price (USDC)
+                            Price (USDC) / 1MB
                         </label>
                         <Input
                             id="price"
@@ -175,12 +190,12 @@ function PriceCard({ client }: { client: TunityClient }) {
     );
 }
 
-function UploadStatus({ state }: { state: UploadState }) {
+function UploadStatus({ state, contentKey }: { state: UploadState, contentKey: UUID | null }) {
     if (state === "success") {
         return (
             <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
                 <CheckCircle className="size-4" />
-                <span className="text-sm">Uploaded</span>
+                <span className="text-sm">Uploaded {contentKey}</span>
             </div>
         );
     }

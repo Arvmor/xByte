@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
+use uuid::Uuid;
 
 /// A trait for a database
 pub trait Database {
@@ -10,7 +11,7 @@ pub trait Database {
     /// The key type
     type Key;
     /// Set the price
-    fn set_price(&self, price: Self::Price) -> anyhow::Result<Self::Key>;
+    fn set_price(&self, key: &Self::Key, price: Self::Price) -> anyhow::Result<()>;
     /// Get the price
     fn get_price(&self, key: &Self::Key) -> anyhow::Result<Self::Price>;
     /// Set content
@@ -22,34 +23,39 @@ pub trait Database {
 /// In-memory database
 #[derive(Debug, Default, Clone)]
 pub struct MemoryDB {
-    prices: Arc<RwLock<HashMap<String, String>>>,
-    contents: Arc<RwLock<HashMap<String, Vec<u8>>>>,
+    prices: Arc<RwLock<HashMap<Uuid, u64>>>,
+    contents: Arc<RwLock<HashMap<Uuid, Vec<u8>>>>,
 }
 
 impl Database for MemoryDB {
-    type Price = String;
+    type Price = u64;
     type Content = Vec<u8>;
-    type Key = String;
+    type Key = Uuid;
 
-    fn set_price(&self, price: Self::Price) -> anyhow::Result<Self::Key> {
+    fn set_price(&self, key: &Self::Key, price: Self::Price) -> anyhow::Result<()> {
+        // Check if the content exists
+        if self.contents.read().unwrap().get(key).is_none() {
+            return Err(anyhow::anyhow!("Content not found"));
+        }
+
+        // Set the price
         let mut db = self.prices.write().unwrap();
-        let key = db.len().to_string();
-        db.insert(key.clone(), price);
+        db.insert(*key, price);
 
-        Ok(key)
+        Ok(())
     }
 
     fn get_price(&self, key: &Self::Key) -> anyhow::Result<Self::Price> {
         let db = self.prices.read().unwrap();
         let result = db.get(key).ok_or(anyhow::anyhow!("Price not found"))?;
 
-        Ok(result.clone())
+        Ok(*result)
     }
 
     fn set_content(&self, content: Self::Content) -> anyhow::Result<Self::Key> {
         let mut db = self.contents.write().unwrap();
-        let key = db.len().to_string();
-        db.insert(key.clone(), content);
+        let key = Uuid::new_v4();
+        db.insert(key, content);
 
         Ok(key)
     }
