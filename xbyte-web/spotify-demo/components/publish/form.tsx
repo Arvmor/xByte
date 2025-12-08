@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, ChangeEvent, FormEvent } from "react";
-import { TunityClient } from "../../../tunity-sdk/src";
+import { xByteClient } from "xbyte-sdk";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,7 @@ import { UUID } from "crypto";
 type UploadState = "idle" | "uploading" | "success" | "error";
 type PriceState = "idle" | "setting" | "success" | "error";
 
-export default function PublishForm({ client }: { client: TunityClient }) {
+export default function PublishForm({ client }: { client: xByteClient }) {
 
     return (
         <div className="flex flex-col gap-6 w-full max-w-xl">
@@ -23,7 +23,7 @@ export default function PublishForm({ client }: { client: TunityClient }) {
     );
 }
 
-function UploadCard({ client }: { client: TunityClient }) {
+function UploadCard({ client }: { client: xByteClient }) {
     const [file, setFile] = useState<File | null>(null);
     const [key, setKey] = useState<UUID | null>(null);
     const [uploadState, setUploadState] = useState<UploadState>("idle");
@@ -67,7 +67,7 @@ function UploadCard({ client }: { client: TunityClient }) {
                     Upload Content
                 </CardTitle>
                 <CardDescription>
-                    Upload your audio or video content to Tunity
+                    Upload your audio or video content to Spotify
                 </CardDescription>
             </CardHeader>
             {/* Card Content */}
@@ -113,7 +113,7 @@ function UploadCard({ client }: { client: TunityClient }) {
     );
 }
 
-function PriceCard({ client }: { client: TunityClient }) {
+function PriceCard({ client }: { client: xByteClient }) {
     const [price, setPrice] = useState<string>("");
     const [key, setKey] = useState<UUID | null>(null);
     const [priceState, setPriceState] = useState<PriceState>("idle");

@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tunity",
+  title: "Spotify",
   description: "Listen to your favourite Music and Podcasts",
 };
 

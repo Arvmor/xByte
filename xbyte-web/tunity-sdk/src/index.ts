@@ -1,21 +1,21 @@
 import { UUID } from "crypto";
 import { ApiResponse, PlayRequest, SetPriceRequest, X402PaymentPayload } from "./types";
 
-/** The default Tunity URL */
-const DEFAULT_TUNITY_URL = "http://localhost:80";
+/** The default xbyte URL */
+const DEFAULT_XBYTE_URL = "http://localhost:80";
 
-export class TunityClient {
-  private readonly tunityUrl: string;
+export class xByteClient {
+  private readonly xbyteUrl: string;
 
-  constructor(tunityUrl?: string) {
-    this.tunityUrl = tunityUrl ?? DEFAULT_TUNITY_URL;
+  constructor(xbyteUrl?: string) {
+    this.xbyteUrl = xbyteUrl ?? DEFAULT_XBYTE_URL;
   }
 
   private async request<T>(
     endpoint: string,
     options?: RequestInit
   ): Promise<T> {
-    const response = await fetch(`${this.tunityUrl}${endpoint}`, options);
+    const response = await fetch(`${this.xbyteUrl}${endpoint}`, options);
     return response.json()
   }
 

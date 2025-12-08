@@ -1,11 +1,11 @@
 "use client"
 
 import { useMemo } from "react";
-import { TunityClient } from "../../../tunity-sdk/src";
+import { xByteClient } from "xbyte-sdk";
 import PublishForm from "@/components/publish/form";
 
 export default function PublishPage() {
-    const client = useMemo(() => new TunityClient(), []);
+    const client = useMemo(() => new xByteClient(), []);
 
     return (
         <div className="flex min-h-screen items-center justify-center p-4">

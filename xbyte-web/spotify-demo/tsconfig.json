@@ -24,6 +24,6 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "../tunity-sdk/**/*"],
-  "references": [{ "path": "../tunity-sdk" }]
+  "exclude": ["node_modules", "../xbyte-sdk/**/*"],
+  "references": [{ "path": "../xbyte-sdk" }]
 }

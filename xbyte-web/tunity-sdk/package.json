@@ -1,7 +1,7 @@
 {
-  "name": "tunity-sdk",
+  "name": "xbyte-sdk",
   "version": "0.0.1",
-  "description": "Tunity SDK",
+  "description": "xbyte SDK",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

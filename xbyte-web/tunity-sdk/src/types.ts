@@ -12,7 +12,7 @@ export interface SetPriceRequest {
 }
 
 /**
- * The response from Tunity API
+ * The response from xByte API
  * @template T - The type of the data
  * @template E - The type of the error
  */
