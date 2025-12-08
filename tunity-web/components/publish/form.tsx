@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { formatFileSize } from "@/lib/utils";
+import { formatAmount, formatFileSize } from "@/lib/utils";
 import { Upload, DollarSign, CheckCircle, XCircle, FileIcon, Trash2 } from "lucide-react";
 
 type UploadState = "idle" | "uploading" | "success" | "error";
@@ -119,7 +119,9 @@ function PriceCard({ client }: { client: TunityClient }) {
         if (!price) return;
         setPriceState("setting");
         
-        const response = await client.setPrice({ price: price });
+        // Format the price to 6 decimals
+        const formattedPrice = formatAmount(price, 6).toString();
+        const response = await client.setPrice({ price: formattedPrice });
         if (response.status === "Success") {
             setPriceState("success");
         } else {
