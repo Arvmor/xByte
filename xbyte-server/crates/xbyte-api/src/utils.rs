@@ -1,7 +1,5 @@
 use actix_web::http::StatusCode;
 use serde::Serialize;
-use std::io::{BufReader, Read, Seek, SeekFrom};
-use std::path::Path;
 
 /// The version of the API
 pub const API_VERSION: &str = std::env!("CARGO_PKG_VERSION");
@@ -74,18 +72,6 @@ where
             .json(self)
             .respond_to(req)
     }
-}
-
-/// Get a chunk of data from a file
-pub fn get_chunk<F: AsRef<Path>>(file: F, offset: u64, length: usize) -> anyhow::Result<Vec<u8>> {
-    let file = std::fs::File::open(file)?;
-    let mut reader = BufReader::new(file);
-
-    reader.seek(SeekFrom::Start(offset))?;
-    let mut bytes = vec![0u8; length];
-    reader.read_exact(&mut bytes)?;
-
-    Ok(bytes)
 }
 
 /// Calculate the price for a given length

@@ -1,13 +1,14 @@
 "use client"
 
 import { useState, useRef, ChangeEvent, FormEvent } from "react";
+import Link from "next/link";
 import { xByteClient } from "xbyte-sdk";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { formatAmount, formatFileSize } from "@/lib/utils";
-import { Upload, DollarSign, CheckCircle, XCircle, FileIcon, Trash2 } from "lucide-react";
+import { Upload, DollarSign, CheckCircle, XCircle, FileIcon, Trash2, ExternalLink } from "lucide-react";
 import { UUID } from "crypto";
 
 type UploadState = "idle" | "uploading" | "success" | "error";
@@ -191,11 +192,21 @@ function PriceCard({ client }: { client: xByteClient }) {
 }
 
 function UploadStatus({ state, contentKey }: { state: UploadState, contentKey: UUID | null }) {
-    if (state === "success") {
+    if (state === "success" && contentKey) {
         return (
-            <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                <CheckCircle className="size-4" />
-                <span className="text-sm">Uploaded {contentKey}</span>
+            <div className="flex flex-col gap-2 text-sm">
+                <Link 
+                    href={`/movie?key=${contentKey}`}
+                    className="flex items-center gap-2 underline"
+                    target="_blank"
+                >
+                    <ExternalLink className="size-4" />
+                    Click to Pay & View
+                </Link>
+                <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                    <CheckCircle className="size-4" />
+                    <span className="text-sm">Uploaded</span>
+                </div>
             </div>
         );
     }

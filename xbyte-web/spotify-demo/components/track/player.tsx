@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import TrackItem, { ItemProps } from "@/components/track/item";
 import XPay, { useXPayAsync } from "@/components/privy/pay";
 import { Download, FastForward, Pause, Play, Rewind } from "lucide-react";
@@ -56,7 +57,10 @@ interface StreamingPlayerProps {
 
 /** Streaming player with chunk-based payment */
 export function StreamingPlayer({ mimeType }: StreamingPlayerProps) {
-    const [contentKey, setContentKey] = useState("");
+    const searchParams = useSearchParams();
+    const keyFromUrl = searchParams.get("key") ?? "";
+    
+    const [contentKey, setContentKey] = useState(keyFromUrl);
     const [chunkSize, setChunkSize] = useState("");
     const [chunkState, setChunkState] = useState<ChunkState | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);

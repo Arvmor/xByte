@@ -2,8 +2,8 @@ import { ItemProps } from "@/components/track/item";
 import { MoviePlayer } from "@/components/track/player";
 
 const propTrack: ItemProps = {
-    title: "Track 1",
-    name: "Artist 1",
+    title: "Movie 1",
+    name: "Actor 1",
     image: "/placeholder.jpg",
     size: 500,
 }

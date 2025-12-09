@@ -14,7 +14,7 @@ export default function AppHeader() {
         <div className="flex p-4 justify-between">
             {/* Logo */}
             <Link href="/">
-                <h2 className="text-2xl font-bold">Spotify</h2>
+                <h2 className="text-2xl font-bold">Spotify x Netflix</h2>
             </Link>
 
             {/* Search bar */}
