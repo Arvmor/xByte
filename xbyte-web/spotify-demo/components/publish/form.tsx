@@ -68,7 +68,7 @@ function UploadCard({ client }: { client: xByteClient }) {
                     Upload Content
                 </CardTitle>
                 <CardDescription>
-                    Upload your audio or video content to Spotify
+                    Upload your audio or video content to start monetizing
                 </CardDescription>
             </CardHeader>
             {/* Card Content */}
