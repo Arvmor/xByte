@@ -1,5 +1,5 @@
 {
     "rust-analyzer.linkedProjects": [
-        "./tunity-server/Cargo.toml"
+        "./xbyte-server/Cargo.toml"
     ],
 }

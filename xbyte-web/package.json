@@ -1,0 +1,13 @@
+{
+  "name": "xbyte-web",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter spotify-web dev",
+    "build": "pnpm --filter xbyte-sdk build && pnpm --filter spotify-web build",
+    "build:sdk": "pnpm --filter xbyte-sdk build",
+    "lint": "pnpm -r lint"
+  },
+  "packageManager": "pnpm@10.12.4"
+}
+
+
