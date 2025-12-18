@@ -79,3 +79,11 @@ pub fn calculate_price(price: f32, length: f32) -> u64 {
     let price_per_mb = length / ONE_MEGA_BYTE as f32;
     (price * price_per_mb) as u64
 }
+
+/// Calculate the range header for a given offset and length
+pub fn calculate_range_header(offset: u64, len: u64) -> Option<String> {
+    let end = offset.checked_add(len)?.checked_sub(1)?;
+    let range = format!("bytes={offset}-{end}");
+
+    Some(range)
+}
