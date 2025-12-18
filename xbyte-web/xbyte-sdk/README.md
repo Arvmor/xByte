@@ -62,7 +62,7 @@ Retrieves the price for a specific content.
 ```typescript
 // { status: "Success", data: "0.001" }
 const { status, data } = await client.getPrice(
-  "550e8400-e29b-41d4-a716-446655440000"
+  "550e8400-e29b-41d4-a716-446655440000",
 );
 ```
 
@@ -92,7 +92,7 @@ const response = await client.play(
         nonce: "0x...",
       },
     },
-  }
+  },
 );
 // { status: "Success", data: [/* byte array */] }
 ```

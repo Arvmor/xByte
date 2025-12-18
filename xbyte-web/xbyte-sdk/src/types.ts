@@ -16,7 +16,7 @@ export interface SetPriceRequest {
  * @template T - The type of the data
  * @template E - The type of the error
  */
-export interface ApiResponse<T, E> {  
+export interface ApiResponse<T, E> {
   /** The status of the response */
   status: "Success" | "Error" | "PaymentRequired";
   /** The data of the response */
