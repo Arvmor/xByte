@@ -1,10 +1,5 @@
 import { UUID } from "crypto";
-import {
-  ApiResponse,
-  PlayRequest,
-  SetPriceRequest,
-  X402PaymentPayload,
-} from "./types";
+import { ApiResponse, PlayRequest, SetPriceRequest, X402PaymentPayload } from "./types";
 
 /** The default xbyte URL */
 const DEFAULT_XBYTE_URL = "http://localhost:80";
@@ -16,10 +11,7 @@ export class xByteClient {
     this.xbyteUrl = xbyteUrl ?? DEFAULT_XBYTE_URL;
   }
 
-  private async request<T>(
-    endpoint: string,
-    options?: RequestInit,
-  ): Promise<T> {
+  private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const response = await fetch(`${this.xbyteUrl}${endpoint}`, options);
     return response.json();
   }
@@ -49,9 +41,7 @@ export class xByteClient {
     return this.request("/play", options);
   }
 
-  async uploadContent(
-    content: Blob | File,
-  ): Promise<ApiResponse<UUID, string>> {
+  async uploadContent(content: Blob | File): Promise<ApiResponse<UUID, string>> {
     const formData = new FormData();
     formData.append("content", content);
 
