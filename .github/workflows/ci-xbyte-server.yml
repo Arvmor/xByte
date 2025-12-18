@@ -1,0 +1,63 @@
+name: CI - xByte Server
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "xbyte-server/**"
+      - ".github/workflows/ci-xbyte-server.yml"
+  pull_request:
+    branches: [master]
+    paths:
+      - "xbyte-server/**"
+      - ".github/workflows/ci-xbyte-server.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: xbyte-server
+
+jobs:
+  clippy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+      - run: cargo clippy --workspace --all-targets --all-features
+        env:
+          RUSTFLAGS: -Dwarnings
+  fmt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - run: cargo fmt --all --check
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+      - run: cargo test --workspace --all-features

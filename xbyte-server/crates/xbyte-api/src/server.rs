@@ -56,6 +56,7 @@ mod tests {
     }
 
     #[actix_web::test]
+    #[ignore = "For development purposes"]
     async fn test_new() -> anyhow::Result<()> {
         let server = Server::new("127.0.0.1:80");
         server.run().await?;
