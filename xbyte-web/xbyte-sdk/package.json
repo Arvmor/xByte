@@ -23,10 +23,10 @@
     ],
     "scripts": {
         "build": "tsc -b",
-        "lint": "oxlint src",
-        "lint:fix": "oxlint --fix src",
-        "format": "oxfmt src",
-        "format:check": "oxfmt --check src"
+        "lint": "oxlint",
+        "lint:fix": "oxlint --fix",
+        "format": "oxfmt",
+        "format:check": "oxfmt --check"
     },
     "devDependencies": {
         "@types/node": "^25.0.3",

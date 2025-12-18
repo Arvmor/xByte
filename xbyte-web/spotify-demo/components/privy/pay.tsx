@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo } from "react";
+import { createContext, Suspense, useContext, useMemo } from "react";
 import { useX402Fetch, UseX402Fetch } from "@privy-io/react-auth";
 
 /** The pay component props */
@@ -21,7 +21,11 @@ export default function XPay({ children }: { children: React.ReactNode }) {
     const { wrapFetchWithPayment } = useX402Fetch();
     const value = useMemo(() => ({ wrapFetchWithPayment }), [wrapFetchWithPayment]);
 
-    return <XPayContext.Provider value={value}>{children}</XPayContext.Provider>;
+    return (
+        <XPayContext.Provider value={value}>
+            <Suspense fallback={null}>{children}</Suspense>
+        </XPayContext.Provider>
+    );
 }
 
 /** The async XPay function */

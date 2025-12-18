@@ -4,12 +4,12 @@
     "private": true,
     "scripts": {
         "dev": "next dev",
-        "build": "next build",
+        "build": "next build --webpack",
         "start": "next start",
-        "lint": "oxlint app components lib next.config.ts postcss.config.mjs",
-        "lint:fix": "oxlint --fix app components lib next.config.ts postcss.config.mjs",
-        "format": "oxfmt app components lib next.config.ts postcss.config.mjs",
-        "format:check": "oxfmt --check app components lib next.config.ts postcss.config.mjs"
+        "lint": "oxlint",
+        "lint:fix": "oxlint --fix",
+        "format": "oxfmt",
+        "format:check": "oxfmt --check"
     },
     "dependencies": {
         "@privy-io/react-auth": "^3.9.0",
