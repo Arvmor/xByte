@@ -6,33 +6,33 @@ import Providers from "@/components/privy/provider";
 import "./globals.css";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+    variable: "--font-geist-sans",
+    subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+    variable: "--font-geist-mono",
+    subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Spotify x Netflix",
-  description: "Listen to your favourite Music x Movies",
+    title: "Spotify x Netflix",
+    description: "Listen to your favourite Music x Movies",
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Providers>
-          <AppHeader />
-          <AppTheme>{children}</AppTheme>
-        </Providers>
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en" suppressHydrationWarning>
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+                <Providers>
+                    <AppHeader />
+                    <AppTheme>{children}</AppTheme>
+                </Providers>
+            </body>
+        </html>
+    );
 }

@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+    return twMerge(clsx(inputs));
 }
 
 /**
@@ -11,9 +11,9 @@ export function cn(...inputs: ClassValue[]) {
  * @returns The file size in a human readable format
  */
 export function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 /**
@@ -23,7 +23,7 @@ export function formatFileSize(bytes: number): string {
  * @returns The amount in a human readable format
  */
 export function formatAmount(amount: number | string, decimals: number = 18) {
-  const amountNumber = typeof amount === "string" ? parseFloat(amount) : amount;
-  const powers = Math.pow(10, decimals);
-  return amountNumber * powers;
+    const amountNumber = typeof amount === "string" ? parseFloat(amount) : amount;
+    const powers = Math.pow(10, decimals);
+    return amountNumber * powers;
 }
