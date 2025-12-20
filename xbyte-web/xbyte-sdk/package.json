@@ -29,7 +29,7 @@
         "format:check": "oxfmt --check"
     },
     "devDependencies": {
-        "@types/node": "^25.0.3",
-        "typescript": "^5.9.3"
+        "@types/node": "*",
+        "typescript": "*"
     }
 }
