@@ -8,9 +8,9 @@ updates:
   - package-ecosystem: "cargo"
     directory: "/xbyte-server"
     schedule:
-      interval: "weekly"
+      interval: "daily"
       
   - package-ecosystem: "bun"
     directory: "/xbyte-web"
     schedule:
-      interval: "weekly"
+      interval: "daily"
