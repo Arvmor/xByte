@@ -1,4 +1,4 @@
-use crate::{ConfigX402, HealthRoute, MemoryDB, PlayerRoute, PricingRoute};
+use crate::{ConfigX402, HealthRoute, MemoryDB, PlayerRoute, PricingRoute, XByteS3};
 use actix_web::web::{Data, ThinData};
 use actix_web::{App, HttpServer};
 use std::net;
@@ -24,11 +24,13 @@ impl<A: net::ToSocketAddrs> Server<A> {
         // Initialize data
         let db = MemoryDB::default();
         let config = Data::new(ConfigX402::build());
+        let s3 = XByteS3::new().await;
 
         let app = move || {
             App::new()
                 .app_data(config.clone())
                 .app_data(ThinData(db.clone()))
+                .app_data(ThinData(s3.clone()))
                 .service(PlayerRoute::Play)
                 .service(PlayerRoute::SetContent)
                 .service(HealthRoute::Status)

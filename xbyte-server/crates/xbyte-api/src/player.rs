@@ -1,6 +1,6 @@
-use crate::utils;
 use crate::x402::{ConfigX402, FacilitatorRequest, PaymentExtractor, PaymentRequest, X402Response};
 use crate::{Database, MemoryDB, ResultAPI};
+use crate::{s3, utils};
 use actix_multipart::form::MultipartForm;
 use actix_multipart::form::tempfile::TempFile;
 use actix_web::Responder;
@@ -44,6 +44,7 @@ pub struct PlayRequest {
 async fn play(
     request: HttpRequest,
     db: web::ThinData<MemoryDB>,
+    s3: web::ThinData<s3::XByteS3>,
     config: web::Data<ConfigX402<&'static str>>,
     payload: web::Json<PlayRequest>,
     auth: Option<PaymentExtractor>,
@@ -69,13 +70,18 @@ async fn play(
     let facilitator = FacilitatorRequest::new(payment, request.accepts[0].clone());
     if let Ok(response) = facilitator.verify()
         && Some(true) == response.is_valid
-        && let Ok(content) = db.get_content(&payload.key)
+        && let Ok(bytes) = s3
+            .get_range(
+                "xbyte-runtime",
+                &payload.key.to_string(),
+                payload.offset as u64,
+                payload.length as u64,
+            )
+            .await
     {
         actix_web::rt::spawn(async move { facilitator.settle() });
 
-        // Get Audio Sample
-        let sample = content[payload.offset..payload.offset + payload.length].to_vec();
-        return ResultAPI::verified_payment(sample);
+        return ResultAPI::verified_payment(bytes.to_vec());
     };
 
     ResultAPI::payment_required(request)

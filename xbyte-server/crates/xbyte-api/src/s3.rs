@@ -1,19 +1,16 @@
-use crate::utils::calculate_range_header;
+use crate::utils;
 use aws_sdk_s3::Client;
-use aws_sdk_s3::presigning::{PresignedRequest, PresigningConfig};
-use std::time::Duration;
+use aws_sdk_s3::primitives::AggregatedBytes;
 
 /// A client for the xByte S3 handling the presigned requests
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct XByteS3(Client);
 
 impl XByteS3 {
     /// Create a new xByte S3 client
     pub async fn new() -> Self {
         let config = aws_config::load_from_env().await;
-        let client = Client::new(&config);
-
-        Self(client)
+        Self(Client::new(&config))
     }
 
     /// Get a presigned request for a range of a file
@@ -23,10 +20,9 @@ impl XByteS3 {
         key: &str,
         offset: u64,
         len: u64,
-        expires_in: Duration,
-    ) -> anyhow::Result<PresignedRequest> {
-        let config = PresigningConfig::expires_in(expires_in)?;
-        let range = calculate_range_header(offset, len).ok_or(anyhow::anyhow!("range overflow"))?;
+    ) -> anyhow::Result<AggregatedBytes> {
+        let range =
+            utils::calculate_range_header(offset, len).ok_or(anyhow::anyhow!("range overflow"))?;
 
         let req = self
             .0
@@ -34,9 +30,11 @@ impl XByteS3 {
             .bucket(bucket)
             .key(key)
             .range(range)
-            .presigned(config)
+            .send()
             .await?;
 
-        Ok(req)
+        let data = req.body.collect().await?;
+
+        Ok(data)
     }
 }
