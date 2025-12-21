@@ -7,15 +7,11 @@
         "xbyte-sdk"
     ],
     "scripts": {
-        "dev": "bun run --filter spotify-web dev",
-        "build": "bun run --filter xbyte-sdk build && bun run --filter spotify-web build",
-        "build:sdk": "bun run --filter xbyte-sdk build",
-        "lint": "bun run --filter xbyte-sdk lint && bun run --filter spotify-web lint",
-        "lint:fix": "bun run --filter xbyte-sdk lint:fix && bun run --filter spotify-web lint:fix",
-        "format": "bun run --filter xbyte-sdk format && bun run --filter spotify-web format",
-        "format:check": "bun run --filter xbyte-sdk format:check && bun run --filter spotify-web format:check",
-        "format:sdk": "bun run --filter xbyte-sdk format",
-        "format:check:sdk": "bun run --filter xbyte-sdk format:check"
+        "build": "bun run --workspaces build",
+        "lint": "bun run --workspaces lint",
+        "lint:fix": "bun run --workspaces lint:fix",
+        "format": "bun run --workspaces format",
+        "format:check": "bun run --workspaces format:check"
     },
     "dependencies": {
         "@privy-io/react-auth": "^3.9.1",

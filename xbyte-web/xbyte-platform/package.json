@@ -1,28 +1,28 @@
 {
-  "name": "xbyte-platform",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "oxlint",
-    "lint:fix": "oxlint --fix",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check"
-  },
-  "dependencies": {
-    "xbyte-sdk": "workspace:*",
-    "next": "*",
-    "react": "*",
-    "react-dom": "*"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "*",
-    "@types/node": "*",
-    "@types/react": "*",
-    "@types/react-dom": "*",
-    "tailwindcss": "*",
-    "typescript": "*"
-  }
+    "name": "xbyte-platform",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "oxlint",
+        "lint:fix": "oxlint --fix",
+        "format": "oxfmt",
+        "format:check": "oxfmt --check"
+    },
+    "dependencies": {
+        "next": "*",
+        "react": "*",
+        "react-dom": "*",
+        "xbyte-sdk": "workspace:*"
+    },
+    "devDependencies": {
+        "@tailwindcss/postcss": "*",
+        "@types/node": "*",
+        "@types/react": "*",
+        "@types/react-dom": "*",
+        "tailwindcss": "*",
+        "typescript": "*"
+    }
 }
