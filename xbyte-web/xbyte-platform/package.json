@@ -12,9 +12,13 @@
         "format:check": "oxfmt --check"
     },
     "dependencies": {
+        "class-variance-authority": "*",
+        "clsx": "*",
+        "lucide-react": "*",
         "next": "*",
         "react": "*",
         "react-dom": "*",
+        "tailwind-merge": "*",
         "xbyte-sdk": "workspace:*"
     },
     "devDependencies": {
@@ -23,6 +27,7 @@
         "@types/react": "*",
         "@types/react-dom": "*",
         "tailwindcss": "*",
+        "tw-animate-css": "*",
         "typescript": "*"
     }
 }
