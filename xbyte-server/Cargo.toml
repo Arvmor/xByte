@@ -17,6 +17,7 @@ base64 = "0.22.1"
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 uuid = { version = "1.19.0", features = ["v4", "serde"] }
+alloy-primitives = { version = "1.5.2", features = ["serde"] }
 
 # API dependencies
 actix-web = { version = "4.12.1", features = ["rustls"] }
