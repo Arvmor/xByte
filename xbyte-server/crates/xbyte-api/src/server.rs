@@ -1,4 +1,4 @@
-use crate::{ConfigX402, HealthRoute, MemoryDB, PlayerRoute, PricingRoute, XByteS3};
+use crate::{ClientRoute, ConfigX402, HealthRoute, MemoryDB, PlayerRoute, PricingRoute, XByteS3};
 use actix_web::web::{Data, ThinData};
 use actix_web::{App, HttpServer};
 use std::net;
@@ -37,6 +37,8 @@ impl<A: net::ToSocketAddrs> Server<A> {
                 .service(HealthRoute::Index)
                 .service(PricingRoute::SetPrice)
                 .service(PricingRoute::GetPrice)
+                .service(ClientRoute::CreateClient)
+                .service(ClientRoute::GetClient)
                 .wrap(actix_cors::Cors::permissive())
         };
 
