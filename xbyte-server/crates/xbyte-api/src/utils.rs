@@ -1,5 +1,5 @@
 use actix_web::http::StatusCode;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 /// The version of the API
 pub const API_VERSION: &str = std::env!("CARGO_PKG_VERSION");
@@ -7,7 +7,7 @@ pub const API_VERSION: &str = std::env!("CARGO_PKG_VERSION");
 pub const ONE_MEGA_BYTE: u64 = 1024 * 1024;
 
 /// The result of an API call
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 #[serde(tag = "status", content = "data")]
 pub enum ResultAPI<D, E> {
     /// The result is successful
@@ -56,6 +56,22 @@ impl<D, E> ResultAPI<D, E> {
             Self::Success(_) => StatusCode::OK,
             Self::Error(_) => StatusCode::BAD_REQUEST,
             Self::PaymentRequired(_) => StatusCode::PAYMENT_REQUIRED,
+        }
+    }
+    /// Get the data
+    pub fn get_data(&self) -> Option<&D> {
+        match self {
+            Self::Success(d) => Some(d),
+            Self::Error(_) => None,
+            Self::PaymentRequired(_) => None,
+        }
+    }
+    /// Get the error
+    pub fn get_error(&self) -> Option<&E> {
+        match self {
+            Self::Success(_) => None,
+            Self::Error(e) => Some(e),
+            Self::PaymentRequired(e) => Some(e),
         }
     }
 }
