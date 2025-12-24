@@ -8,3 +8,4 @@ xbyte_api.workspace = true
 anyhow.workspace = true
 tokio.workspace = true
 dotenv.workspace = true
+tracing-subscriber.workspace = true
