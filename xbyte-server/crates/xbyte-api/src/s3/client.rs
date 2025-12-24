@@ -1,7 +1,7 @@
 use crate::utils;
 use aws_sdk_s3::Client;
 use aws_sdk_s3::primitives::AggregatedBytes;
-use aws_sdk_s3::types::Bucket;
+use aws_sdk_s3::types::{Bucket, Object};
 
 /// A client for the xByte S3 handling the presigned requests
 #[derive(Debug, Clone)]
@@ -46,6 +46,14 @@ impl XByteS3 {
 
         Ok(buckets)
     }
+
+    /// List all objects in a bucket
+    pub async fn list_objects(&self, bucket: &str) -> anyhow::Result<Vec<Object>> {
+        let req = self.0.list_objects().bucket(bucket).send().await?;
+        let objects = req.contents.ok_or(anyhow::anyhow!("no objects found"))?;
+
+        Ok(objects)
+    }
 }
 
 #[cfg(test)]
@@ -53,7 +61,7 @@ mod tests {
     use super::*;
 
     #[actix_web::test]
-    async fn test_list_objects() -> anyhow::Result<()> {
+    async fn test_list_buckets() -> anyhow::Result<()> {
         dotenv::dotenv().ok();
 
         // Create a new client
@@ -62,6 +70,23 @@ mod tests {
 
         // Verify the data
         assert!(buckets.is_ok());
+        Ok(())
+    }
+
+    #[actix_web::test]
+    async fn test_list_objects() -> anyhow::Result<()> {
+        dotenv::dotenv().ok();
+
+        // Create a new client
+        let client = XByteS3::new().await;
+        let buckets = client.list_buckets().await?;
+        let Some(bucket_name) = buckets.into_iter().next().and_then(|f| f.name) else {
+            return Ok(());
+        };
+
+        // List objects in the bucket
+        let objects = client.list_objects(&bucket_name).await;
+        assert!(objects.is_ok());
         Ok(())
     }
 }
