@@ -39,10 +39,11 @@ async fn set_price(
     db: web::ThinData<MemoryDB>,
 ) -> impl Responder {
     let payload = payload.into_inner();
+
     match db.set_price(&payload.key, payload.price) {
         Ok(key) => ResultAPI::okay(key),
-        Err(e) => {
-            tracing::error!("Error setting price: {e:?}");
+        Err(error) => {
+            tracing::error!(?error, "Failed to set price");
             ResultAPI::failure("Price not set")
         }
     }
@@ -52,14 +53,15 @@ async fn set_price(
 async fn get_price(key: web::Path<String>, db: web::ThinData<MemoryDB>) -> impl Responder {
     // Parse the key as a UUID
     let Ok(key) = Uuid::parse_str(key.as_str()) else {
+        tracing::warn!(?key, "Invalid key");
         return ResultAPI::failure("Invalid key");
     };
 
     // Get the price
     match db.get_price(&key) {
         Ok(price) => ResultAPI::okay(price),
-        Err(e) => {
-            tracing::error!("Error getting price: {e:?}");
+        Err(error) => {
+            tracing::error!(?error, "Failed to get price");
             ResultAPI::failure("Price not found")
         }
     }

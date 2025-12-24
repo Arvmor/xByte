@@ -103,12 +103,13 @@ async fn set_content(
     let mut content = form.content.file.as_file();
     let mut buffer = vec![0u8; form.content.size];
 
-    if let Err(e) = content.read_exact(&mut buffer) {
-        tracing::error!("Failed to read content: {e:?}");
+    if let Err(error) = content.read_exact(&mut buffer) {
+        tracing::error!(?error, "Failed to read content");
         return ResultAPI::failure("Failed to read content");
     };
 
     let Ok(key) = db.set_content(buffer) else {
+        tracing::error!(?form.content, "Failed to set content");
         return ResultAPI::failure("Content not set");
     };
 
