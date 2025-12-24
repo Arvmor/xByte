@@ -10,7 +10,7 @@ import { Slider } from "@/components/ui/slider";
 import { Input } from "../ui/input";
 import { UUID } from "crypto";
 
-const PLAY_URL = `http://127.0.0.1:80/play`;
+const PLAY_URL = `http://127.0.0.1:80/s3/bucket`;
 
 /** The MIME types */
 const AUDIO_MIME = "audio/mpeg";
@@ -28,15 +28,6 @@ interface ChunkState {
     offset: number;
     chunkSize: number;
     chunks: Uint8Array[];
-}
-
-/** Creates a play request body */
-function createPlayRequestBody(key: UUID, offset: number, length: number): RequestInit {
-    return {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key, offset, length }),
-    };
 }
 
 /** The track player component */
@@ -88,8 +79,8 @@ export function StreamingPlayer({ mimeType }: StreamingPlayerProps) {
         setIsLoading(true);
 
         const { status, data } = await xPayAsync({
-            url: PLAY_URL,
-            body: createPlayRequestBody(contentKey as UUID, currentOffset, size),
+            url: `${PLAY_URL}/xbyte-runtime/object/${contentKey}?offset=${currentOffset}&length=${size}`,
+            body: {},
             maxValue: MAX_PAYMENT_VALUE,
         });
 
