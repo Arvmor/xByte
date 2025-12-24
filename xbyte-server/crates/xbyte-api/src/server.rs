@@ -48,6 +48,7 @@ impl<A: net::ToSocketAddrs> Server<A> {
                 // S3 routes
                 .service(S3Route::GetAllBuckets)
                 .service(S3Route::GetAllObjects)
+                .service(S3Route::GetObject)
                 .wrap(actix_cors::Cors::permissive())
         };
 
