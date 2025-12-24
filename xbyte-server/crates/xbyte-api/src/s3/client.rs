@@ -1,6 +1,7 @@
 use crate::utils;
 use aws_sdk_s3::Client;
 use aws_sdk_s3::primitives::AggregatedBytes;
+use aws_sdk_s3::types::Bucket;
 
 /// A client for the xByte S3 handling the presigned requests
 #[derive(Debug, Clone)]
@@ -36,5 +37,31 @@ impl XByteS3 {
         let data = req.body.collect().await?;
 
         Ok(data)
+    }
+
+    /// List all Buckets
+    pub async fn list_buckets(&self) -> anyhow::Result<Vec<Bucket>> {
+        let req = self.0.list_buckets().send().await?;
+        let buckets = req.buckets.ok_or(anyhow::anyhow!("no buckets found"))?;
+
+        Ok(buckets)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[actix_web::test]
+    async fn test_list_objects() -> anyhow::Result<()> {
+        dotenv::dotenv().ok();
+
+        // Create a new client
+        let client = XByteS3::new().await;
+        let buckets = client.list_buckets().await;
+
+        // Verify the data
+        assert!(buckets.is_ok());
+        Ok(())
     }
 }

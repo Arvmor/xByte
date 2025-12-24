@@ -13,7 +13,7 @@ pub use db::{Database, MemoryDB};
 pub use health::HealthRoute;
 pub use player::PlayerRoute;
 pub use pricing::PricingRoute;
-pub use s3::XByteS3;
+pub use s3::{S3Route, XByteS3};
 pub use server::Server;
 pub use utils::ResultAPI;
 pub use x402::{ConfigX402, FacilitatorRequest, FacilitatorResponse};
