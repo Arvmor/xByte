@@ -1,8 +1,4 @@
-import {
-    ApiResponse,
-    Client,
-    SetPriceRequest,
-} from "./types";
+import { ApiResponse, Client, SetPriceRequest } from "./types";
 
 const DEFAULT_XBYTE_URL = "http://localhost:80";
 

@@ -14,11 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { formatAmount } from "@/lib/utils";
-import {
-    DollarSign,
-    CheckCircle,
-    XCircle,
-} from "lucide-react";
+import { DollarSign, CheckCircle, XCircle } from "lucide-react";
 
 type PriceState = "idle" | "setting" | "success" | "error";
 
@@ -46,7 +42,7 @@ function PriceCard({ client }: { client: xByteClient }) {
         const response = await client.setPrice({
             bucket,
             object,
-            price: formattedPrice
+            price: formattedPrice,
         });
         if (response.status === "Success") {
             setPriceState("success");
@@ -110,7 +106,10 @@ function PriceCard({ client }: { client: xByteClient }) {
                 </CardContent>
                 <CardFooter className="flex justify-between items-center">
                     <PriceStatus state={priceState} />
-                    <Button type="submit" disabled={!price || !bucket || !object || priceState === "setting"}>
+                    <Button
+                        type="submit"
+                        disabled={!price || !bucket || !object || priceState === "setting"}
+                    >
                         {priceState === "setting" && <Spinner />}
                         {priceState === "setting" ? "Setting..." : "Set Price"}
                     </Button>
