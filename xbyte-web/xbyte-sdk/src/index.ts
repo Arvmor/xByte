@@ -1,7 +1,9 @@
-import { UUID } from "crypto";
-import { ApiResponse, PlayRequest, SetPriceRequest, X402PaymentPayload } from "./types";
+import {
+    ApiResponse,
+    Client,
+    SetPriceRequest,
+} from "./types";
 
-/** The default xbyte URL */
 const DEFAULT_XBYTE_URL = "http://localhost:80";
 
 export class xByteClient {
@@ -24,46 +26,39 @@ export class xByteClient {
         return this.request("/");
     }
 
-    async play(
-        body: PlayRequest,
-        payment: X402PaymentPayload,
-    ): Promise<ApiResponse<number[], X402PaymentPayload>> {
-        const paymentHeader = btoa(JSON.stringify(payment));
-        const options: RequestInit = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Payment": paymentHeader,
-            },
-            body: JSON.stringify(body),
-        };
-
-        return this.request("/play", options);
-    }
-
-    async uploadContent(content: Blob | File): Promise<ApiResponse<UUID, string>> {
-        const formData = new FormData();
-        formData.append("content", content);
-
-        const options: RequestInit = {
-            method: "POST",
-            body: formData,
-        };
-
-        return this.request("/content", options);
-    }
-
-    async setPrice(price: SetPriceRequest): Promise<ApiResponse<string, string>> {
+    async setPrice(request: SetPriceRequest): Promise<ApiResponse<string, string>> {
         const options: RequestInit = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(price),
+            body: JSON.stringify(request),
         };
 
         return this.request("/price", options);
     }
 
-    async getPrice(key: string): Promise<ApiResponse<string, string>> {
-        return this.request(`/price/${key}`);
+    async getPrice(bucket: string, object: string): Promise<ApiResponse<number, string>> {
+        return this.request(`/price/${bucket}/${object}`);
+    }
+
+    async createClient(request: Client): Promise<ApiResponse<Client, string>> {
+        const options: RequestInit = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(request),
+        };
+
+        return this.request("/client", options);
+    }
+
+    async getClient(id: string): Promise<ApiResponse<Client, string>> {
+        return this.request(`/client/${id}`);
+    }
+
+    async getAllBuckets(): Promise<ApiResponse<string[], string>> {
+        return this.request("/s3/bucket");
+    }
+
+    async getAllObjects(bucket: string): Promise<ApiResponse<string[], string>> {
+        return this.request(`/s3/bucket/${bucket}/objects`);
     }
 }

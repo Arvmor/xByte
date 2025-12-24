@@ -1,14 +1,20 @@
 import { UUID } from "crypto";
 
-export interface PlayRequest {
-    key: UUID;
+export interface SetPriceRequest {
+    bucket: string;
+    object: string;
+    price: number;
+}
+
+export interface RangeRequest {
     offset: number;
     length: number;
 }
 
-export interface SetPriceRequest {
-    key: UUID;
-    price: number;
+export interface Client {
+    id?: UUID;
+    name: string;
+    wallet: string;
 }
 
 /**
