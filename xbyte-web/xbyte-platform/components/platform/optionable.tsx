@@ -10,7 +10,7 @@ export interface OptionableProps {
 export default function Option({ titleText, descriptionText, Icon, onClick }: OptionableProps) {
     return (
         <div
-            className="flex flex-col items-center bg-muted rounded-sm p-8 h-100 w-full cursor-pointer hover:border-muted-foreground border-transparent border-3 transition-all duration-300"
+            className="flex flex-col items-center bg-muted rounded-sm p-8 h-100 w-full cursor-pointer hover:border-muted-foreground/30 border-transparent border-2 transition-all duration-300"
             onClick={onClick}
         >
             <div className="flex items-center justify-center h-full text-background">
