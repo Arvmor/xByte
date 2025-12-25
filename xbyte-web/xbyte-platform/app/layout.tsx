@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import AppHeader from "@/components/app/appHeader";
-import AppFooter from "@/components/app/appFooter";
+import AppHeader, { HeaderLinkProps } from "@/components/app/appHeader";
+import AppFooter, { FooterLinkProps } from "@/components/app/appFooter";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,6 +19,81 @@ export const metadata: Metadata = {
     description: "xByte, the Pay-per-Byte infra.",
 };
 
+const headerLinks: HeaderLinkProps[] = [
+    {
+        label: "Integration",
+    },
+    {
+        label: "Pricing",
+    },
+    {
+        label: "API Docs",
+    },
+];
+
+const footerLinks: FooterLinkProps[][] = [
+    [
+        {
+            isTitle: true,
+            label: "Get Started",
+        },
+        {
+            label: "Integration",
+        },
+        {
+            label: "Pricing",
+        },
+        {
+            label: "Sign Up",
+        },
+    ],
+    [
+        {
+            isTitle: true,
+            label: "Platform",
+        },
+        {
+            label: "xByte-SDK",
+        },
+        {
+            label: "API Docs",
+        },
+        {
+            label: "FAQ",
+        },
+    ],
+    [
+        {
+            isTitle: true,
+            label: "About",
+        },
+        {
+            label: "Company",
+        },
+        {
+            label: "Blog",
+        },
+        {
+            label: "Support",
+        },
+    ],
+    [
+        {
+            isTitle: true,
+            label: "Legal",
+        },
+        {
+            label: "Terms",
+        },
+        {
+            label: "Privacy",
+        },
+        {
+            label: "Security",
+        },
+    ],
+];
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -29,9 +104,9 @@ export default function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased p-8 max-w-5xl mx-auto`}
             >
-                <AppHeader />
+                <AppHeader links={headerLinks} />
                 {children}
-                <AppFooter />
+                <AppFooter links={footerLinks} />
             </body>
         </html>
     );

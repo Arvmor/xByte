@@ -6,20 +6,8 @@ export interface HeaderLinkProps {
     href?: string;
 }
 
-const headerLinks: HeaderLinkProps[] = [
-    {
-        label: "Integration",
-    },
-    {
-        label: "Pricing",
-    },
-    {
-        label: "API Docs",
-    },
-];
-
-export default function AppHeader() {
-    const links = headerLinks.map(({ label, href }, index) => (
+export default function AppHeader({ links }: { links: HeaderLinkProps[] }) {
+    const headerLinks = links.map(({ label, href }, index) => (
         <Link key={index} href={href ?? "#"} className="text-sm text-muted-foreground">
             {label}
         </Link>
@@ -29,7 +17,7 @@ export default function AppHeader() {
         <div className="flex justify-between items-center pb-16">
             <AppLogo />
 
-            <div className="flex items-center gap-4">{links}</div>
+            <div className="flex items-center gap-4">{headerLinks}</div>
         </div>
     );
 }

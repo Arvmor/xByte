@@ -9,71 +9,8 @@ export interface FooterLinkProps {
     href?: string;
 }
 
-const footerLinks: FooterLinkProps[][] = [
-    [
-        {
-            isTitle: true,
-            label: "Get Started",
-        },
-        {
-            label: "Integration",
-        },
-        {
-            label: "Pricing",
-        },
-        {
-            label: "Sign Up",
-        },
-    ],
-    [
-        {
-            isTitle: true,
-            label: "Platform",
-        },
-        {
-            label: "xByte-SDK",
-        },
-        {
-            label: "API Docs",
-        },
-        {
-            label: "FAQ",
-        },
-    ],
-    [
-        {
-            isTitle: true,
-            label: "About",
-        },
-        {
-            label: "Company",
-        },
-        {
-            label: "Blog",
-        },
-        {
-            label: "Support",
-        },
-    ],
-    [
-        {
-            isTitle: true,
-            label: "Legal",
-        },
-        {
-            label: "Terms",
-        },
-        {
-            label: "Privacy",
-        },
-        {
-            label: "Security",
-        },
-    ],
-];
-
-export default function AppFooter() {
-    const links = footerLinks.map((links, index) => (
+export default function AppFooter({ links }: { links: FooterLinkProps[][] }) {
+    const footerLinks = links.map((links, index) => (
         <div key={index} className="flex flex-col gap-2">
             {links.map(({ isTitle, label, href }, index) => (
                 <Link
@@ -97,7 +34,9 @@ export default function AppFooter() {
             <div className="flex flex-col md:flex-row justify-between">
                 <AppLogo isSecondary />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">{links}</div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {footerLinks}
+                </div>
             </div>
         </div>
     );
