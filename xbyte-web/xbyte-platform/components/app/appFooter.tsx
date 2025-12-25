@@ -31,10 +31,10 @@ export default function AppFooter({ links }: { links: FooterLinkProps[][] }) {
         <div className="py-16">
             <Separator className="mb-16" />
 
-            <div className="flex flex-col md:flex-row justify-between">
+            <div className="flex flex-col md:flex-row justify-between gap-16">
                 <AppLogo isSecondary />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-16">
                     {footerLinks}
                 </div>
             </div>
