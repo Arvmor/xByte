@@ -1,4 +1,5 @@
 import CallToAction, { CallToActionProps } from "@/components/platform/callToAction";
+import Feature, { FeatureProps } from "@/components/platform/feature";
 import Optionable, { OptionableProps } from "@/components/platform/optionable";
 import Paragraph, { ParagraphProps } from "@/components/platform/paragraph";
 import { Separator } from "@/components/ui/separator";
@@ -45,6 +46,19 @@ const heroSection: CallToActionProps = {
     secondaryButtonText: "Documentation",
 };
 
+const feature: FeatureProps[] = [
+    {
+        title: "Feature 1",
+        description: "Description 1",
+        Icon: Building2,
+    },
+    {
+        title: "Feature 3",
+        description: "Description 3",
+        Icon: Building2,
+    },
+];
+
 export default function Home() {
     return (
         <div>
@@ -53,8 +67,8 @@ export default function Home() {
 
             {/* Integration Options */}
             <div className="flex flex-col md:flex-row gap-4 py-18">
-                {integrationOptions.map((option) => (
-                    <Optionable key={option.titleText} {...option} />
+                {integrationOptions.map((option, index) => (
+                    <Optionable key={index} {...option} />
                 ))}
             </div>
 
@@ -64,6 +78,12 @@ export default function Home() {
 
             {/* Verify Integration */}
             <CallToAction {...verifySection} />
+
+            <div className="flex flex-col md:flex-row gap-4">
+                {feature.map((feature, index) => (
+                    <Feature key={index} {...feature} />
+                ))}
+            </div>
 
             {/* Get Started */}
             <CallToAction {...setContentPricing} />
