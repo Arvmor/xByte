@@ -1,5 +1,3 @@
-import { Building2 } from "lucide-react";
-
 export interface OptionableProps {
     titleText: string;
     descriptionText?: string;
