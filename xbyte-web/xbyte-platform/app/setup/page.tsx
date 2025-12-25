@@ -3,6 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { paragraph, feature, integrationOptions } from "../page";
+import Paragraph from "@/components/platform/paragraph";
+import Feature from "@/components/platform/feature";
+import Optionable from "@/components/platform/optionable";
 
 /**
  * The steps of the setup process.
@@ -54,31 +58,48 @@ export default function SetupPage() {
     };
 
     return (
-        <>
+        <div className="space-y-8">
             {StepSection}
             <Button onClick={handleNextStep}>Next</Button>
-        </>
+        </div>
     );
 }
 
 function OnboardingSection() {
-    return <>Integrate xByte with your platform.</>;
+    const features = feature.map((option, index) => <Feature key={index} {...option} />);
+
+    return (
+        <>
+            <h1 className="text-2xl font-bold">Onboarding</h1>
+            <Paragraph {...paragraph} title={undefined} />
+            <div className="flex flex-col md:flex-row gap-4">{features}</div>
+        </>
+    );
 }
 
 function IntegrateProviderSection() {
+    const options = integrationOptions.map((option, index) => (
+        <Optionable key={index} {...option} />
+    ));
+
     return (
-        <div>
-            <h1>Integrate Data Provider</h1>
-        </div>
+        <>
+            <h1 className="text-2xl font-bold">Integrate Data Provider</h1>
+            <Paragraph {...paragraph} title={undefined} />
+            <div className="flex flex-col md:flex-row gap-4">{options}</div>
+        </>
     );
 }
 
 function SetWalletSection() {
     return (
-        <div>
-            <h1>Set Wallet</h1>
+        <>
+            <h1 className="text-2xl font-bold">Set Wallet</h1>
+            <Paragraph {...paragraph} title={undefined} />
             <Input placeholder="e.g. 0xYourAddress" />
-        </div>
+            <Feature {...feature[0]} className="w-100" />
+            <Feature {...feature[0]} className="w-100 justify-self-end" />
+        </>
     );
 }
 

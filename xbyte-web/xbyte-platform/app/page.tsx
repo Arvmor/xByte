@@ -8,12 +8,12 @@ import { Separator } from "@/components/ui/separator";
 import { Building2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-const paragraph: ParagraphProps = {
+export const paragraph: ParagraphProps = {
     title: "Integration Instructions",
     text: "Select your preferred data storage provider above.Follow the step-by-step xByte instructions to configure access policies and permissions on AWS, GCP, Azure, or xByte Hosting.Ensure credentials are entered securely. After setup, click the Verify button below to confirm xByte's access.If verification succeeds, you will progress to wallet setup.",
 };
 
-const integrationOptions: OptionableProps[] = [
+export const integrationOptions: OptionableProps[] = [
     {
         titleText: "AWS",
         descriptionText: "Connect Amazon",
@@ -49,7 +49,7 @@ const heroSection: CallToActionProps = {
     secondaryButtonText: "Documentation",
 };
 
-const feature: FeatureProps[] = [
+export const feature: FeatureProps[] = [
     {
         title: "Feature 1",
         description: "Description 1",

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 export interface FeatureProps {
     title?: string;
@@ -7,11 +8,17 @@ export interface FeatureProps {
     imageSrc?: string;
 }
 
-export default function Feature({ title, description, Icon, imageSrc }: FeatureProps) {
+export default function Feature({
+    title,
+    description,
+    Icon,
+    imageSrc,
+    className,
+}: FeatureProps & React.ComponentProps<"div">) {
     return (
-        <div className="space-y-4 w-full">
+        <div className={cn("space-y-4 w-full aspect-square", className)}>
             {/* Icon / Image */}
-            <div className="flex items-center justify-center bg-muted rounded-sm aspect-square text-background">
+            <div className="flex items-center justify-center bg-muted rounded-sm text-background h-full">
                 {Icon && <Icon className="size-24" />}
                 {imageSrc && <Image src={imageSrc} alt={title ?? ""} width={100} height={100} />}
             </div>
