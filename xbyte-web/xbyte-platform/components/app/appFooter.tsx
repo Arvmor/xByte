@@ -1,6 +1,7 @@
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import AppLogo from "@/components/app/appLogo";
 
 export interface FooterLinkProps {
     isTitle?: boolean;
@@ -94,7 +95,7 @@ export default function AppFooter() {
             <Separator className="mb-16" />
 
             <div className="flex flex-col md:flex-row justify-between">
-                <h1>App Footer</h1>
+                <AppLogo isSecondary />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">{links}</div>
             </div>

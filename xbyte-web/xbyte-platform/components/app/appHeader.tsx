@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AppLogo from "@/components/app/appLogo";
 
 export interface HeaderLinkProps {
     label: string;
@@ -25,8 +26,8 @@ export default function AppHeader() {
     ));
 
     return (
-        <div className="flex justify-between items-center">
-            <h1>App Header</h1>
+        <div className="flex justify-between items-center pb-16">
+            <AppLogo />
 
             <div className="flex items-center gap-4">{links}</div>
         </div>
