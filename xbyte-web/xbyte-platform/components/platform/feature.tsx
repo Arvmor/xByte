@@ -6,6 +6,7 @@ export interface FeatureProps {
     description?: string;
     Icon?: React.ElementType;
     imageSrc?: string;
+    aspect?: "square" | "rectangle";
 }
 
 export default function Feature({
@@ -14,9 +15,16 @@ export default function Feature({
     Icon,
     imageSrc,
     className,
+    aspect = "square",
 }: FeatureProps & React.ComponentProps<"div">) {
+    const classNames = cn(
+        "space-y-4 w-full",
+        aspect === "square" ? "aspect-square" : "aspect-rectangle",
+        className,
+    );
+
     return (
-        <div className={cn("space-y-4 w-full aspect-square", className)}>
+        <div className={classNames}>
             {/* Icon / Image */}
             <div className="flex items-center justify-center bg-muted rounded-sm text-background h-full">
                 {Icon && <Icon className="size-24" />}

@@ -3,10 +3,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { paragraph, feature, integrationOptions } from "../page";
+import { paragraph, feature, integrationOptions, heroSection } from "../page";
 import Paragraph from "@/components/platform/paragraph";
 import Feature from "@/components/platform/feature";
 import Optionable from "@/components/platform/optionable";
+import CallToAction from "@/components/platform/callToAction";
 
 /**
  * The steps of the setup process.
@@ -104,25 +105,57 @@ function SetWalletSection() {
 }
 
 function SetPriceSection() {
+    const options = integrationOptions
+        .slice(0, 2)
+        .map((option, index) => <Optionable key={index} {...option} />);
+
     return (
-        <div>
-            <h1>Set Price</h1>
-        </div>
+        <>
+            <h1 className="text-2xl font-bold">Set Price</h1>
+            <Paragraph {...paragraph} title={undefined} />
+
+            {/* Options for price */}
+            <div className="flex flex-col md:flex-row gap-6">{options}</div>
+            <Paragraph {...paragraph} />
+
+            {/* Form set price */}
+            <div className="flex gap-2">
+                <Input placeholder="e.g. a12add23-1234-1234-1234-12345678" className="w-1/3" />
+                <Input
+                    placeholder="e.g. 0.0001"
+                    defaultValue={0.0001}
+                    type="number"
+                    step="0.00001"
+                    min="0"
+                    className="w-1/6"
+                />
+            </div>
+        </>
     );
 }
 
 function SetSDKSection() {
     return (
-        <div>
-            <h1>Set SDK</h1>
-        </div>
+        <>
+            <h1 className="text-2xl font-bold">Set SDK</h1>
+            <Paragraph {...paragraph} title={undefined} />
+            <Feature
+                {...feature[0]}
+                className="h-100"
+                aspect="rectangle"
+                title={undefined}
+                description={undefined}
+            />
+        </>
     );
 }
 
 function OnboardedSection() {
     return (
-        <div>
-            <h1>Onboarded</h1>
-        </div>
+        <>
+            <h1 className="text-2xl font-bold">Onboarded</h1>
+            <Paragraph {...paragraph} title={undefined} />
+            <CallToAction {...heroSection} />
+        </>
     );
 }

@@ -42,7 +42,7 @@ const verifySection: CallToActionProps = {
     buttonText: "Verify",
 };
 
-const heroSection: CallToActionProps = {
+export const heroSection: CallToActionProps = {
     titleText: "Integrate xByte-SDK.",
     descriptionText: "Get your API key and add xByte to your platform.",
     buttonText: "Get API Key",
