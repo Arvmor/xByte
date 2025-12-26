@@ -1,17 +1,32 @@
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 export interface FeatureProps {
     title?: string;
     description?: string;
     Icon?: React.ElementType;
     imageSrc?: string;
+    aspect?: "square" | "rectangle";
 }
 
-export default function Feature({ title, description, Icon, imageSrc }: FeatureProps) {
+export default function Feature({
+    title,
+    description,
+    Icon,
+    imageSrc,
+    className,
+    aspect = "square",
+}: FeatureProps & React.ComponentProps<"div">) {
+    const classNames = cn(
+        "space-y-4 w-full",
+        aspect === "square" ? "aspect-square" : "aspect-rectangle",
+        className,
+    );
+
     return (
-        <div className="space-y-4 w-full">
+        <div className={classNames}>
             {/* Icon / Image */}
-            <div className="flex items-center justify-center bg-muted rounded-sm aspect-square text-background">
+            <div className="flex items-center justify-center bg-muted rounded-sm text-background h-full">
                 {Icon && <Icon className="size-24" />}
                 {imageSrc && <Image src={imageSrc} alt={title ?? ""} width={100} height={100} />}
             </div>

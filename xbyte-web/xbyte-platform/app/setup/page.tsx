@@ -3,6 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { paragraph, feature, integrationOptions, heroSection } from "../page";
+import Paragraph from "@/components/platform/paragraph";
+import Feature from "@/components/platform/feature";
+import Optionable from "@/components/platform/optionable";
+import CallToAction from "@/components/platform/callToAction";
+import { xByteClient } from "xbyte-sdk";
 
 /**
  * The steps of the setup process.
@@ -28,6 +34,8 @@ const nextStep = new Map<SetupStep, SetupStep>([
     [SetupStep.Onboarded, SetupStep.Onboarded],
 ]);
 
+const xbyteClient = new xByteClient();
+
 /**
  * The section for each step.
  */
@@ -48,13 +56,13 @@ export default function SetupPage() {
         return <div>Step not found</div>;
     }
 
-    const handleNextStep = () => {
+    const handleNextStep = async () => {
         const next = nextStep.get(step) ?? SetupStep.Onboarding;
         setStep(next);
     };
 
     return (
-        <div>
+        <div className="space-y-8">
             {StepSection}
             <Button onClick={handleNextStep}>Next</Button>
         </div>
@@ -62,46 +70,150 @@ export default function SetupPage() {
 }
 
 function OnboardingSection() {
-    return <>Integrate xByte with your platform.</>;
+    const features = feature.map((option, index) => <Feature key={index} {...option} />);
+
+    return (
+        <>
+            <h1 className="text-2xl font-bold">Onboarding</h1>
+            <Paragraph {...paragraph} title={undefined} />
+            <div className="flex flex-col md:flex-row gap-4">{features}</div>
+        </>
+    );
 }
 
 function IntegrateProviderSection() {
+    const [data, setData] = useState<string[]>(["Currently None, Integrate to show."]);
+
+    const onClick = async () => {
+        await xbyteClient.createClient({
+            name: "platformA",
+            wallet: "0x1234567890123456789012345678901234567890",
+        });
+
+        const { status, data } = await xbyteClient.getAllBuckets();
+        if (status === "Success") setData(data);
+    };
+
+    const options = integrationOptions.map((option, index) => (
+        <Optionable key={index} {...option} onClick={onClick} />
+    ));
+
     return (
-        <div>
-            <h1>Integrate Data Provider</h1>
-        </div>
+        <>
+            <h1 className="text-2xl font-bold">Integrate Data Provider</h1>
+            <Paragraph {...paragraph} title={undefined} />
+            <div className="flex flex-col md:flex-row gap-4">{options}</div>
+            <div>
+                <h1 className="text-lg font-bold">Your Buckets</h1>
+                {data.map((bucket, index) => (
+                    <h2 key={index} className="font-medium text-muted-foreground">
+                        {bucket}
+                    </h2>
+                ))}
+            </div>
+        </>
     );
 }
 
 function SetWalletSection() {
     return (
-        <div>
-            <h1>Set Wallet</h1>
+        <>
+            <h1 className="text-2xl font-bold">Set Wallet</h1>
+            <Paragraph {...paragraph} title={undefined} />
             <Input placeholder="e.g. 0xYourAddress" />
-        </div>
+            <Feature {...feature[0]} className="w-100" />
+            <Feature {...feature[0]} className="w-100 justify-self-end" />
+        </>
     );
 }
 
 function SetPriceSection() {
+    const [buckets, setBuckets] = useState<string[]>([]);
+    const [objects, setObjects] = useState<string[]>(["Currently None, Integrate to show."]);
+    const [price, setPrice] = useState<number>(0.0001);
+
+    const onClick = async () => {
+        const buckets = await xbyteClient.getAllBuckets();
+        if (buckets.status !== "Success") return;
+        setBuckets(buckets.data);
+
+        const objects = await xbyteClient.getAllObjects(buckets.data[0]);
+        if (objects.status === "Success") setObjects(objects.data);
+    };
+
+    const onClickSetPrice = async () => {
+        const object = objects.at(0);
+        const bucket = buckets.at(0);
+
+        if (!object || !bucket) return;
+        await xbyteClient.setPrice({
+            bucket,
+            object,
+            price,
+        });
+    };
+
+    const options = integrationOptions
+        .slice(0, 2)
+        .map((option, index) => <Optionable key={index} {...option} onClick={onClick} />);
+
     return (
-        <div>
-            <h1>Set Price</h1>
-        </div>
+        <>
+            {/* Options for price */}
+            <h1 className="text-2xl font-bold">Set Price</h1>
+            <div className="flex flex-col md:flex-row gap-6">{options}</div>
+            <Paragraph {...paragraph} />
+
+            {/* Object List */}
+            <div>
+                <h1 className="text-lg font-bold">Your Objects</h1>
+                {objects.map((object, index) => (
+                    <h2 key={index} className="font-medium text-muted-foreground">
+                        {object}
+                    </h2>
+                ))}
+            </div>
+
+            {/* Form set price */}
+            <div className="flex gap-2">
+                <Input placeholder="e.g. a12add23-1234-1234-1234-12345678" className="w-1/3" />
+                <Input
+                    placeholder="e.g. 0.0001"
+                    value={price}
+                    onChange={(e) => setPrice(Number(e.target.value))}
+                    type="number"
+                    step="0.00001"
+                    min="0"
+                    className="w-1/6"
+                />
+                <Button onClick={onClickSetPrice}>Set Price</Button>
+            </div>
+        </>
     );
 }
 
 function SetSDKSection() {
     return (
-        <div>
-            <h1>Set SDK</h1>
-        </div>
+        <>
+            <h1 className="text-2xl font-bold">Set SDK</h1>
+            <Paragraph {...paragraph} title={undefined} />
+            <Feature
+                {...feature[0]}
+                className="h-100"
+                aspect="rectangle"
+                title={undefined}
+                description={undefined}
+            />
+        </>
     );
 }
 
 function OnboardedSection() {
     return (
-        <div>
-            <h1>Onboarded</h1>
-        </div>
+        <>
+            <h1 className="text-2xl font-bold">Onboarded</h1>
+            <Paragraph {...paragraph} title={undefined} />
+            <CallToAction {...heroSection} />
+        </>
     );
 }

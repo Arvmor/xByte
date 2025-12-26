@@ -1,16 +1,19 @@
+"use client";
+
 import CallToAction, { CallToActionProps } from "@/components/platform/callToAction";
 import Feature, { FeatureProps } from "@/components/platform/feature";
 import Optionable, { OptionableProps } from "@/components/platform/optionable";
 import Paragraph, { ParagraphProps } from "@/components/platform/paragraph";
 import { Separator } from "@/components/ui/separator";
 import { Building2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-const paragraph: ParagraphProps = {
+export const paragraph: ParagraphProps = {
     title: "Integration Instructions",
     text: "Select your preferred data storage provider above.Follow the step-by-step xByte instructions to configure access policies and permissions on AWS, GCP, Azure, or xByte Hosting.Ensure credentials are entered securely. After setup, click the Verify button below to confirm xByte's access.If verification succeeds, you will progress to wallet setup.",
 };
 
-const integrationOptions: OptionableProps[] = [
+export const integrationOptions: OptionableProps[] = [
     {
         titleText: "AWS",
         descriptionText: "Connect Amazon",
@@ -39,14 +42,14 @@ const verifySection: CallToActionProps = {
     buttonText: "Verify",
 };
 
-const heroSection: CallToActionProps = {
+export const heroSection: CallToActionProps = {
     titleText: "Integrate xByte-SDK.",
     descriptionText: "Get your API key and add xByte to your platform.",
     buttonText: "Get API Key",
     secondaryButtonText: "Documentation",
 };
 
-const feature: FeatureProps[] = [
+export const feature: FeatureProps[] = [
     {
         title: "Feature 1",
         description: "Description 1",
@@ -60,10 +63,16 @@ const feature: FeatureProps[] = [
 ];
 
 export default function Home() {
+    const router = useRouter();
+
+    function goToSetupPage() {
+        router.push("/setup");
+    }
+
     return (
-        <div>
+        <>
             {/* Start Integrating */}
-            <CallToAction {...heroSection} />
+            <CallToAction {...heroSection} buttonAction={goToSetupPage} />
 
             {/* Integration Options */}
             <div className="flex flex-col md:flex-row gap-4 py-18">
@@ -87,6 +96,6 @@ export default function Home() {
 
             {/* Get Started */}
             <CallToAction {...setContentPricing} />
-        </div>
+        </>
     );
 }

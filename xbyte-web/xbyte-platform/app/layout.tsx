@@ -105,7 +105,7 @@ export default function RootLayout({
                 className={`${geistSans.variable} ${geistMono.variable} antialiased p-8 max-w-5xl mx-auto`}
             >
                 <AppHeader links={headerLinks} />
-                {children}
+                <main className="min-h-screen">{children}</main>
                 <AppFooter links={footerLinks} />
             </body>
         </html>

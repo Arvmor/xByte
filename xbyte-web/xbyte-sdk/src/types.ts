@@ -22,12 +22,9 @@ export interface Client {
  * @template T - The type of the data
  * @template E - The type of the error
  */
-export interface ApiResponse<T, E> {
-    /** The status of the response */
-    status: "Success" | "Error" | "PaymentRequired";
-    /** The data of the response */
-    data: T | E;
-}
+export type ApiResponse<T, E> =
+    | { status: "Success"; data: T }
+    | { status: "Error" | "PaymentRequired"; data: E };
 
 export interface X402PaymentPayload {
     x402Version: number;
