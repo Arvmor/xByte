@@ -8,6 +8,7 @@ import Paragraph from "@/components/platform/paragraph";
 import Feature from "@/components/platform/feature";
 import Optionable from "@/components/platform/optionable";
 import CallToAction from "@/components/platform/callToAction";
+import { xByteClient } from "xbyte-sdk";
 
 /**
  * The steps of the setup process.
@@ -33,6 +34,8 @@ const nextStep = new Map<SetupStep, SetupStep>([
     [SetupStep.Onboarded, SetupStep.Onboarded],
 ]);
 
+const xbyteClient = new xByteClient();
+
 /**
  * The section for each step.
  */
@@ -53,7 +56,7 @@ export default function SetupPage() {
         return <div>Step not found</div>;
     }
 
-    const handleNextStep = () => {
+    const handleNextStep = async () => {
         const next = nextStep.get(step) ?? SetupStep.Onboarding;
         setStep(next);
     };
@@ -79,8 +82,20 @@ function OnboardingSection() {
 }
 
 function IntegrateProviderSection() {
+    const [data, setData] = useState<string[]>(["Currently None, Integrate to show."]);
+
+    const onClick = async () => {
+        await xbyteClient.createClient({
+            name: "platformA",
+            wallet: "0x1234567890123456789012345678901234567890",
+        });
+
+        const { status, data } = await xbyteClient.getAllBuckets();
+        if (status === "Success") setData(data);
+    };
+
     const options = integrationOptions.map((option, index) => (
-        <Optionable key={index} {...option} />
+        <Optionable key={index} {...option} onClick={onClick} />
     ));
 
     return (
@@ -88,6 +103,14 @@ function IntegrateProviderSection() {
             <h1 className="text-2xl font-bold">Integrate Data Provider</h1>
             <Paragraph {...paragraph} title={undefined} />
             <div className="flex flex-col md:flex-row gap-4">{options}</div>
+            <div>
+                <h1 className="text-lg font-bold">Your Buckets</h1>
+                {data.map((bucket, index) => (
+                    <h2 key={index} className="font-medium text-muted-foreground">
+                        {bucket}
+                    </h2>
+                ))}
+            </div>
         </>
     );
 }
@@ -105,30 +128,65 @@ function SetWalletSection() {
 }
 
 function SetPriceSection() {
+    const [buckets, setBuckets] = useState<string[]>([]);
+    const [objects, setObjects] = useState<string[]>(["Currently None, Integrate to show."]);
+    const [price, setPrice] = useState<number>(0.0001);
+
+    const onClick = async () => {
+        const buckets = await xbyteClient.getAllBuckets();
+        if (buckets.status !== "Success") return;
+        setBuckets(buckets.data);
+
+        const objects = await xbyteClient.getAllObjects(buckets.data[0]);
+        if (objects.status === "Success") setObjects(objects.data);
+    };
+
+    const onClickSetPrice = async () => {
+        const object = objects.at(0);
+        const bucket = buckets.at(0);
+
+        if (!object || !bucket) return;
+        await xbyteClient.setPrice({
+            bucket,
+            object,
+            price,
+        });
+    };
+
     const options = integrationOptions
         .slice(0, 2)
-        .map((option, index) => <Optionable key={index} {...option} />);
+        .map((option, index) => <Optionable key={index} {...option} onClick={onClick} />);
 
     return (
         <>
-            <h1 className="text-2xl font-bold">Set Price</h1>
-            <Paragraph {...paragraph} title={undefined} />
-
             {/* Options for price */}
+            <h1 className="text-2xl font-bold">Set Price</h1>
             <div className="flex flex-col md:flex-row gap-6">{options}</div>
             <Paragraph {...paragraph} />
+
+            {/* Object List */}
+            <div>
+                <h1 className="text-lg font-bold">Your Objects</h1>
+                {objects.map((object, index) => (
+                    <h2 key={index} className="font-medium text-muted-foreground">
+                        {object}
+                    </h2>
+                ))}
+            </div>
 
             {/* Form set price */}
             <div className="flex gap-2">
                 <Input placeholder="e.g. a12add23-1234-1234-1234-12345678" className="w-1/3" />
                 <Input
                     placeholder="e.g. 0.0001"
-                    defaultValue={0.0001}
+                    value={price}
+                    onChange={(e) => setPrice(Number(e.target.value))}
                     type="number"
                     step="0.00001"
                     min="0"
                     className="w-1/6"
                 />
+                <Button onClick={onClickSetPrice}>Set Price</Button>
             </div>
         </>
     );
