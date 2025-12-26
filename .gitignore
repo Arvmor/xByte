@@ -1,3 +1,12 @@
-.env
+**/.env
 *.mp3
 *.mp4
+**/.DS_Store
+
+# Node targets
+**/node_modules
+**/*.tsbuildinfo
+xbyte-web/xbyte-sdk/dist
+
+# Rust targets
+xbyte-server/target
