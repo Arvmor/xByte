@@ -42,4 +42,6 @@ contract xByteVault is Ownable {
 
         emit Withdraw(amount, fee, owner(), factory, _token);
     }
+
+    receive() external payable {}
 }
