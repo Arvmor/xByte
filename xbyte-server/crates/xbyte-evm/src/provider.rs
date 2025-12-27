@@ -15,7 +15,7 @@ impl Client {
 
 impl Provider for Client {
     fn root(&self) -> &alloy_provider::RootProvider<Ethereum> {
-        &self.0.root()
+        self.0.root()
     }
 }
 

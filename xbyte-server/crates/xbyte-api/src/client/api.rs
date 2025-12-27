@@ -102,8 +102,12 @@ mod tests {
     #[actix_web::test]
     async fn test_get_client_api() -> anyhow::Result<()> {
         // Run the server
+        let provider = ThinData(xbyte_evm::Client::new("https://sepolia.base.org")?);
         let db = ThinData(MemoryDB::default());
-        let app = App::new().app_data(db.clone()).service(get_client);
+        let app = App::new()
+            .app_data(db.clone())
+            .app_data(provider)
+            .service(get_client);
         let server = test::init_service(app).await;
 
         // Create a new client
