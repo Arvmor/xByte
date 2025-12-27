@@ -2,6 +2,7 @@
 pragma solidity ^0.8.31;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 
 struct Vault {
     address vaultAddress;
@@ -10,51 +11,35 @@ struct Vault {
 }
 
 contract xByteFactory is Ownable {
-    address public VAULT_IMPLEMENTATION;
+    address public vaultImplementation;
+    uint8 public constant COMMISSION_FEE = 1;
 
     mapping(address => Vault) public vaults;
 
     constructor(address _vaultImplementation) Ownable(msg.sender) {
-        VAULT_IMPLEMENTATION = _vaultImplementation;
+        vaultImplementation = _vaultImplementation;
     }
 
-    function createVault() public {
+    function createVault() public returns (address) {
         address owner = msg.sender;
-        address vaultAddress = _deployVault(bytes32(bytes20(owner)));
+        address vaultAddress = _deployVault(owner);
 
         vaults[owner] = Vault({
             vaultAddress: vaultAddress,
             owner: owner,
-            fee: 0
+            fee: COMMISSION_FEE
         });
+
+        return vaultAddress;
     }
 
     function computeVaultAddress(address owner) public view returns (address) {
         bytes32 salt = bytes32(bytes20(owner));
-
-        bytes32 initHash = keccak256(VAULT_IMPLEMENTATION.code);
-
-        bytes32 hash = keccak256(
-            abi.encodePacked(bytes1(0xff), address(this), salt, initHash)
-        );
-
-        // Convert the last 20 bytes of the hash to an address
-        return address(uint160(uint256(hash)));
+        return Create2.computeAddress(salt, vaultImplementation.codehash);
     }
 
-    function _deployVault(bytes32 salt) internal returns (address addr) {
-        // Get bytecode of the vault implementation
-        bytes memory bytecode = VAULT_IMPLEMENTATION.code;
-
-        // Deploy the vault implementation using CREATE2
-        assembly {
-            addr := create2(0, add(bytecode, 0x20), mload(bytecode), salt)
-
-            if iszero(addr) {
-                revert(0, 0)
-            }
-        }
-
-        return addr;
+    function _deployVault(address owner) internal returns (address addr) {
+        bytes32 salt = bytes32(bytes20(owner));
+        return Create2.deploy(0, salt, vaultImplementation.code);
     }
 }
