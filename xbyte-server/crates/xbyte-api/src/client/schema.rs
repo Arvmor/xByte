@@ -4,7 +4,7 @@ use uuid::Uuid;
 use xbyte_evm::Factory;
 
 /// xByte Client
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Client<N = String>
 where
