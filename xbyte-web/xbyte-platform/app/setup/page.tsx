@@ -9,7 +9,6 @@ import Feature from "@/components/platform/feature";
 import Optionable from "@/components/platform/optionable";
 import CallToAction from "@/components/platform/callToAction";
 import { xByteClient } from "xbyte-sdk";
-import { RegisterRequest } from "xbyte-sdk/types";
 
 /**
  * The steps of the setup process.
@@ -91,7 +90,6 @@ function IntegrateProviderSection() {
             wallet: "0x1234567890123456789012345678901234567890",
         });
         if (clientStatus !== "Success" || !client.id) return;
-
 
         const { status, data } = await xbyteClient.getAllBuckets();
         if (status !== "Success") return;

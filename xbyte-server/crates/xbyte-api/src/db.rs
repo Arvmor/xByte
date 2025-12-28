@@ -87,7 +87,7 @@ impl Database for MemoryDB {
         let db = self.buckets.read().unwrap();
         let result = db.get(key).ok_or(anyhow::anyhow!("Bucket not found"))?;
 
-        Ok(result.clone())
+        Ok(*result)
     }
 }
 
