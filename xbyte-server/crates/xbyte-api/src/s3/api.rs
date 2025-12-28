@@ -91,7 +91,7 @@ async fn get_object(
     let pay_to = db
         .get_bucket(&path.0)
         .and_then(|c| db.get_client(&c))
-        .map(|o| o.wallet.to_string())
+        .map(|o| o.vault.unwrap().to_string())
         .unwrap_or_else(|error| {
             tracing::error!(?error, "Failed to get bucket owner");
             config.payment_address.to_string()
