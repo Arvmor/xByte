@@ -1,5 +1,8 @@
 use xbyte_api::Server;
 
+const SERVER_ADDR: &str = "127.0.0.1:80";
+const RPC_URL: &str = "https://sepolia.base.org";
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // Initialize Logging
@@ -11,7 +14,7 @@ async fn main() -> anyhow::Result<()> {
     dotenv::dotenv().ok();
 
     // Start the API server
-    let server = Server::new("127.0.0.1:80");
+    let server = Server::new(SERVER_ADDR, RPC_URL);
     server.run().await?;
 
     Ok(())
