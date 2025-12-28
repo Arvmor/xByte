@@ -9,6 +9,7 @@ import Feature from "@/components/platform/feature";
 import Optionable from "@/components/platform/optionable";
 import CallToAction from "@/components/platform/callToAction";
 import { xByteClient } from "xbyte-sdk";
+import { RegisterRequest } from "xbyte-sdk/types";
 
 /**
  * The steps of the setup process.
@@ -85,13 +86,23 @@ function IntegrateProviderSection() {
     const [data, setData] = useState<string[]>(["Currently None, Integrate to show."]);
 
     const onClick = async () => {
-        await xbyteClient.createClient({
+        const { status: clientStatus, data: client } = await xbyteClient.createClient({
             name: "platformA",
             wallet: "0x1234567890123456789012345678901234567890",
         });
+        if (clientStatus !== "Success" || !client.id) return;
+
 
         const { status, data } = await xbyteClient.getAllBuckets();
-        if (status === "Success") setData(data);
+        if (status !== "Success") return;
+
+        setData(data);
+        for (const bucket of data) {
+            await xbyteClient.registerBucket({
+                bucket,
+                client: client.id,
+            });
+        }
     };
 
     const options = integrationOptions.map((option, index) => (

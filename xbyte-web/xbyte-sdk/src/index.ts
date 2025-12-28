@@ -1,4 +1,4 @@
-import { ApiResponse, Client, SetPriceRequest } from "./types";
+import { ApiResponse, Client, RegisterRequest, SetPriceRequest } from "./types";
 
 const DEFAULT_XBYTE_URL = "http://localhost:80";
 
@@ -56,5 +56,15 @@ export class xByteClient {
 
     async getAllObjects(bucket: string): Promise<ApiResponse<string[], string>> {
         return this.request(`/s3/bucket/${bucket}/objects`);
+    }
+
+    async registerBucket(request: RegisterRequest): Promise<ApiResponse<string, string>> {
+        const options: RequestInit = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(request),
+        };
+
+        return this.request("/s3/register", options);
     }
 }

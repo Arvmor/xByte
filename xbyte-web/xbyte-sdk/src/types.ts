@@ -1,5 +1,10 @@
 import { UUID } from "crypto";
 
+export interface RegisterRequest {
+    bucket: string;
+    client: UUID;
+}
+
 export interface SetPriceRequest {
     bucket: string;
     object: string;

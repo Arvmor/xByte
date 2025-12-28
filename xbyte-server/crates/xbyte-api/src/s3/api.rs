@@ -88,9 +88,17 @@ async fn get_object(
     // Get the price in USDC / 1MB
     let price = db.get_price(&path).unwrap_or(1000);
     let total_price = utils::calculate_price(price as f32, length as f32).to_string();
-    let req = x402::PaymentRequest::new(&config, total_price, "Access the object", url);
+    let pay_to = db
+        .get_bucket(&path.0)
+        .and_then(|c| db.get_client(&c))
+        .map(|o| o.wallet.to_string())
+        .unwrap_or_else(|error| {
+            tracing::error!(?error, "Failed to get bucket owner");
+            config.payment_address.to_string()
+        });
 
     // Check received payment
+    let req = x402::PaymentRequest::new(&config, pay_to, total_price, "Access the object", url);
     let request = x402::X402Response::new(&[req]);
     let Some(payment) = auth else {
         return ResultAPI::payment_required(request);
