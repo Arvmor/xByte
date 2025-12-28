@@ -36,15 +36,8 @@ async fn create_client(
     }
 
     let factory = xbyte_evm::Factory::new(provider);
-    match factory.computeVaultAddress(data.wallet).call().await {
-        Ok(address) => {
-            tracing::info!(?address, ?data.wallet, "Vault address computed");
-        }
-        Err(error) => {
-            tracing::error!(?error, ?data.wallet, "Failed to compute vault address");
-            return ResultAPI::failure("Failed to compute vault address");
-        }
-    }
+    let address = factory.compute_vault_address_sync(data.wallet);
+    tracing::info!(?address, ?data.wallet, "Vault address computed");
 
     ResultAPI::okay(client)
 }
@@ -70,8 +63,12 @@ mod tests {
     #[actix_web::test]
     async fn test_create_client_api() -> anyhow::Result<()> {
         // Run the server
+        let provider = ThinData(xbyte_evm::Client::new("https://sepolia.base.org")?);
         let db = ThinData(MemoryDB::default());
-        let app = App::new().app_data(db.clone()).service(create_client);
+        let app = App::new()
+            .app_data(db.clone())
+            .app_data(provider)
+            .service(create_client);
         let server = test::init_service(app).await;
 
         // Create a new client
@@ -102,12 +99,8 @@ mod tests {
     #[actix_web::test]
     async fn test_get_client_api() -> anyhow::Result<()> {
         // Run the server
-        let provider = ThinData(xbyte_evm::Client::new("https://sepolia.base.org")?);
         let db = ThinData(MemoryDB::default());
-        let app = App::new()
-            .app_data(db.clone())
-            .app_data(provider)
-            .service(get_client);
+        let app = App::new().app_data(db.clone()).service(get_client);
         let server = test::init_service(app).await;
 
         // Create a new client

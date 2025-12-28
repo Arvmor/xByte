@@ -9,3 +9,6 @@ alloy-contract.workspace = true
 alloy-provider.workspace = true
 alloy-primitives.workspace = true
 anyhow.workspace = true
+
+[dev-dependencies]
+tokio.workspace = true

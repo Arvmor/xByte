@@ -5514,6 +5514,7 @@ dependencies = [
  "alloy-provider",
  "alloy-sol-types",
  "anyhow",
+ "tokio",
 ]
 
 [[package]]
