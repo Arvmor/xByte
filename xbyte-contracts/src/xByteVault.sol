@@ -5,6 +5,7 @@ import {Vault} from "./xByteFactory.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract xByteVault is Ownable {
     address public factory;
@@ -36,8 +37,8 @@ contract xByteVault is Ownable {
         uint256 fee = (balance * vault.fee) / 100;
         uint256 amount = balance - fee;
 
-        require(token.transfer(factory, fee));
-        require(token.transfer(owner(), amount));
+        SafeERC20.safeTransfer(token, factory, fee);
+        SafeERC20.safeTransfer(token, owner(), amount);
 
         emit Withdraw(amount, fee, owner(), factory, _token);
     }

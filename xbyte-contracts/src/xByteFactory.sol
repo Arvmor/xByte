@@ -5,6 +5,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 struct Vault {
     address vaultAddress;
@@ -64,7 +65,7 @@ contract xByteFactory is Ownable {
         IERC20 token = IERC20(_token);
         uint256 balance = token.balanceOf(address(this));
 
-        require(token.transfer(owner(), balance));
+        SafeERC20.safeTransfer(token, owner(), balance);
         emit Withdraw(balance, owner(), _token);
     }
 
