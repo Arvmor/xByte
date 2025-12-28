@@ -22,6 +22,7 @@ impl<A: net::ToSocketAddrs> Server<A> {
     /// Run the API server
     pub async fn run(self) -> anyhow::Result<()> {
         // Initialize data
+        let provider = xbyte_evm::Client::new("https://sepolia.base.org")?;
         let db = MemoryDB::default();
         let config = Data::new(ConfigX402::build());
         let s3 = XByteS3::new().await;
@@ -29,6 +30,7 @@ impl<A: net::ToSocketAddrs> Server<A> {
         let app = move || {
             App::new()
                 .app_data(config.clone())
+                .app_data(ThinData(provider.clone()))
                 .app_data(ThinData(db.clone()))
                 .app_data(ThinData(s3.clone()))
                 // Health routes

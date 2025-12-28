@@ -1,11 +1,12 @@
 [workspace]
 resolver = "3"
-members = ["crates/xbyte-api", "crates/xbyte-app"]
+members = ["crates/xbyte-api", "crates/xbyte-app", "crates/xbyte-evm"]
 
 [workspace.dependencies]
 # Local Crates
 xbyte_api = { path = "crates/xbyte-api" }
 xbyte_app = { path = "crates/xbyte-app" }
+xbyte-evm = { path = "crates/xbyte-evm" }
 
 # Common dependencies
 dotenv = "0.15.0"
@@ -17,7 +18,6 @@ base64 = "0.22.1"
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 uuid = { version = "1.19.0", features = ["v4", "serde"] }
-alloy-primitives = { version = "1.5.2", features = ["serde"] }
 
 # API dependencies
 actix-web = { version = "4.12.1", features = ["rustls"] }
@@ -34,3 +34,7 @@ aws-sdk-s3 = { version = "1.119.0", features = ["behavior-version-latest"] }
 
 # x402 dependencies
 ureq = { version = "3.1.4", features = ["rustls", "json"] }
+alloy-sol-types = "1.5.2"
+alloy-contract = "1.2.1"
+alloy-provider = "1.2.1"
+alloy-primitives = { version = "1.5.2", features = ["serde"] }
