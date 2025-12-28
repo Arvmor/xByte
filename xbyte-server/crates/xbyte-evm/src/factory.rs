@@ -10,23 +10,27 @@ sol! {
 
 /// Factory Interface for [`xByteFactory`] contract.
 #[derive(Debug, Clone)]
-pub struct Factory<P: Provider>(xByteFactory::xByteFactoryInstance<P>);
+pub struct Factory<P>(xByteFactory::xByteFactoryInstance<P>);
 
 impl<P: Provider> Factory<P> {
-    /// The address of the xByteFactory contract
-    pub const ADDRESS: Address = address!("b0b6c2EC918388aE785541a0635E36c69358A80d");
     /// Initialize an Instance of the Factory
     pub fn new(provider: P) -> Self {
         let instance = xByteFactory::xByteFactoryInstance::new(Self::ADDRESS, provider);
         Self(instance)
     }
-    pub fn compute_vault_address_sync(&self, owner: Address) -> Address {
+}
+
+impl<P> Factory<P> {
+    /// The address of the xByteFactory contract
+    pub const ADDRESS: Address = address!("b0b6c2EC918388aE785541a0635E36c69358A80d");
+    /// Compute the vault address for the owner
+    pub fn compute_vault(owner: Address) -> Address {
         let salt = B256::right_padding_from(owner.as_slice());
         Self::ADDRESS.create2(salt, Vault::BYTECODE_HASH)
     }
 }
 
-impl<P: Provider> Deref for Factory<P> {
+impl<P> Deref for Factory<P> {
     type Target = xByteFactory::xByteFactoryInstance<P>;
 
     fn deref(&self) -> &Self::Target {
@@ -54,13 +58,10 @@ mod tests {
     }
 
     #[test]
-    fn test_compute_vault_address_sync() -> anyhow::Result<()> {
-        let provider = Client::new("http://localhost:8545")?;
-        let factory = Factory::new(provider);
-
+    fn test_compute_vault_sync() -> anyhow::Result<()> {
         // Compute the vault address for the owner
         let owner = address!("d6404c4d93e9ea3cdc247d909062bdb6eb0726b0");
-        let address = factory.compute_vault_address_sync(owner);
+        let address = Factory::<()>::compute_vault(owner);
 
         // Verify CREATE2
         let expected = address!("69b645ee2dae3ce10483118bc52bdc5e6e574d26");
@@ -74,7 +75,7 @@ mod tests {
         let factory = Factory::new(provider);
 
         let owner = address!("d6404c4d93e9ea3cdc247d909062bdb6eb0726b0");
-        let address_sync = factory.compute_vault_address_sync(owner);
+        let address_sync = Factory::<()>::compute_vault(owner);
         let address_async = factory.computeVaultAddress(owner).call().await?;
         let expected = address!("69b645ee2dae3ce10483118bc52bdc5e6e574d26");
 

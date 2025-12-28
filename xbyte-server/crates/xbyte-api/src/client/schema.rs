@@ -1,9 +1,10 @@
 use alloy_primitives::Address;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
+use xbyte_evm::Factory;
 
 /// xByte Client
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Client<N = String>
 where
@@ -15,13 +16,22 @@ where
     pub name: N,
     /// Wallet Address
     pub wallet: Address,
+    /// Vault Address
+    pub vault: Option<Address>,
 }
 
 impl<N: AsRef<str>> Client<N> {
     /// Create a new client
     pub fn new(name: N, wallet: Address) -> Self {
         let id = Some(Uuid::new_v4());
-        Self { id, name, wallet }
+        let vault = Some(Factory::<()>::compute_vault(wallet));
+
+        Self {
+            id,
+            name,
+            wallet,
+            vault,
+        }
     }
 }
 

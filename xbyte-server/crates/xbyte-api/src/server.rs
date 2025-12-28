@@ -4,25 +4,23 @@ use actix_web::{App, HttpServer};
 use std::net;
 
 /// A server that can be used to start the API
-pub struct Server<A: net::ToSocketAddrs> {
+pub struct Server<A: net::ToSocketAddrs, R: AsRef<str>> {
     /// The address to bind the server to
     addr: A,
+    /// The RPC URL (e.g. ethereum, base, etc.)
+    rpc: R,
 }
 
-impl<A: net::ToSocketAddrs> Server<A> {
+impl<A: net::ToSocketAddrs, R: AsRef<str>> Server<A, R> {
     /// Create a new server
-    ///
-    /// # Arguments
-    ///
-    /// * `addr` - The address to bind the server to
-    pub fn new(addr: A) -> Self {
-        Self { addr }
+    pub fn new(addr: A, rpc: R) -> Self {
+        Self { addr, rpc }
     }
 
     /// Run the API server
     pub async fn run(self) -> anyhow::Result<()> {
         // Initialize data
-        let provider = xbyte_evm::Client::new("https://sepolia.base.org")?;
+        let provider = xbyte_evm::Client::new(self.rpc.as_ref())?;
         let db = MemoryDB::default();
         let config = Data::new(ConfigX402::build());
         let s3 = XByteS3::new().await;
@@ -46,6 +44,7 @@ impl<A: net::ToSocketAddrs> Server<A> {
                 .service(S3Route::GetAllBuckets)
                 .service(S3Route::GetAllObjects)
                 .service(S3Route::GetObject)
+                .service(S3Route::RegisterBucket)
                 .wrap(actix_cors::Cors::permissive())
         };
 
@@ -61,17 +60,10 @@ mod tests {
     #[test]
     fn test_constructor() {
         let addr = "127.0.0.1:80";
-        let server = Server::new(addr);
+        let rpc = "http://localhost:8545";
+        let server = Server::new(addr, rpc);
 
         assert_eq!(server.addr, addr);
-    }
-
-    #[actix_web::test]
-    #[ignore = "For development purposes"]
-    async fn test_new() -> anyhow::Result<()> {
-        let server = Server::new("127.0.0.1:80");
-        server.run().await?;
-
-        Ok(())
+        assert_eq!(server.rpc, rpc);
     }
 }

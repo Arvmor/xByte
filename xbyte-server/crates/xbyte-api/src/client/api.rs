@@ -23,7 +23,6 @@ impl HttpServiceFactory for ClientRoute {
 #[post("/client")]
 async fn create_client(
     web::ThinData(db): web::ThinData<MemoryDB>,
-    web::ThinData(provider): web::ThinData<xbyte_evm::Client>,
     web::Json(data): web::Json<Client>,
 ) -> impl Responder {
     // Create a new client
@@ -34,10 +33,6 @@ async fn create_client(
         tracing::error!(?error, ?client, "Failed to create client");
         return ResultAPI::failure("Failed to create client");
     }
-
-    let factory = xbyte_evm::Factory::new(provider);
-    let address = factory.compute_vault_address_sync(data.wallet);
-    tracing::info!(?address, ?data.wallet, "Vault address computed");
 
     ResultAPI::okay(client)
 }
@@ -63,12 +58,8 @@ mod tests {
     #[actix_web::test]
     async fn test_create_client_api() -> anyhow::Result<()> {
         // Run the server
-        let provider = ThinData(xbyte_evm::Client::new("https://sepolia.base.org")?);
         let db = ThinData(MemoryDB::default());
-        let app = App::new()
-            .app_data(db.clone())
-            .app_data(provider)
-            .service(create_client);
+        let app = App::new().app_data(db.clone()).service(create_client);
         let server = test::init_service(app).await;
 
         // Create a new client

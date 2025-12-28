@@ -48,7 +48,7 @@ pub struct PaymentRequest<S, T> {
     pub resource: Url,
     pub description: Option<S>,
     pub mime_type: S,
-    pub pay_to: S,
+    pub pay_to: T,
     pub max_timeout_seconds: u64,
     pub extra: HashMap<S, S>,
     pub asset: S,
@@ -61,6 +61,7 @@ where
     /// Create a new PaymentRequest
     pub fn new(
         config: &ConfigX402<S>,
+        pay_to: T,
         max_amount_required: T,
         description: S,
         resource: Url,
@@ -72,7 +73,7 @@ where
             resource,
             description: Some(description),
             mime_type: config.mime_type,
-            pay_to: config.payment_address,
+            pay_to,
             max_timeout_seconds: 60,
             asset: config.token,
             extra: config.extra.clone(),
