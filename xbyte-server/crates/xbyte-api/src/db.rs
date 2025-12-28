@@ -15,6 +15,8 @@ pub trait Database {
     type Client;
     /// The bucket key type
     type KeyBucket;
+    /// The bucket type
+    type Bucket;
 
     /// Set the price
     fn set_price(&self, key: Self::KeyPrice, price: Self::Price) -> anyhow::Result<()>;
@@ -27,7 +29,7 @@ pub trait Database {
     /// Assign Bucket to Client
     fn assign_bucket(&self, key: Self::KeyBucket, client: Self::KeyClient) -> anyhow::Result<()>;
     /// Get Bucket from Client
-    fn get_bucket(&self, key: &Self::KeyBucket) -> anyhow::Result<Self::KeyClient>;
+    fn get_bucket(&self, key: &Self::KeyBucket) -> anyhow::Result<Self::Bucket>;
 }
 
 /// In-memory database
@@ -44,6 +46,7 @@ impl Database for MemoryDB {
     type KeyClient = Uuid;
     type Client = Client;
     type KeyBucket = String;
+    type Bucket = Uuid;
 
     fn set_price(&self, key: Self::KeyPrice, price: Self::Price) -> anyhow::Result<()> {
         // Set the price
@@ -80,7 +83,7 @@ impl Database for MemoryDB {
         Ok(())
     }
 
-    fn get_bucket(&self, key: &Self::KeyBucket) -> anyhow::Result<Self::KeyClient> {
+    fn get_bucket(&self, key: &Self::KeyBucket) -> anyhow::Result<Self::Bucket> {
         let db = self.buckets.read().unwrap();
         let result = db.get(key).ok_or(anyhow::anyhow!("Bucket not found"))?;
 

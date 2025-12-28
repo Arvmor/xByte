@@ -1,6 +1,6 @@
 use crate::{ConfigX402, Database, MemoryDB, ResultAPI, XByteS3, utils, x402};
 use actix_web::dev::HttpServiceFactory;
-use actix_web::{HttpRequest, Responder, get, web};
+use actix_web::{HttpRequest, Responder, get, post, web};
 use serde::{Deserialize, Serialize};
 
 /// The S3 Routes
@@ -12,6 +12,8 @@ pub enum S3Route {
     GetAllObjects,
     /// The get object endpoint
     GetObject,
+    /// The register bucket endpoint
+    RegisterBucket,
 }
 
 impl HttpServiceFactory for S3Route {
@@ -20,6 +22,7 @@ impl HttpServiceFactory for S3Route {
             Self::GetAllBuckets => get_all_buckets.register(config),
             Self::GetAllObjects => get_all_objects.register(config),
             Self::GetObject => get_object.register(config),
+            Self::RegisterBucket => register_bucket.register(config),
         }
     }
 }
@@ -119,4 +122,27 @@ async fn get_object(
             ResultAPI::payment_required(request)
         }
     }
+}
+
+/// The request to register a bucket
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RegisterRequest {
+    /// The bucket
+    pub bucket: String,
+    /// The client ID
+    pub client: uuid::Uuid,
+}
+
+#[post("/s3/register")]
+async fn register_bucket(
+    db: web::ThinData<MemoryDB>,
+    web::Json(payload): web::Json<RegisterRequest>,
+) -> impl Responder {
+    if let Err(error) = db.assign_bucket(payload.bucket, payload.client) {
+        tracing::error!(?error, "Failed to register bucket");
+        return ResultAPI::failure("Failed to register bucket");
+    };
+
+    ResultAPI::okay("Bucket registered successfully")
 }
