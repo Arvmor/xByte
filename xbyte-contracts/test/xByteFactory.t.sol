@@ -6,6 +6,7 @@ import {xByteFactory} from "../src/xByteFactory.sol";
 import {xByteVault} from "../src/xByteVault.sol";
 import {xByteRelay} from "../src/xByteRelay.sol";
 import {ERC20Mock} from "@openzeppelin/contracts/mocks/token/ERC20Mock.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract xByteFactoryTest is Test {
     xByteFactory public factory;
@@ -60,9 +61,9 @@ contract xByteFactoryTest is Test {
         assertEq(bobVault, factory.computeVaultAddress(bob));
         assertEq(charlieVault, factory.computeVaultAddress(charlie));
 
-        assertTrue(aliceVault != bobVault);
-        assertTrue(bobVault != charlieVault);
-        assertTrue(aliceVault != charlieVault);
+        assertNotEq(aliceVault, bobVault);
+        assertNotEq(bobVault, charlieVault);
+        assertNotEq(aliceVault, charlieVault);
     }
 
     function test_createVault_storesVaultMapping() public {
@@ -92,7 +93,7 @@ contract xByteFactoryTest is Test {
     function test_computeVaultAddress_differentPerUser() public view {
         address aliceComputed = factory.computeVaultAddress(alice);
         address bobComputed = factory.computeVaultAddress(bob);
-        assertTrue(aliceComputed != bobComputed);
+        assertNotEq(aliceComputed, bobComputed);
     }
 
     function test_withdrawNative() public {
@@ -256,5 +257,36 @@ contract xByteFactoryTest is Test {
         assertEq(afterOwner - beforeOwner, amount);
     }
 
+    function test_withdraw_revert_reentrancy() public {
+        ReentrantFactoryAttacker attacker = new ReentrantFactoryAttacker();
+        xByteVault _vault = new xByteVault();
+        xByteRelay _relay = new xByteRelay(address(_vault));
+        xByteFactory attackerFactory = new xByteFactory(address(_relay));
+
+        attackerFactory.transferOwnership(address(attacker));
+        attacker.setFactory(attackerFactory);
+
+        vm.deal(address(attackerFactory), 1 ether);
+
+        vm.expectRevert(ReentrancyGuard.ReentrancyGuardReentrantCall.selector);
+        attacker.attack();
+    }
+
     receive() external payable {}
+}
+
+contract ReentrantFactoryAttacker {
+    xByteFactory public factory;
+
+    function setFactory(xByteFactory factory_) external {
+        factory = factory_;
+    }
+
+    function attack() external {
+        factory.withdraw();
+    }
+
+    receive() external payable {
+        factory.withdraw();
+    }
 }

@@ -6,6 +6,7 @@ import {xByteFactory} from "../src/xByteFactory.sol";
 import {xByteVault} from "../src/xByteVault.sol";
 import {ERC20Mock} from "@openzeppelin/contracts/mocks/token/ERC20Mock.sol";
 import {xByteRelay} from "../src/xByteRelay.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract xByteVaultTest is Test {
     xByteFactory public factory;
@@ -296,5 +297,38 @@ contract xByteVaultTest is Test {
         assertEq(fee + remaining, amount);
     }
 
+    function test_withdraw_revert_reentrancy() public {
+        ReentrantVaultAttacker attacker = new ReentrantVaultAttacker();
+
+        xByteVault _vaultImpl = new xByteVault();
+        xByteRelay _relay = new xByteRelay(address(_vaultImpl));
+        xByteFactory _factory = new xByteFactory(address(_relay));
+
+        vm.prank(address(attacker));
+        xByteVault attackerVault = xByteVault(payable(_factory.createVault()));
+
+        attacker.setVault(attackerVault);
+        vm.deal(address(attackerVault), 1 ether);
+
+        vm.expectRevert(ReentrancyGuard.ReentrancyGuardReentrantCall.selector);
+        attacker.attack();
+    }
+
     receive() external payable {}
+}
+
+contract ReentrantVaultAttacker {
+    xByteVault public vault;
+
+    function setVault(xByteVault vault_) external {
+        vault = vault_;
+    }
+
+    function attack() external {
+        vault.withdraw();
+    }
+
+    receive() external payable {
+        vault.withdraw();
+    }
 }
