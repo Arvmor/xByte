@@ -20,7 +20,7 @@ contract xByteVaultTest is Test {
     }
 
     function test_createVault() public {
-        assertEq(vault.owner(), msg.sender);
+        assertEq(vault.owner(), address(this));
         assertEq(vault.factory(), address(factory));
     }
 
@@ -50,4 +50,6 @@ contract xByteVaultTest is Test {
         assertEq(token.balanceOf(vault.owner()), 99);
         assertEq(token.balanceOf(vault.factory()), 1);
     }
+
+    receive() external payable {}
 }

@@ -37,7 +37,8 @@ contract xByteFactory is Ownable, ReentrancyGuard {
     function computeVaultAddress(address owner) public view returns (address) {
         bytes32 codehash;
 
-        bytes memory implementation = abi.encodePacked(type(BeaconProxy).creationCode, abi.encode(vaultRelay, ""));
+        bytes memory initData = abi.encodeWithSignature("initialize(address,address)", owner, address(this));
+        bytes memory implementation = abi.encodePacked(type(BeaconProxy).creationCode, abi.encode(vaultRelay, initData));
         assembly {
             codehash := keccak256(add(implementation, 0x20), mload(implementation))
         }

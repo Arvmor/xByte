@@ -17,7 +17,9 @@ contract xByteFactoryTest is Test {
     }
 
     function test_deploy_address() public {
-        factory.createVault();
+        address vaultAddress = factory.createVault();
+        address computedAddress = factory.computeVaultAddress(address(this));
+        assertEq(vaultAddress, computedAddress);
     }
 
     function test_withdrawNative() public {
