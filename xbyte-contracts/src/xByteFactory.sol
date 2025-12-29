@@ -36,25 +36,28 @@ contract xByteFactory is Ownable, ReentrancyGuard {
 
     function computeVaultAddress(address owner) public view returns (address) {
         bytes32 codehash;
+        (bytes32 salt, bytes memory initData) = _deployParameters(owner);
 
-        bytes memory initData = abi.encodeWithSignature("initialize(address,address)", owner, address(this));
         bytes memory implementation = abi.encodePacked(type(BeaconProxy).creationCode, abi.encode(vaultRelay, initData));
         assembly {
             codehash := keccak256(add(implementation, 0x20), mload(implementation))
         }
 
-        bytes32 salt = bytes32(bytes20(owner));
         return Create2.computeAddress(salt, codehash);
     }
 
     function _deployVault(address owner) internal returns (address) {
-        bytes memory initData = abi.encodeWithSignature("initialize(address,address)", owner, address(this));
-
-        bytes32 salt = bytes32(bytes20(owner));
+        (bytes32 salt, bytes memory initData) = _deployParameters(owner);
         BeaconProxy proxy = new BeaconProxy{salt: salt}(vaultRelay, initData);
 
         emit VaultCreated(owner, address(proxy));
         return address(proxy);
+    }
+
+    function _deployParameters(address owner) internal view returns (bytes32 salt, bytes memory initData) {
+        initData = abi.encodeWithSignature("initialize(address,address)", owner, address(this));
+        salt = bytes32(bytes20(owner));
+        return (salt, initData);
     }
 
     function withdraw() public nonReentrant {
