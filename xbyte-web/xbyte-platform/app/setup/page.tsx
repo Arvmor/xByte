@@ -8,7 +8,9 @@ import Paragraph from "@/components/platform/paragraph";
 import Feature from "@/components/platform/feature";
 import Optionable from "@/components/platform/optionable";
 import CallToAction from "@/components/platform/callToAction";
-import { xByteClient } from "xbyte-sdk";
+import { signatureCreateVault, xByteClient } from "xbyte-sdk";
+import { usePrivy } from "@privy-io/react-auth";
+import { XBYTE_FACTORY_ADDRESS } from "xbyte-sdk";
 
 /**
  * The steps of the setup process.
@@ -125,11 +127,23 @@ function IntegrateProviderSection() {
 }
 
 function SetWalletSection() {
+    const { sendTransaction, user } = usePrivy();
+    if (!user?.wallet?.address) return null;
+
+    async function createVault() {
+        sendTransaction({
+            to: XBYTE_FACTORY_ADDRESS,
+            data: signatureCreateVault(),
+            chainId: 84532,
+        });
+    }
+
     return (
         <>
             <h1 className="text-2xl font-bold">Set Wallet</h1>
             <Paragraph {...paragraph} title={undefined} />
-            <Input placeholder="e.g. 0xYourAddress" />
+            <Input value={user.wallet.address} disabled />
+            <Button onClick={createVault}>Create Vault</Button>
             <Feature {...feature[0]} className="w-100" />
             <Feature {...feature[0]} className="w-100 justify-self-end" />
         </>

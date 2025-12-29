@@ -12,7 +12,8 @@
         "format:check": "oxfmt --check"
     },
     "dependencies": {
-        "@radix-ui/react-separator": "^1.1.8",
+        "@privy-io/react-auth": "*",
+        "@radix-ui/react-separator": "*",
         "@radix-ui/react-slot": "*",
         "class-variance-authority": "*",
         "clsx": "*",

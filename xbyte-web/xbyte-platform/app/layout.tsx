@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import AppHeader, { HeaderLinkProps } from "@/components/app/appHeader";
 import AppFooter, { FooterLinkProps } from "@/components/app/appFooter";
+import Providers from "@/components/privy/provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -104,9 +105,11 @@ export default function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased p-8 max-w-5xl mx-auto`}
             >
-                <AppHeader links={headerLinks} />
-                <main className="min-h-screen">{children}</main>
-                <AppFooter links={footerLinks} />
+                <Providers>
+                    <AppHeader links={headerLinks} />
+                    <main className="min-h-screen">{children}</main>
+                    <AppFooter links={footerLinks} />
+                </Providers>
             </body>
         </html>
     );
