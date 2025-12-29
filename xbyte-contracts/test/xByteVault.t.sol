@@ -5,24 +5,23 @@ import {Test} from "forge-std/Test.sol";
 import {xByteFactory} from "../src/xByteFactory.sol";
 import {xByteVault} from "../src/xByteVault.sol";
 import {ERC20Mock} from "@openzeppelin/contracts/mocks/token/ERC20Mock.sol";
+import {xByteRelay} from "../src/xByteRelay.sol";
 
 contract xByteVaultTest is Test {
     xByteFactory public factory;
     xByteVault public vault;
+    xByteRelay public vaultRelay;
 
     function setUp() public {
-        // Deploy time bytecode of xByteVault
-        bytes memory initCode = type(xByteVault).creationCode;
-        factory = new xByteFactory(initCode);
-        address vaultAddress = factory.createVault();
-        vault = xByteVault(payable(vaultAddress));
+        xByteVault _vault = new xByteVault();
+        vaultRelay = new xByteRelay(address(_vault));
+        factory = new xByteFactory(address(vaultRelay));
+        vault = xByteVault(payable(factory.createVault()));
     }
 
     function test_createVault() public {
-        (address vaultAddress, address owner, uint8 fee) = vault.vault();
-        assertEq(vaultAddress, address(vault));
-        assertEq(owner, msg.sender);
-        assertEq(fee, 1);
+        assertEq(vault.owner(), msg.sender);
+        assertEq(vault.factory(), address(factory));
     }
 
     function test_withdrawNative() public {

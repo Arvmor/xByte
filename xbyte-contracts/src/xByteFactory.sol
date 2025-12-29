@@ -3,19 +3,17 @@ pragma solidity ^0.8.31;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {BeaconProxy} from "@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 struct Vault {
     address vaultAddress;
     address owner;
-    uint8 fee;
 }
 
 contract xByteFactory is Ownable {
-    bytes public vaultImplementation;
-    uint8 public constant COMMISSION_FEE = 1;
+    address public vaultRelay;
 
     mapping(address => Vault) public vaults;
 
@@ -23,35 +21,38 @@ contract xByteFactory is Ownable {
     event WithdrawNative(uint256 amount, address indexed owner);
     event Withdraw(uint256 amount, address indexed owner, address indexed token);
 
-    constructor(bytes memory _vaultImplementation) Ownable(msg.sender) {
-        vaultImplementation = _vaultImplementation;
+    constructor(address vaultRelay_) Ownable(msg.sender) {
+        vaultRelay = vaultRelay_;
     }
 
     function createVault() public returns (address) {
         address owner = msg.sender;
         address vaultAddress = _deployVault(owner);
 
-        vaults[owner] = Vault({vaultAddress: vaultAddress, owner: owner, fee: COMMISSION_FEE});
-
-        emit VaultCreated(owner, vaultAddress);
+        vaults[owner] = Vault({vaultAddress: vaultAddress, owner: owner});
         return vaultAddress;
     }
 
     function computeVaultAddress(address owner) public view returns (address) {
-        bytes32 salt = bytes32(bytes20(owner));
-        bytes memory implementation = vaultImplementation;
-
         bytes32 codehash;
+
+        bytes memory implementation = abi.encodePacked(type(BeaconProxy).creationCode, abi.encode(vaultRelay, ""));
         assembly {
             codehash := keccak256(add(implementation, 0x20), mload(implementation))
         }
 
+        bytes32 salt = bytes32(bytes20(owner));
         return Create2.computeAddress(salt, codehash);
     }
 
-    function _deployVault(address owner) internal returns (address addr) {
+    function _deployVault(address owner) internal returns (address) {
+        bytes memory initData = abi.encodeWithSignature("initialize(address,address)", owner, address(this));
+
         bytes32 salt = bytes32(bytes20(owner));
-        return Create2.deploy(0, salt, vaultImplementation);
+        BeaconProxy proxy = new BeaconProxy{salt: salt}(vaultRelay, initData);
+
+        emit VaultCreated(owner, address(proxy));
+        return address(proxy);
     }
 
     function withdraw() public {

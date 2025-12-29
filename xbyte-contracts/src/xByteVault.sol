@@ -1,27 +1,30 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.31;
 
-import {Vault} from "./xByteFactory.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract xByteVault is Ownable {
+contract xByteVault is OwnableUpgradeable, ReentrancyGuard {
     address public factory;
-    Vault public vault;
+    uint8 public constant COMMISSION_FEE = 1;
 
     event WithdrawNative(uint256 amount, uint256 fee, address indexed owner, address indexed factory);
     event Withdraw(uint256 amount, uint256 fee, address indexed owner, address indexed factory, address indexed token);
 
-    constructor() Ownable(tx.origin) {
-        vault = Vault({vaultAddress: address(this), owner: owner(), fee: 1});
-        factory = msg.sender;
+    constructor() {
+        _disableInitializers();
     }
 
-    function withdraw() public {
+    function initialize(address owner_, address factory_) external initializer {
+        __Ownable_init(owner_);
+        factory = factory_;
+    }
+
+    function withdraw() public nonReentrant {
         uint256 balance = address(this).balance;
-        uint256 fee = (balance * vault.fee) / 100;
+        uint256 fee = (balance * COMMISSION_FEE) / 100;
         uint256 amount = balance - fee;
 
         Address.sendValue(payable(factory), fee);
@@ -30,11 +33,11 @@ contract xByteVault is Ownable {
         emit WithdrawNative(amount, fee, owner(), factory);
     }
 
-    function withdrawERC20(address _token) public {
+    function withdrawERC20(address _token) public nonReentrant {
         IERC20 token = IERC20(_token);
 
         uint256 balance = token.balanceOf(address(this));
-        uint256 fee = (balance * vault.fee) / 100;
+        uint256 fee = (balance * COMMISSION_FEE) / 100;
         uint256 amount = balance - fee;
 
         SafeERC20.safeTransfer(token, factory, fee);
