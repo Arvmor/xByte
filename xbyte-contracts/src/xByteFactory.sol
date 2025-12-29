@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.31;
 
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 import {BeaconProxy} from "@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol";
@@ -12,7 +13,7 @@ struct Vault {
     address owner;
 }
 
-contract xByteFactory is Ownable {
+contract xByteFactory is Ownable, ReentrancyGuard {
     address public vaultRelay;
 
     mapping(address => Vault) public vaults;
@@ -55,14 +56,14 @@ contract xByteFactory is Ownable {
         return address(proxy);
     }
 
-    function withdraw() public {
+    function withdraw() public nonReentrant {
         uint256 balance = address(this).balance;
 
         Address.sendValue(payable(owner()), balance);
         emit WithdrawNative(balance, owner());
     }
 
-    function withdrawERC20(address _token) public {
+    function withdrawERC20(address _token) public nonReentrant {
         IERC20 token = IERC20(_token);
         uint256 balance = token.balanceOf(address(this));
 
