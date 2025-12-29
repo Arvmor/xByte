@@ -31,5 +31,8 @@
     "devDependencies": {
         "@types/node": "*",
         "typescript": "*"
+    },
+    "dependencies": {
+        "viem": "*"
     }
 }
