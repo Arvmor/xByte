@@ -4,8 +4,7 @@
     "private": true,
     "scripts": {
         "dev": "next dev",
-        "prebuild": "cd ../xbyte-sdk && bun run build",
-        "build": "next build",
+        "build": "next build --webpack",
         "start": "next start",
         "lint": "oxlint",
         "lint:fix": "oxlint --fix",
