@@ -107,16 +107,18 @@ export class xByteEvmClient {
      * Get the owner of the xByteFactory
      * @returns The owner of the xByteFactory
      */
-    async getOwner() {
-        return this.xByteFactory.read.owner();
+    async getOwner(): Promise<Address> {
+        const result = await this.xByteFactory.read.owner();
+        return result as Address;
     }
 
     /**
      * Get the vault relay of the xByteFactory
      * @returns The vault relay of the xByteFactory
      */
-    async getVaultRelay() {
-        return this.xByteFactory.read.vaultRelay();
+    async getVaultRelay(): Promise<Address> {
+        const result = await this.xByteFactory.read.vaultRelay();
+        return result as Address;
     }
 
     /**
@@ -124,7 +126,18 @@ export class xByteEvmClient {
      * @param owner The owner of the vault
      * @returns The vault of the owner
      */
-    async getVault(owner: Address) {
-        return this.xByteFactory.read.vaults([owner]);
+    async getVault(owner: Address): Promise<Address[]> {
+        const result = await this.xByteFactory.read.vaults([owner]);
+        return result as Address[];
+    }
+
+    /**
+     * Get the computed vault address for the owner
+     * @param owner The owner of the vault
+     * @returns The computed vault address for the owner
+     */
+    async getComputeVaultAddress(owner: Address): Promise<Address> {
+        const result = await this.xByteFactory.read.computeVaultAddress([owner]);
+        return result as Address;
     }
 }

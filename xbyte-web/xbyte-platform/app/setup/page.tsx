@@ -128,6 +128,7 @@ function IntegrateProviderSection() {
 }
 
 function SetWalletSection() {
+    const [isDeployed, setIsDeployed] = useState(true);
     const [deployedVault, setDeployedVault] = useState("");
     const { sendTransaction, user } = usePrivy();
     const wallet = user?.wallet?.address as `0x${string}`;
@@ -137,8 +138,10 @@ function SetWalletSection() {
     }, [user?.wallet?.address]);
 
     async function checkVault() {
+        const computedVault = await xbyteEvmClient.getComputeVaultAddress(wallet);
         const vault = await xbyteEvmClient.getVault(wallet);
-        setDeployedVault(vault as string);
+        setDeployedVault(computedVault);
+        setIsDeployed(vault.length !== 0);
     }
 
     async function createVault() {
@@ -154,7 +157,8 @@ function SetWalletSection() {
             <h1 className="text-2xl font-bold">Set Wallet</h1>
             <Paragraph {...paragraph} title={undefined} />
             <Input value={wallet} disabled />
-            <Button onClick={createVault} disabled={deployedVault !== ""}>
+            <Input value={deployedVault} disabled />
+            <Button onClick={createVault} disabled={isDeployed}>
                 Create Vault
             </Button>
             <Feature {...feature[0]} className="w-100" />
