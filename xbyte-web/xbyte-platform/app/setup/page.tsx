@@ -8,9 +8,8 @@ import Paragraph from "@/components/platform/paragraph";
 import Feature from "@/components/platform/feature";
 import Optionable from "@/components/platform/optionable";
 import CallToAction from "@/components/platform/callToAction";
-import { xByteClient, xByteEvmClient } from "xbyte-sdk";
+import { xByteClient, xByteEvmClient, XBYTE_FACTORY_ADDRESS } from "xbyte-sdk";
 import { usePrivy } from "@privy-io/react-auth";
-import { XBYTE_FACTORY_ADDRESS } from "xbyte-sdk";
 
 /**
  * The steps of the setup process.
