@@ -1,7 +1,7 @@
 /**
  * The address of the xByteFactory contract
  */
-export const XBYTE_FACTORY_ADDRESS = "0x7cf0AeaC2E17fca480bc3A39c425E8Bef0324019";
+export const XBYTE_FACTORY_ADDRESS = "0x4957cDc66a60FfBf6E78baE23d18973a5dcC3e05";
 
 /**
  * The ABI of the xByteFactory contract

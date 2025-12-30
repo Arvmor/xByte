@@ -75,7 +75,7 @@ mod tests {
         let address = Factory::<()>::compute_vault(owner);
 
         // Verify CREATE2
-        let expected = address!("D6404c4d93e9ea3CDC247D909062BDB6eb0726B0");
+        let expected = address!("1adac06802a7f7d3a20e68fd9b51b010fa172bd5");
         assert_eq!(address, expected);
         Ok(())
     }
