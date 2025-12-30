@@ -134,4 +134,4 @@ export const XBYTE_FACTORY_ABI = [
         type: "function",
     },
     { stateMutability: "payable", type: "receive" },
-];
+] as const;
