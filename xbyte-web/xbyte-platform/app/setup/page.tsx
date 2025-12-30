@@ -2,15 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { paragraph, feature, integrationOptions, heroSection } from "../page";
 import Paragraph from "@/components/platform/paragraph";
 import Feature from "@/components/platform/feature";
 import Optionable from "@/components/platform/optionable";
 import CallToAction from "@/components/platform/callToAction";
-import { signatureCreateVault, xByteClient } from "xbyte-sdk";
+import { xByteClient, xByteEvmClient, XBYTE_FACTORY_ADDRESS } from "xbyte-sdk";
 import { usePrivy } from "@privy-io/react-auth";
-import { XBYTE_FACTORY_ADDRESS } from "xbyte-sdk";
 
 /**
  * The steps of the setup process.
@@ -37,6 +36,7 @@ const nextStep = new Map<SetupStep, SetupStep>([
 ]);
 
 const xbyteClient = new xByteClient();
+const xbyteEvmClient = new xByteEvmClient();
 
 /**
  * The section for each step.
@@ -127,13 +127,26 @@ function IntegrateProviderSection() {
 }
 
 function SetWalletSection() {
+    const [isDeployed, setIsDeployed] = useState(true);
+    const [deployedVault, setDeployedVault] = useState("");
     const { sendTransaction, user } = usePrivy();
-    if (!user?.wallet?.address) return null;
+    const wallet = user?.wallet?.address as `0x${string}`;
+
+    useEffect(() => {
+        checkVault();
+    }, [user?.wallet?.address]);
+
+    async function checkVault() {
+        const computedVault = await xbyteEvmClient.getComputeVaultAddress(wallet);
+        const vault = await xbyteEvmClient.getVault(wallet);
+        setDeployedVault(computedVault);
+        setIsDeployed(vault.length !== 0);
+    }
 
     async function createVault() {
         sendTransaction({
             to: XBYTE_FACTORY_ADDRESS,
-            data: signatureCreateVault(),
+            data: xbyteEvmClient.signatureCreateVault(),
             chainId: 84532,
         });
     }
@@ -142,8 +155,11 @@ function SetWalletSection() {
         <>
             <h1 className="text-2xl font-bold">Set Wallet</h1>
             <Paragraph {...paragraph} title={undefined} />
-            <Input value={user.wallet.address} disabled />
-            <Button onClick={createVault}>Create Vault</Button>
+            <Input value={wallet} disabled />
+            <Input value={deployedVault} disabled />
+            <Button onClick={createVault} disabled={isDeployed}>
+                Create Vault
+            </Button>
             <Feature {...feature[0]} className="w-100" />
             <Feature {...feature[0]} className="w-100 justify-self-end" />
         </>

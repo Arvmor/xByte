@@ -28,6 +28,9 @@
         "format": "oxfmt",
         "format:check": "oxfmt --check"
     },
+    "dependencies": {
+        "viem": "*"
+    },
     "devDependencies": {
         "@types/node": "*",
         "typescript": "*"
