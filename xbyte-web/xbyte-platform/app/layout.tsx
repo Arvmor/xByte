@@ -91,9 +91,11 @@ const footerLinks: FooterLinkProps[][] = [
         },
         {
             label: "Terms",
+            href: "/terms",
         },
         {
             label: "Privacy",
+            href: "/privacy",
         },
         {
             label: "Security",
