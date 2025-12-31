@@ -23,9 +23,15 @@ export const metadata: Metadata = {
 const headerLinks: HeaderLinkProps[] = [
     {
         label: "Integration",
+        href: "/setup",
     },
     {
-        label: "Pricing",
+        label: "Landing",
+        href: "/landing",
+    },
+    {
+        label: "Payout",
+        href: "/payout",
     },
     {
         label: "API Docs",
