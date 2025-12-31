@@ -26,10 +26,6 @@ const headerLinks: HeaderLinkProps[] = [
         href: "/setup",
     },
     {
-        label: "Landing",
-        href: "/landing",
-    },
-    {
         label: "Payout",
         href: "/payout",
     },
