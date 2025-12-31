@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 import { loadEnvFile } from "process";
 
-loadEnvFile("../../.env");
+try {
+    loadEnvFile("../../.env");
+} catch (error) {
+    console.warn("Error loading .env file", error);
+}
 
 const nextConfig: NextConfig = {
     output: "export",
