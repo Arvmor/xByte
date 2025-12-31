@@ -26,18 +26,6 @@ enum SetupStep {
     Onboarded,
 }
 
-/**
- * The next step for each step.
- */
-const nextStep = new Map<SetupStep, SetupStep>([
-    [SetupStep.Onboarding, SetupStep.SetupProvider],
-    [SetupStep.SetupProvider, SetupStep.SetWallet],
-    [SetupStep.SetWallet, SetupStep.SetPrice],
-    [SetupStep.SetPrice, SetupStep.SetSDK],
-    [SetupStep.SetSDK, SetupStep.Onboarded],
-    [SetupStep.Onboarded, SetupStep.Onboarded],
-]);
-
 const xbyteClient = new xByteClient();
 const xbyteEvmClient = new xByteEvmClient();
 
@@ -62,50 +50,154 @@ const stepLabels = [
     "Complete",
 ];
 
+const pageHeader = {
+    title: "Setup xByte Integration",
+    description: "Follow these steps to integrate xByte into your platform",
+};
+
+const buttonTexts = {
+    back: "Back",
+    continue: "Continue",
+    completeSetup: "Complete Setup",
+};
+
+const onboardingSection = {
+    title: "Welcome to xByte Setup",
+    description:
+        "Get started by following these simple steps to integrate xByte into your platform.",
+};
+
+const integrateProviderSection = {
+    title: "Connect Your Data Storage",
+    description: "Select your preferred data storage provider to connect with xByte.",
+    connectedBucketsTitle: "Connected Buckets",
+    noBucketsMessage:
+        "No buckets found. Please ensure your storage provider is properly configured.",
+};
+
+const setWalletSection = {
+    title: "Configure Your Wallet",
+    description: "Set up your wallet address and create a vault to receive payments.",
+    walletAddressLabel: "Your Wallet Address",
+    walletAddressHelper: "This wallet will receive payments from content consumption.",
+    vaultAddressLabel: "Vault Address",
+    checkingVaultStatus: "Checking vault status...",
+    vaultNotComputed: "Not computed",
+    vaultAddressHelper: "Your unique vault address for receiving x402 payments.",
+    vaultDeployedMessage: "Vault is deployed and ready",
+    createVaultDescription:
+        "Create a vault contract to receive and manage payments. This is a one-time transaction.",
+    createVaultButton: "Create Vault",
+    creatingVault: "Creating Vault...",
+    walletNotConnectedTitle: "Wallet Not Connected",
+    walletNotConnectedMessage: "Please connect your wallet to continue with the setup.",
+};
+
+const setPriceSection = {
+    title: "Set Content Pricing",
+    description: "Configure pricing for your content. Choose between API or manual pricing.",
+    selectBucketLabel: "Select Bucket",
+    noBucketsAvailable: "No buckets available",
+    selectObjectLabel: "Select Object",
+    noObjectsAvailable: "No objects available",
+    pricePerByteLabel: "Price per Byte (USDC)",
+    pricePlaceholder: "0.0001",
+    priceHelper: "Set the price users will pay per byte consumed for this content.",
+    setPriceButton: "Set Price",
+    settingPrice: "Setting...",
+    priceSetSuccess: "Price set successfully",
+    defaultPrice: 0.0001,
+};
+
+const setSDKSection = {
+    title: "Get Your API Key",
+    description: "Generate your API key to integrate xByte SDK into your platform.",
+    apiKeyLabel: "Your API Key",
+    apiKeyPlaceholder: "Click Generate to create your API key",
+    generateButton: "Generate",
+    generating: "Generating...",
+    apiKeyHelper: "Keep this key secure. It will be used to authenticate your platform with xByte.",
+    nextStepsTitle: "Next Steps",
+    nextSteps: [
+        "Install xByte SDK in your project",
+        "Configure the SDK with your API key",
+        "Start integrating pay-per-byte payments",
+    ],
+    apiKeyPrefix: "XB-",
+};
+
+const onboardedSection = {
+    title: "Setup Complete!",
+    description: "Your xByte integration is ready. Start monetizing your content today.",
+};
+
+const errorMessages = {
+    stepNotFound: "Step not found",
+    failedToConnectProvider: "Failed to connect provider:",
+    failedToCheckVault: "Failed to check vault:",
+    failedToCreateVault: "Failed to create vault:",
+    failedToLoadBuckets: "Failed to load buckets:",
+    failedToLoadObjects: "Failed to load objects:",
+    failedToSetPrice: "Failed to set price:",
+};
+
+const clientConfig = {
+    name: "platformA",
+    wallet: "0x1234567890123456789012345678901234567890",
+};
+
+const vaultConfig = {
+    chainId: 84532,
+    checkDelay: 3000,
+};
+
+const apiKeyConfig = {
+    generationDelay: 1000,
+};
+
 export default function SetupPage() {
     const [step, setStep] = useState<SetupStep>(SetupStep.Onboarding);
 
     const StepSection = stepSection.get(step);
     if (!StepSection) {
-        return <div>Step not found</div>;
+        return <div>{errorMessages.stepNotFound}</div>;
     }
 
-    const handleNextStep = async () => {
-        const next = nextStep.get(step) ?? SetupStep.Onboarding;
-        setStep(next);
+    const handleBackStep = () => {
+        setStep((prev) => Math.max(0, prev - 1));
     };
 
-    const currentStepIndex = step;
-    const totalSteps = stepLabels.length;
+    const handleNextStep = async () => {
+        setStep((prev) => Math.min(prev + 1, SetupStep.Onboarded));
+    };
+
+    const BackButton = () => (
+        <Button variant="outline" onClick={handleBackStep}>
+            {buttonTexts.back}
+        </Button>
+    );
+
+    const NextButton = () => (
+        <Button onClick={handleNextStep} size="lg">
+            {step === SetupStep.SetSDK ? buttonTexts.completeSetup : buttonTexts.continue}
+        </Button>
+    );
 
     return (
         <div className="space-y-12 max-w-4xl mx-auto">
             <div className="space-y-4">
-                <h1 className="text-3xl font-bold">Setup xByte Integration</h1>
-                <p className="text-muted-foreground">
-                    Follow these steps to integrate xByte into your platform
-                </p>
+                <h1 className="text-3xl font-bold">{pageHeader.title}</h1>
+                <p className="text-muted-foreground">{pageHeader.description}</p>
             </div>
 
-            <ProgressStepper currentStep={currentStepIndex} totalSteps={totalSteps} />
+            <ProgressStepper currentStep={step} totalSteps={stepLabels.length} />
 
             <div className="bg-card border rounded-lg p-8 space-y-8">{StepSection}</div>
 
-            {step !== SetupStep.Onboarded && (
-                <div className="flex justify-end gap-4">
-                    {step > SetupStep.Onboarding && (
-                        <Button
-                            variant="outline"
-                            onClick={() => setStep((prev) => Math.max(0, prev - 1))}
-                        >
-                            Back
-                        </Button>
-                    )}
-                    <Button onClick={handleNextStep} size="lg">
-                        {step === SetupStep.SetSDK ? "Complete Setup" : "Continue"}
-                    </Button>
-                </div>
-            )}
+            <div className="flex justify-end gap-4">
+                {step > SetupStep.Onboarding && <BackButton />}
+                {step < SetupStep.Onboarded && <NextButton />}
+            </div>
         </div>
     );
 }
@@ -118,43 +210,37 @@ function ProgressStepper({ currentStep, totalSteps }: { currentStep: number; tot
                 const isCurrent = index === currentStep;
                 const isUpcoming = index > currentStep;
 
+                const className = cn(
+                    "flex items-center justify-center size-10 rounded-full border-2 transition-colors",
+                    isCompleted && "bg-primary border-primary text-primary-foreground",
+                    isCurrent && "bg-primary/10 border-primary text-primary",
+                    isUpcoming && "bg-muted border-muted-foreground/30 text-muted-foreground",
+                );
+
+                const labelClassName = cn(
+                    "mt-2 text-xs font-medium text-center",
+                    isCurrent && "text-foreground",
+                    !isCurrent && "text-muted-foreground",
+                );
+
+                const separatorClassName = cn(
+                    "flex-1 transition-colors",
+                    isCompleted ? "bg-primary" : "bg-muted",
+                );
+
+                const stepIcon = isCompleted ? (
+                    <CheckCircle2 className="size-5" />
+                ) : (
+                    <span className="text-sm font-semibold">{index + 1}</span>
+                );
+
                 return (
                     <div key={index} className="flex items-center flex-1">
                         <div className="flex flex-col items-center flex-1">
-                            <div
-                                className={cn(
-                                    "flex items-center justify-center size-10 rounded-full border-2 transition-colors",
-                                    isCompleted &&
-                                        "bg-primary border-primary text-primary-foreground",
-                                    isCurrent && "bg-primary/10 border-primary text-primary",
-                                    isUpcoming &&
-                                        "bg-muted border-muted-foreground/30 text-muted-foreground",
-                                )}
-                            >
-                                {isCompleted ? (
-                                    <CheckCircle2 className="size-5" />
-                                ) : (
-                                    <span className="text-sm font-semibold">{index + 1}</span>
-                                )}
-                            </div>
-                            <span
-                                className={cn(
-                                    "mt-2 text-xs font-medium text-center",
-                                    isCurrent && "text-foreground",
-                                    !isCurrent && "text-muted-foreground",
-                                )}
-                            >
-                                {label}
-                            </span>
+                            <div className={className}>{stepIcon}</div>
+                            <span className={labelClassName}>{label}</span>
                         </div>
-                        {index < totalSteps - 1 && (
-                            <div
-                                className={cn(
-                                    "h-0.5 flex-1 mx-2 transition-colors",
-                                    isCompleted ? "bg-primary" : "bg-muted",
-                                )}
-                            />
-                        )}
+                        {index < totalSteps - 1 && <Separator className={separatorClassName} />}
                     </div>
                 );
             })}
@@ -168,11 +254,8 @@ function OnboardingSection() {
     return (
         <div className="space-y-8">
             <div className="space-y-2">
-                <h2 className="text-2xl font-bold">Welcome to xByte Setup</h2>
-                <p className="text-muted-foreground">
-                    Get started by following these simple steps to integrate xByte into your
-                    platform.
-                </p>
+                <h2 className="text-2xl font-bold">{onboardingSection.title}</h2>
+                <p className="text-muted-foreground">{onboardingSection.description}</p>
             </div>
             <Separator />
             <Paragraph {...paragraph} title={undefined} />
@@ -194,8 +277,8 @@ function IntegrateProviderSection() {
 
         try {
             const { status: clientStatus, data: client } = await xbyteClient.createClient({
-                name: "platformA",
-                wallet: "0x1234567890123456789012345678901234567890",
+                name: clientConfig.name,
+                wallet: clientConfig.wallet,
             });
             if (clientStatus !== "Success" || !client.id) {
                 setIsLoading(false);
@@ -218,7 +301,7 @@ function IntegrateProviderSection() {
                 });
             }
         } catch (error) {
-            console.error("Failed to connect provider:", error);
+            console.error(errorMessages.failedToConnectProvider, error);
         } finally {
             setIsLoading(false);
         }
@@ -227,10 +310,8 @@ function IntegrateProviderSection() {
     return (
         <div className="space-y-8">
             <div className="space-y-2">
-                <h2 className="text-2xl font-bold">Connect Your Data Storage</h2>
-                <p className="text-muted-foreground">
-                    Select your preferred data storage provider to connect with xByte.
-                </p>
+                <h2 className="text-2xl font-bold">{integrateProviderSection.title}</h2>
+                <p className="text-muted-foreground">{integrateProviderSection.description}</p>
             </div>
 
             <Separator />
@@ -238,37 +319,40 @@ function IntegrateProviderSection() {
             <Paragraph {...paragraph} title={undefined} />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {integrationOptions.map((option, index) => (
-                    <div
-                        key={index}
-                        className={cn(
-                            "relative",
-                            selectedProvider === option.titleText && "ring-2 ring-primary",
-                        )}
-                    >
-                        <Optionable
-                            {...option}
-                            onClick={() => handleProviderClick(option.titleText)}
-                        />
-                        {selectedProvider === option.titleText && isConnected && (
-                            <div className="absolute top-2 right-2">
-                                <CheckCircle className="size-5 text-primary" />
-                            </div>
-                        )}
-                        {selectedProvider === option.titleText && isLoading && (
-                            <div className="absolute top-2 right-2">
-                                <Loader2 className="size-5 text-primary animate-spin" />
-                            </div>
-                        )}
-                    </div>
-                ))}
+                {integrationOptions.map((option, index) => {
+                    const className = cn(
+                        "relative",
+                        selectedProvider === option.titleText && "ring-2 ring-primary",
+                    );
+
+                    return (
+                        <div key={index} className={className}>
+                            <Optionable
+                                {...option}
+                                onClick={() => handleProviderClick(option.titleText)}
+                            />
+                            {selectedProvider === option.titleText && isConnected && (
+                                <div className="absolute top-2 right-2">
+                                    <CheckCircle className="size-5 text-primary" />
+                                </div>
+                            )}
+                            {selectedProvider === option.titleText && isLoading && (
+                                <div className="absolute top-2 right-2">
+                                    <Loader2 className="size-5 text-primary animate-spin" />
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
             </div>
 
             {buckets.length > 0 && (
                 <div className="space-y-4 p-6 bg-muted rounded-lg">
                     <div className="flex items-center gap-2">
                         <CheckCircle2 className="size-5 text-primary" />
-                        <h3 className="text-lg font-semibold">Connected Buckets</h3>
+                        <h3 className="text-lg font-semibold">
+                            {integrateProviderSection.connectedBucketsTitle}
+                        </h3>
                     </div>
                     <div className="space-y-2">
                         {buckets.map((bucket, index) => (
@@ -286,7 +370,7 @@ function IntegrateProviderSection() {
 
             {buckets.length === 0 && !isLoading && selectedProvider && (
                 <div className="p-4 bg-muted rounded-lg text-sm text-muted-foreground">
-                    No buckets found. Please ensure your storage provider is properly configured.
+                    {integrateProviderSection.noBucketsMessage}
                 </div>
             )}
         </div>
@@ -316,7 +400,7 @@ function SetWalletSection() {
             setDeployedVault(computedVault);
             setIsDeployed(vault.length !== 0);
         } catch (error) {
-            console.error("Failed to check vault:", error);
+            console.error(errorMessages.failedToCheckVault, error);
         } finally {
             setIsChecking(false);
         }
@@ -329,11 +413,11 @@ function SetWalletSection() {
             await sendTransaction({
                 to: XBYTE_FACTORY_ADDRESS,
                 data: xbyteEvmClient.signatureCreateVault(),
-                chainId: 84532,
+                chainId: vaultConfig.chainId,
             });
-            setTimeout(() => checkVault(), 3000);
+            setTimeout(() => checkVault(), vaultConfig.checkDelay);
         } catch (error) {
-            console.error("Failed to create vault:", error);
+            console.error(errorMessages.failedToCreateVault, error);
         } finally {
             setIsCreating(false);
         }
@@ -344,9 +428,11 @@ function SetWalletSection() {
             <div className="space-y-4 text-center py-8">
                 <Wallet className="size-12 mx-auto text-muted-foreground" />
                 <div className="space-y-2">
-                    <h3 className="text-lg font-semibold">Wallet Not Connected</h3>
+                    <h3 className="text-lg font-semibold">
+                        {setWalletSection.walletNotConnectedTitle}
+                    </h3>
                     <p className="text-muted-foreground">
-                        Please connect your wallet to continue with the setup.
+                        {setWalletSection.walletNotConnectedMessage}
                     </p>
                 </div>
             </div>
@@ -356,41 +442,43 @@ function SetWalletSection() {
     return (
         <div className="space-y-8">
             <div className="space-y-2">
-                <h2 className="text-2xl font-bold">Configure Your Wallet</h2>
-                <p className="text-muted-foreground">
-                    Set up your wallet address and create a vault to receive payments.
-                </p>
+                <h2 className="text-2xl font-bold">{setWalletSection.title}</h2>
+                <p className="text-muted-foreground">{setWalletSection.description}</p>
             </div>
 
             <Separator />
 
             <div className="space-y-6">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Your Wallet Address</label>
+                    <label className="text-sm font-medium">
+                        {setWalletSection.walletAddressLabel}
+                    </label>
                     <Input value={wallet} disabled className="font-mono" />
                     <p className="text-xs text-muted-foreground">
-                        This wallet will receive payments from content consumption.
+                        {setWalletSection.walletAddressHelper}
                     </p>
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Vault Address</label>
+                    <label className="text-sm font-medium">
+                        {setWalletSection.vaultAddressLabel}
+                    </label>
                     {isChecking ? (
                         <div className="flex items-center gap-2 p-3 bg-muted rounded border">
                             <Loader2 className="size-4 animate-spin text-muted-foreground" />
                             <span className="text-sm text-muted-foreground">
-                                Checking vault status...
+                                {setWalletSection.checkingVaultStatus}
                             </span>
                         </div>
                     ) : (
                         <>
                             <Input
-                                value={deployedVault || "Not computed"}
+                                value={deployedVault || setWalletSection.vaultNotComputed}
                                 disabled
                                 className="font-mono"
                             />
                             <p className="text-xs text-muted-foreground">
-                                Your unique vault address for receiving x402 payments.
+                                {setWalletSection.vaultAddressHelper}
                             </p>
                         </>
                     )}
@@ -400,15 +488,16 @@ function SetWalletSection() {
                     <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
                         <div className="flex items-center gap-2">
                             <CheckCircle2 className="size-5 text-primary" />
-                            <span className="font-medium">Vault is deployed and ready</span>
+                            <span className="font-medium">
+                                {setWalletSection.vaultDeployedMessage}
+                            </span>
                         </div>
                     </div>
                 ) : (
                     <div className="space-y-4">
                         <div className="p-4 bg-muted rounded-lg">
                             <p className="text-sm text-muted-foreground">
-                                Create a vault contract to receive and manage payments. This is a
-                                one-time transaction.
+                                {setWalletSection.createVaultDescription}
                             </p>
                         </div>
                         <Button
@@ -420,10 +509,10 @@ function SetWalletSection() {
                             {isCreating ? (
                                 <>
                                     <Loader2 className="size-4 animate-spin" />
-                                    Creating Vault...
+                                    {setWalletSection.creatingVault}
                                 </>
                             ) : (
-                                "Create Vault"
+                                setWalletSection.createVaultButton
                             )}
                         </Button>
                     </div>
@@ -438,7 +527,7 @@ function SetPriceSection() {
     const [objects, setObjects] = useState<string[]>([]);
     const [selectedBucket, setSelectedBucket] = useState<string>("");
     const [selectedObject, setSelectedObject] = useState<string>("");
-    const [price, setPrice] = useState<number>(0.0001);
+    const [price, setPrice] = useState<number>(setPriceSection.defaultPrice);
     const [isLoading, setIsLoading] = useState(false);
     const [isSettingPrice, setIsSettingPrice] = useState(false);
     const [priceSet, setPriceSet] = useState(false);
@@ -455,7 +544,7 @@ function SetPriceSection() {
                 }
             }
         } catch (error) {
-            console.error("Failed to load buckets:", error);
+            console.error(errorMessages.failedToLoadBuckets, error);
         } finally {
             setIsLoading(false);
         }
@@ -472,7 +561,7 @@ function SetPriceSection() {
                 }
             }
         } catch (error) {
-            console.error("Failed to load objects:", error);
+            console.error(errorMessages.failedToLoadObjects, error);
         } finally {
             setIsLoading(false);
         }
@@ -490,7 +579,7 @@ function SetPriceSection() {
             });
             setPriceSet(true);
         } catch (error) {
-            console.error("Failed to set price:", error);
+            console.error(errorMessages.failedToSetPrice, error);
         } finally {
             setIsSettingPrice(false);
         }
@@ -503,10 +592,8 @@ function SetPriceSection() {
     return (
         <div className="space-y-8">
             <div className="space-y-2">
-                <h2 className="text-2xl font-bold">Set Content Pricing</h2>
-                <p className="text-muted-foreground">
-                    Configure pricing for your content. Choose between API or manual pricing.
-                </p>
+                <h2 className="text-2xl font-bold">{setPriceSection.title}</h2>
+                <p className="text-muted-foreground">{setPriceSection.description}</p>
             </div>
 
             <Separator />
@@ -522,7 +609,9 @@ function SetPriceSection() {
             <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Select Bucket</label>
+                        <label className="text-sm font-medium">
+                            {setPriceSection.selectBucketLabel}
+                        </label>
                         <select
                             value={selectedBucket}
                             onChange={(e) => {
@@ -533,7 +622,7 @@ function SetPriceSection() {
                             disabled={isLoading || buckets.length === 0}
                         >
                             {buckets.length === 0 ? (
-                                <option>No buckets available</option>
+                                <option>{setPriceSection.noBucketsAvailable}</option>
                             ) : (
                                 buckets.map((bucket) => (
                                     <option key={bucket} value={bucket}>
@@ -545,7 +634,9 @@ function SetPriceSection() {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Select Object</label>
+                        <label className="text-sm font-medium">
+                            {setPriceSection.selectObjectLabel}
+                        </label>
                         <select
                             value={selectedObject}
                             onChange={(e) => setSelectedObject(e.target.value)}
@@ -553,7 +644,7 @@ function SetPriceSection() {
                             disabled={isLoading || objects.length === 0}
                         >
                             {objects.length === 0 ? (
-                                <option>No objects available</option>
+                                <option>{setPriceSection.noObjectsAvailable}</option>
                             ) : (
                                 objects.map((object) => (
                                     <option key={object} value={object}>
@@ -566,10 +657,12 @@ function SetPriceSection() {
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Price per Byte (USDC)</label>
+                    <label className="text-sm font-medium">
+                        {setPriceSection.pricePerByteLabel}
+                    </label>
                     <div className="flex gap-2">
                         <Input
-                            placeholder="0.0001"
+                            placeholder={setPriceSection.pricePlaceholder}
                             value={price}
                             onChange={(e) => setPrice(Number(e.target.value))}
                             type="number"
@@ -584,23 +677,21 @@ function SetPriceSection() {
                             {isSettingPrice ? (
                                 <>
                                     <Loader2 className="size-4 animate-spin" />
-                                    Setting...
+                                    {setPriceSection.settingPrice}
                                 </>
                             ) : (
-                                "Set Price"
+                                setPriceSection.setPriceButton
                             )}
                         </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                        Set the price users will pay per byte consumed for this content.
-                    </p>
+                    <p className="text-xs text-muted-foreground">{setPriceSection.priceHelper}</p>
                 </div>
 
                 {priceSet && (
                     <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
                         <div className="flex items-center gap-2">
                             <CheckCircle2 className="size-5 text-primary" />
-                            <span className="font-medium">Price set successfully</span>
+                            <span className="font-medium">{setPriceSection.priceSetSuccess}</span>
                         </div>
                     </div>
                 )}
@@ -615,18 +706,18 @@ function SetSDKSection() {
 
     const generateApiKey = async () => {
         setIsGenerating(true);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setApiKey("XB-" + Math.random().toString(36).substring(2, 15).toUpperCase());
+        await new Promise((resolve) => setTimeout(resolve, apiKeyConfig.generationDelay));
+        setApiKey(
+            setSDKSection.apiKeyPrefix + Math.random().toString(36).substring(2, 15).toUpperCase(),
+        );
         setIsGenerating(false);
     };
 
     return (
         <div className="space-y-8">
             <div className="space-y-2">
-                <h2 className="text-2xl font-bold">Get Your API Key</h2>
-                <p className="text-muted-foreground">
-                    Generate your API key to integrate xByte SDK into your platform.
-                </p>
+                <h2 className="text-2xl font-bold">{setSDKSection.title}</h2>
+                <p className="text-muted-foreground">{setSDKSection.description}</p>
             </div>
 
             <Separator />
@@ -635,10 +726,10 @@ function SetSDKSection() {
 
             <div className="space-y-6">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Your API Key</label>
+                    <label className="text-sm font-medium">{setSDKSection.apiKeyLabel}</label>
                     <div className="flex gap-2">
                         <Input
-                            value={apiKey || "Click Generate to create your API key"}
+                            value={apiKey || setSDKSection.apiKeyPlaceholder}
                             disabled
                             className="font-mono"
                         />
@@ -646,26 +737,23 @@ function SetSDKSection() {
                             {isGenerating ? (
                                 <>
                                     <Loader2 className="size-4 animate-spin" />
-                                    Generating...
+                                    {setSDKSection.generating}
                                 </>
                             ) : (
-                                "Generate"
+                                setSDKSection.generateButton
                             )}
                         </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                        Keep this key secure. It will be used to authenticate your platform with
-                        xByte.
-                    </p>
+                    <p className="text-xs text-muted-foreground">{setSDKSection.apiKeyHelper}</p>
                 </div>
 
                 {apiKey && (
                     <div className="p-4 bg-muted rounded-lg space-y-2">
-                        <h3 className="font-semibold">Next Steps</h3>
+                        <h3 className="font-semibold">{setSDKSection.nextStepsTitle}</h3>
                         <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                            <li>Install xByte SDK in your project</li>
-                            <li>Configure the SDK with your API key</li>
-                            <li>Start integrating pay-per-byte payments</li>
+                            {setSDKSection.nextSteps.map((step, index) => (
+                                <li key={index}>{step}</li>
+                            ))}
                         </ul>
                     </div>
                 )}
@@ -691,10 +779,8 @@ function OnboardedSection() {
                 </div>
             </div>
             <div className="space-y-2">
-                <h2 className="text-3xl font-bold">Setup Complete!</h2>
-                <p className="text-muted-foreground text-lg">
-                    Your xByte integration is ready. Start monetizing your content today.
-                </p>
+                <h2 className="text-3xl font-bold">{onboardedSection.title}</h2>
+                <p className="text-muted-foreground text-lg">{onboardedSection.description}</p>
             </div>
             <Separator />
             <CallToAction {...heroSection} />
