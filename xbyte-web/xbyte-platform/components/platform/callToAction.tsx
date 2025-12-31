@@ -31,9 +31,9 @@ export default function CallToAction({
 
     return (
         <div className="flex flex-col items-center justify-center gap-8 py-36">
-            <div className="text-4xl font-bold text-center">
-                <h1>{titleText}</h1>
-                <h1 className="text-muted-foreground/80">{descriptionText}</h1>
+            <div className="text-center space-y-1">
+                <h1 className="text-4xl font-bold">{titleText}</h1>
+                <h1 className="text-3xl font-medium text-muted-foreground/80">{descriptionText}</h1>
             </div>
 
             <div className="flex items-center gap-2">

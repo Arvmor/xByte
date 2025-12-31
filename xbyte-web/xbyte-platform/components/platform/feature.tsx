@@ -32,9 +32,9 @@ export default function Feature({
             </div>
 
             {/* Title */}
-            <div className="text-2xl">
+            <div className="text-lg">
                 <h1 className="font-bold">{title}</h1>
-                <p className="font-medium text-muted-foreground/80">{description}</p>
+                <p className="text-md text-muted-foreground/80">{description}</p>
             </div>
         </div>
     );
