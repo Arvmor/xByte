@@ -11,7 +11,7 @@ import Optionable from "@/components/platform/optionable";
 import CallToAction from "@/components/platform/callToAction";
 import { xByteClient, xByteEvmClient, XBYTE_FACTORY_ADDRESS } from "xbyte-sdk";
 import { usePrivy } from "@privy-io/react-auth";
-import { CheckCircle2, Loader2, Wallet, CheckCircle } from "lucide-react";
+import { CheckCircle2, Loader2, Wallet, CheckCircle, Dot } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -270,6 +270,13 @@ function IntegrateProviderSection() {
     const [isConnected, setIsConnected] = useState(false);
     const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
 
+    const SelectIcon = () => (
+        <div className="absolute top-2 right-2">
+            {isConnected && <CheckCircle className="size-5 text-primary" />}
+            {isLoading && !isConnected && <Loader2 className="size-5 text-primary animate-spin" />}
+        </div>
+    );
+
     const handleProviderClick = async (providerName: string) => {
         setSelectedProvider(providerName);
         setIsLoading(true);
@@ -319,31 +326,15 @@ function IntegrateProviderSection() {
             <Paragraph {...paragraph} title={undefined} />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {integrationOptions.map((option, index) => {
-                    const className = cn(
-                        "relative",
-                        selectedProvider === option.titleText && "ring-2 ring-primary",
-                    );
-
-                    return (
-                        <div key={index} className={className}>
-                            <Optionable
-                                {...option}
-                                onClick={() => handleProviderClick(option.titleText)}
-                            />
-                            {selectedProvider === option.titleText && isConnected && (
-                                <div className="absolute top-2 right-2">
-                                    <CheckCircle className="size-5 text-primary" />
-                                </div>
-                            )}
-                            {selectedProvider === option.titleText && isLoading && (
-                                <div className="absolute top-2 right-2">
-                                    <Loader2 className="size-5 text-primary animate-spin" />
-                                </div>
-                            )}
-                        </div>
-                    );
-                })}
+                {integrationOptions.map((option, index) => (
+                    <div key={index} className="relative">
+                        <Optionable
+                            {...option}
+                            onClick={() => handleProviderClick(option.titleText)}
+                        />
+                        {selectedProvider === option.titleText && <SelectIcon />}
+                    </div>
+                ))}
             </div>
 
             {buckets.length > 0 && (
@@ -358,9 +349,9 @@ function IntegrateProviderSection() {
                         {buckets.map((bucket, index) => (
                             <div
                                 key={index}
-                                className="flex items-center gap-2 p-3 bg-background rounded border"
+                                className="flex items-center gap-2 p-3 bg-background rounded-sm border"
                             >
-                                <div className="size-2 rounded-full bg-primary" />
+                                <Dot className="size-8" />
                                 <span className="font-mono text-sm">{bucket}</span>
                             </div>
                         ))}
