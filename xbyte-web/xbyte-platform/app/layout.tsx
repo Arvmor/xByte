@@ -45,13 +45,12 @@ const footerLinks: FooterLinkProps[][] = [
             label: "Get Started",
         },
         {
+            label: "Payout",
+            href: "/payout",
+        },
+        {
             label: "Integration",
-        },
-        {
-            label: "Pricing",
-        },
-        {
-            label: "Sign Up",
+            href: "/setup",
         },
     ],
     [
@@ -60,28 +59,14 @@ const footerLinks: FooterLinkProps[][] = [
             label: "Platform",
         },
         {
-            label: "xByte-SDK",
+            label: "FAQ",
         },
         {
             label: "API Docs",
         },
         {
-            label: "FAQ",
-        },
-    ],
-    [
-        {
-            isTitle: true,
-            label: "About",
-        },
-        {
-            label: "Company",
-        },
-        {
-            label: "Blog",
-        },
-        {
-            label: "Support",
+            label: "xByte SDK",
+            href: "https://github.com/Arvmor/xByte/tree/master/xbyte-web/xbyte-sdk",
         },
     ],
     [
@@ -96,9 +81,6 @@ const footerLinks: FooterLinkProps[][] = [
         {
             label: "Privacy",
             href: "/privacy",
-        },
-        {
-            label: "Security",
         },
     ],
 ];

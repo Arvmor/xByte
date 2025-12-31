@@ -16,6 +16,7 @@ export default function AppFooter({ links }: { links: FooterLinkProps[][] }) {
                 <Link
                     key={index}
                     href={href ?? "#"}
+                    target="_blank"
                     className={cn(
                         isTitle && "font-semibold text-primary!",
                         "text-sm text-muted-foreground",
@@ -34,7 +35,7 @@ export default function AppFooter({ links }: { links: FooterLinkProps[][] }) {
             <div className="flex flex-col md:flex-row justify-between gap-16">
                 <AppLogo isSecondary />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-16">
                     {footerLinks}
                 </div>
             </div>
