@@ -41,14 +41,7 @@ const stepSection = new Map<SetupStep, React.ReactNode>([
     [SetupStep.Onboarded, <OnboardedSection />],
 ]);
 
-const stepLabels = [
-    "Welcome",
-    "Connect Storage",
-    "Set Wallet",
-    "Set Pricing",
-    "Get SDK",
-    "Complete",
-];
+const stepLabels = ["Welcome", "Connect", "Set Wallet", "Set Pricing", "Get SDK", "Complete"];
 
 const pageHeader = {
     title: "Setup xByte Integration",
@@ -389,7 +382,7 @@ function SetWalletSection() {
             const computedVault = await xbyteEvmClient.getComputeVaultAddress(wallet);
             const vault = await xbyteEvmClient.getVault(wallet);
             setDeployedVault(computedVault);
-            setIsDeployed(vault.length !== 0);
+            setIsDeployed(vault.some((v) => v !== "0x0000000000000000000000000000000000000000"));
         } catch (error) {
             console.error(errorMessages.failedToCheckVault, error);
         } finally {
