@@ -18,7 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Address, formatEther, formatUnits } from "viem";
 
-const xbyteEvmClient = new xByteEvmClient();
+const xbyteEvmClient = new xByteEvmClient(process.env.NEXT_PUBLIC_RPC_URL);
 
 const pageHeader = {
     title: "xByte Payout",
@@ -26,8 +26,8 @@ const pageHeader = {
 };
 
 const vaultConfig = {
-    chainId: 84532,
-    refreshDelay: 3000,
+    chainId: Number(process.env.NEXT_PUBLIC_CHAIN_ID),
+    refreshDelay: 1000,
 };
 
 const errorMessages = {

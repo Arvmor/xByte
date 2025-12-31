@@ -22,10 +22,12 @@ export const metadata: Metadata = {
 
 const headerLinks: HeaderLinkProps[] = [
     {
-        label: "Integration",
+        label: "Setup",
+        href: "/setup",
     },
     {
-        label: "Pricing",
+        label: "Payout",
+        href: "/payout",
     },
     {
         label: "API Docs",
@@ -39,13 +41,12 @@ const footerLinks: FooterLinkProps[][] = [
             label: "Get Started",
         },
         {
-            label: "Integration",
+            label: "Payout",
+            href: "/payout",
         },
         {
-            label: "Pricing",
-        },
-        {
-            label: "Sign Up",
+            label: "Setup",
+            href: "/setup",
         },
     ],
     [
@@ -54,28 +55,14 @@ const footerLinks: FooterLinkProps[][] = [
             label: "Platform",
         },
         {
-            label: "xByte-SDK",
+            label: "FAQ",
         },
         {
             label: "API Docs",
         },
         {
-            label: "FAQ",
-        },
-    ],
-    [
-        {
-            isTitle: true,
-            label: "About",
-        },
-        {
-            label: "Company",
-        },
-        {
-            label: "Blog",
-        },
-        {
-            label: "Support",
+            label: "xByte SDK",
+            href: "https://github.com/Arvmor/xByte/tree/master/xbyte-web/xbyte-sdk",
         },
     ],
     [
@@ -85,12 +72,11 @@ const footerLinks: FooterLinkProps[][] = [
         },
         {
             label: "Terms",
+            href: "/terms",
         },
         {
             label: "Privacy",
-        },
-        {
-            label: "Security",
+            href: "/privacy",
         },
     ],
 ];
