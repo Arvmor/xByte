@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 const headerLinks: HeaderLinkProps[] = [
     {
-        label: "Integration",
+        label: "Setup",
         href: "/setup",
     },
     {
@@ -45,7 +45,7 @@ const footerLinks: FooterLinkProps[][] = [
             href: "/payout",
         },
         {
-            label: "Integration",
+            label: "Setup",
             href: "/setup",
         },
     ],
