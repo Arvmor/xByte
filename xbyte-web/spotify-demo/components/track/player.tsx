@@ -10,7 +10,7 @@ import { Slider } from "@/components/ui/slider";
 import { Input } from "../ui/input";
 import { UUID } from "crypto";
 
-const PLAY_URL = `http://127.0.0.1:80/s3/bucket`;
+const PLAY_URL = `${process.env.NEXT_PUBLIC_XBYTE_URL}/s3/bucket`;
 
 /** The MIME types */
 const AUDIO_MIME = "audio/mpeg";
