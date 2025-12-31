@@ -1,8 +1,5 @@
 use xbyte_api::Server;
 
-const SERVER_ADDR: &str = "127.0.0.1:80";
-const RPC_URL: &str = "https://sepolia.base.org";
-
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // Initialize Logging
@@ -13,8 +10,11 @@ async fn main() -> anyhow::Result<()> {
     #[cfg(debug_assertions)]
     dotenv::dotenv().ok();
 
+    let rpc_url = std::env::var("RPC_URL").expect("ENV Variable RPC_URL is not set");
+    let server_addr = std::env::var("SERVER_ADDR").expect("ENV Variable SERVER_ADDR is not set");
+
     // Start the API server
-    let server = Server::new(SERVER_ADDR, RPC_URL);
+    let server = Server::new(server_addr, rpc_url);
     server.run().await?;
 
     Ok(())

@@ -26,8 +26,8 @@ enum SetupStep {
     Onboarded,
 }
 
-const xbyteClient = new xByteClient();
-const xbyteEvmClient = new xByteEvmClient();
+const xbyteClient = new xByteClient(process.env.NEXT_PUBLIC_XBYTE_URL);
+const xbyteEvmClient = new xByteEvmClient(process.env.NEXT_PUBLIC_RPC_URL);
 
 /**
  * The section for each step.
