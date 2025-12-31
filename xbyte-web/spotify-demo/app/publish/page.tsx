@@ -1,12 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
 import { xByteClient } from "xbyte-sdk";
 import PublishForm from "@/components/publish/form";
 
-export default function PublishPage() {
-    const client = useMemo(() => new xByteClient(), []);
+const client = new xByteClient(process.env.NEXT_PUBLIC_XBYTE_URL);
 
+export default function PublishPage() {
     return (
         <div className="flex min-h-screen items-center justify-center p-4">
             <main className="flex w-full flex-col items-center gap-8 py-16">
