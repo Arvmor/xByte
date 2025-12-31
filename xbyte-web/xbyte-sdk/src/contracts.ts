@@ -1,5 +1,5 @@
 import { Abi, Address, createPublicClient, encodeFunctionData, getContract, http } from "viem";
-import { XBYTE_FACTORY_ABI, XBYTE_FACTORY_ADDRESS } from "./abi";
+import { XBYTE_FACTORY_ABI, XBYTE_FACTORY_ADDRESS, ERC20_ABI, XBYTE_VAULT_ABI } from "./abi";
 import { baseSepolia } from "viem/chains";
 
 /**
@@ -96,10 +96,11 @@ export class xByteEvmClient {
      * Get a signature for the withdraw ERC20 function
      * @returns The signature for the withdraw ERC20 function
      */
-    signatureWithdrawERC20() {
+    signatureWithdrawERC20(tokenAddress: Address) {
         return this.getSignature({
             abi: XBYTE_FACTORY_ABI,
             functionName: "withdrawERC20",
+            args: [tokenAddress],
         });
     }
 
@@ -139,5 +140,59 @@ export class xByteEvmClient {
     async getComputeVaultAddress(owner: Address): Promise<Address> {
         const result = await this.xByteFactory.read.computeVaultAddress([owner]);
         return result as Address;
+    }
+
+    /**
+     * Get the native balance of a vault
+     * @param vaultAddress The address of the vault
+     * @returns The native balance of the vault in wei
+     */
+    async getVaultBalance(vaultAddress: Address): Promise<bigint> {
+        return await this.publicClient.getBalance({ address: vaultAddress });
+    }
+
+    /**
+     * Get the ERC20 token balance of a vault
+     * @param vaultAddress The address of the vault
+     * @param tokenAddress The address of the ERC20 token
+     * @returns The ERC20 token balance of the vault
+     */
+    async getVaultERC20Balance(vaultAddress: Address, tokenAddress: Address): Promise<bigint> {
+        const tokenContract = this.getContract({
+            address: tokenAddress,
+            abi: ERC20_ABI,
+        });
+        const result = await tokenContract.read.balanceOf([vaultAddress]);
+        return result as bigint;
+    }
+
+    /**
+     * Get vault events (WithdrawNative and Withdraw)
+     * @param vaultAddress The address of the vault
+     * @param fromBlock The block number to start from
+     * @returns Array of vault events
+     */
+    async getVaultEvents(address: Address, fromBlock?: bigint, toBlock?: bigint) {
+        if (!fromBlock && !toBlock) {
+            const latestBlock = await this.publicClient.getBlockNumber();
+            toBlock = latestBlock;
+            fromBlock = latestBlock - 100000n;
+        }
+
+        const withdrawNativeEvents = await this.publicClient.getLogs({
+            address,
+            event: XBYTE_VAULT_ABI.find((e) => e.type === "event" && e.name === "WithdrawNative"),
+            fromBlock,
+            toBlock,
+        });
+
+        const withdrawEvents = await this.publicClient.getLogs({
+            address,
+            event: XBYTE_VAULT_ABI.find((e) => e.type === "event" && e.name === "Withdraw"),
+            fromBlock,
+            toBlock,
+        });
+
+        return [...withdrawNativeEvents, ...withdrawEvents];
     }
 }
