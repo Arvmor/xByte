@@ -13,7 +13,7 @@ const xbyteEvmClient = new xByteEvmClient(process.env.NEXT_PUBLIC_RPC_URL);
 
 /** The header component for the app */
 export default function AppHeader() {
-    const { user, login } = usePrivy();
+    const { authenticated, user, connectOrCreateWallet } = usePrivy();
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -46,7 +46,8 @@ export default function AppHeader() {
 
                     {/* User info*/}
                     <div className="flex items-center">
-                        {user ? <UserInfo user={user} /> : <Onboarding onClick={login} />}
+                        {authenticated && user && <UserInfo user={user} />}
+                        {!authenticated && <Onboarding onClick={connectOrCreateWallet} />}
                     </div>
                 </div>
             </div>
