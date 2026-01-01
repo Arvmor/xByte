@@ -53,7 +53,7 @@ const balanceSection = {
     title: "Balances",
     description: "Withdrawable amounts in your vault",
     nativeBalanceLabel: "Native Balance",
-    erc20BalanceLabel: "ERC20 Balance",
+    erc20BalanceLabel: "USDC Balance",
     tokenAddressLabel: "Token Address",
     tokenAddressPlaceholder: "0x...",
     refreshButton: "Refresh",
@@ -112,9 +112,9 @@ export default function PayoutPage() {
                 <p className="text-muted-foreground">{pageHeader.description}</p>
             </div>
 
-            <VaultStatusSection wallet={wallet} />
             <BalanceSection wallet={wallet} />
             <WithdrawSection wallet={wallet} />
+            <VaultStatusSection wallet={wallet} />
             <HistorySection wallet={wallet} />
         </div>
     );
@@ -217,7 +217,7 @@ function VaultStatusSection({ wallet }: { wallet: `0x${string}` }) {
 function BalanceSection({ wallet }: { wallet: `0x${string}` }) {
     const [nativeBalance, setNativeBalance] = useState<bigint>(0n);
     const [erc20Balance, setERC20Balance] = useState<bigint>(0n);
-    const [tokenAddress, setTokenAddress] = useState<string>("");
+    const [tokenAddress, setTokenAddress] = useState<string>(process.env.NEXT_PUBLIC_USDC_ADDRESS!);
     const [isLoading, setIsLoading] = useState(false);
     const [vaultAddress, setVaultAddress] = useState<Address | null>(null);
 
@@ -314,7 +314,7 @@ function BalanceSection({ wallet }: { wallet: `0x${string}` }) {
                             ) : (
                                 <span className="text-lg font-semibold">
                                     {erc20Balance > 0n && tokenAddress
-                                        ? `${formatUnits(erc20Balance, 18)}`
+                                        ? `${formatUnits(erc20Balance, 6)}`
                                         : balanceSection.noBalance}
                                 </span>
                             )}
