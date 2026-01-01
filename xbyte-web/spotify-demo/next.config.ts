@@ -10,6 +10,9 @@ try {
 const nextConfig: NextConfig = {
     output: "export",
     transpilePackages: ["xbyte-sdk"],
+    images: {
+        unoptimized: true,
+    },
     /* config options here */
 };
 

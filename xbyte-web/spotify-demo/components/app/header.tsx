@@ -11,30 +11,45 @@ export default function AppHeader() {
     const { user, connectOrCreateWallet } = usePrivy();
 
     return (
-        <div className="flex p-4 justify-between">
-            {/* Logo */}
-            <Link href="/">
-                <h2 className="text-2xl font-bold">Spotify x Netflix</h2>
-            </Link>
+        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex h-16 items-center justify-between gap-4">
+                    {/* Logo */}
+                    <Link href="/" className="flex items-center">
+                        <h2 className="text-xl sm:text-2xl font-bold transition-colors hover:text-primary">
+                            Spotify x Netflix
+                        </h2>
+                    </Link>
 
-            {/* Search bar */}
-            <div className="flex gap-2">
-                <Link href="/">
-                    <Button variant="outline" size="icon">
-                        <Home />
-                    </Button>
-                </Link>
-                <Link href="/publish">
-                    <Button variant="outline" size="icon">
-                        <Upload />
-                    </Button>
-                </Link>
-                <Input placeholder="What do you want to play?" />
+                    {/* Search bar and navigation */}
+                    <div className="flex flex-1 items-center justify-center gap-2 max-w-md mx-4">
+                        <Link href="/">
+                            <Button variant="ghost" size="icon" className="hidden sm:flex">
+                                <Home className="size-4" />
+                            </Button>
+                        </Link>
+                        <Input
+                            placeholder="What do you want to play?"
+                            className="w-full hidden sm:flex"
+                        />
+                        <Link href="/publish">
+                            <Button variant="ghost" size="icon">
+                                <Upload className="size-4" />
+                            </Button>
+                        </Link>
+                    </div>
+
+                    {/* User info*/}
+                    <div className="flex items-center">
+                        {user ? (
+                            <UserInfo user={user} />
+                        ) : (
+                            <Onboarding onClick={connectOrCreateWallet} />
+                        )}
+                    </div>
+                </div>
             </div>
-
-            {/* User info*/}
-            {user ? <UserInfo user={user} /> : <Onboarding onClick={connectOrCreateWallet} />}
-        </div>
+        </header>
     );
 }
 
@@ -42,10 +57,10 @@ export default function AppHeader() {
 function Onboarding({ onClick }: { onClick: () => void }) {
     return (
         <div className="flex gap-2">
-            <Button variant="ghost" onClick={onClick}>
+            <Button variant="ghost" onClick={onClick} className="hidden sm:flex">
                 Sign up
             </Button>
-            <Button variant="outline" onClick={onClick}>
+            <Button variant="default" onClick={onClick} size="sm">
                 Login
             </Button>
         </div>
@@ -66,13 +81,16 @@ function UserInfo({ user }: { user: User }) {
     return (
         <div className="flex items-center gap-2">
             {/* Address */}
-            <div className="flex bg-accent px-3 py-2 rounded-md items-center gap-2">
-                <Copy className="size-4" onClick={handleCopy} />
-                <p className="text-sm">{shortAddress}</p>
+            <div className="hidden sm:flex bg-accent px-3 py-2 rounded-md items-center gap-2 hover:bg-accent/80 transition-colors cursor-pointer group">
+                <Copy
+                    className="size-4 text-muted-foreground group-hover:text-foreground transition-colors"
+                    onClick={handleCopy}
+                />
+                <p className="text-sm font-mono">{shortAddress}</p>
             </div>
             {/* Avatar */}
-            <div className="size-10 rounded-full bg-accent flex items-center justify-center">
-                <User2 className="size-5" />
+            <div className="size-9 sm:size-10 rounded-full bg-accent flex items-center justify-center hover:bg-accent/80 transition-colors cursor-pointer">
+                <User2 className="size-4 sm:size-5" />
             </div>
         </div>
     );

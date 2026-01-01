@@ -33,12 +33,9 @@ interface ChunkState {
 /** The track player component */
 export default function TrackPlayer({ title, name, image, size }: ItemProps) {
     return (
-        <div className="flex flex-col gap-4">
-            <TrackItem title={title} name={name} image={image} size={size} />
-            <XPay>
-                <StreamingPlayer mimeType={AUDIO_MIME} />
-            </XPay>
-        </div>
+        <XPay>
+            <StreamingPlayer mimeType={AUDIO_MIME} />
+        </XPay>
     );
 }
 
@@ -129,8 +126,22 @@ export function StreamingPlayer({ mimeType }: StreamingPlayerProps) {
 
     const hasContent = chunkState !== null && chunkState.chunks.length > 0;
 
+    const formatTime = (seconds: number): string => {
+        if (!isFinite(seconds) || isNaN(seconds)) return "0:00";
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, "0")}`;
+    };
+
+    const handleSeek = (value: number[]) => {
+        if (ref.current && duration > 0) {
+            ref.current.currentTime = value[0];
+            setCurrentTime(value[0]);
+        }
+    };
+
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6 w-full">
             <ContentKeyInput
                 contentKey={contentKey}
                 chunkSize={chunkSize}
@@ -139,49 +150,93 @@ export function StreamingPlayer({ mimeType }: StreamingPlayerProps) {
                 onReset={resetPlayer}
             />
 
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span>Loaded: {formatBytes(totalBytes)}</span>
-                {chunkState && <span>| Chunks: {chunkState.chunks.length}</span>}
-            </div>
-
             {isAudio ? (
                 <audio
                     ref={ref as React.RefObject<HTMLAudioElement>}
                     onTimeUpdate={onTimeUpdate}
+                    onLoadedMetadata={onTimeUpdate}
                     hidden
                 />
             ) : (
-                <video ref={ref as React.RefObject<HTMLVideoElement>} onTimeUpdate={onTimeUpdate} />
+                <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black">
+                    <video
+                        ref={ref as React.RefObject<HTMLVideoElement>}
+                        onTimeUpdate={onTimeUpdate}
+                        onLoadedMetadata={onTimeUpdate}
+                        className="w-full h-full object-contain"
+                        controls={false}
+                    />
+                </div>
             )}
 
-            <div className="flex items-center gap-4">
-                <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handlePlayPause}
-                    disabled={!hasContent}
-                >
-                    {isPlaying ? <Pause /> : <Play />}
-                </Button>
+            <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                    <Slider
+                        value={[currentTime]}
+                        max={duration || 1}
+                        step={0.1}
+                        onValueChange={handleSeek}
+                        className="flex-1"
+                        disabled={!hasContent}
+                    />
+                </div>
 
-                <Slider defaultValue={[0]} value={[currentTime]} max={duration || 1} />
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                        <span>{formatTime(currentTime)}</span>
+                        <span>/</span>
+                        <span>{formatTime(duration)}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <span>Loaded: {formatBytes(totalBytes)}</span>
+                        {chunkState && <span>• {chunkState.chunks.length} chunks</span>}
+                    </div>
+                </div>
 
-                <Button variant="ghost" size="icon" disabled>
-                    <Rewind />
-                </Button>
-                <Button variant="ghost" size="icon" disabled>
-                    <FastForward />
-                </Button>
+                <div className="flex items-center justify-center gap-2 sm:gap-4">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        disabled={!hasContent}
+                        className="size-10 sm:size-12"
+                    >
+                        <Rewind className="size-5" />
+                    </Button>
 
-                <Button
-                    variant="secondary"
-                    size="icon"
-                    onClick={fetchNextChunk}
-                    disabled={!contentKey || isLoading}
-                    title="Fetch & pay for next chunk"
-                >
-                    <Download className={isLoading ? "animate-pulse" : ""} />
-                </Button>
+                    <Button
+                        variant="default"
+                        size="icon"
+                        onClick={handlePlayPause}
+                        disabled={!hasContent}
+                        className="size-14 sm:size-16 rounded-full shadow-lg hover:scale-105 transition-transform"
+                    >
+                        {isPlaying ? (
+                            <Pause className="size-6 sm:size-7 fill-current" />
+                        ) : (
+                            <Play className="size-6 sm:size-7 fill-current ml-0.5" />
+                        )}
+                    </Button>
+
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        disabled={!hasContent}
+                        className="size-10 sm:size-12"
+                    >
+                        <FastForward className="size-5" />
+                    </Button>
+
+                    <Button
+                        variant="secondary"
+                        size="icon"
+                        onClick={fetchNextChunk}
+                        disabled={!contentKey || isLoading}
+                        title="Fetch & pay for next chunk"
+                        className="size-10 sm:size-12"
+                    >
+                        <Download className={`size-5 ${isLoading ? "animate-pulse" : ""}`} />
+                    </Button>
+                </div>
             </div>
         </div>
     );
@@ -190,15 +245,9 @@ export function StreamingPlayer({ mimeType }: StreamingPlayerProps) {
 /** Movie Player component */
 export function MoviePlayer({ title, name }: ItemProps) {
     return (
-        <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-                <h2 className="text-md font-bold">{title}</h2>
-                <h3 className="text-muted-foreground">{name}</h3>
-            </div>
-            <XPay>
-                <StreamingPlayer mimeType={VIDEO_MIME} />
-            </XPay>
-        </div>
+        <XPay>
+            <StreamingPlayer mimeType={VIDEO_MIME} />
+        </XPay>
     );
 }
 
@@ -248,21 +297,30 @@ function ContentKeyInput({
     onReset: () => void;
 }) {
     return (
-        <div className="flex flex-col gap-2">
-            <Input
-                type="text"
-                placeholder="Content UUID"
-                value={contentKey}
-                onChange={(e) => onKeyChange(e.target.value)}
-            />
-            <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-3 p-4 rounded-lg border bg-muted/50">
+            <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium">Content Key</label>
                 <Input
-                    type="number"
-                    placeholder="Chunk size (MB)"
-                    value={chunkSize}
-                    onChange={(e) => onChunkSizeChange(e.target.value)}
+                    type="text"
+                    placeholder="Enter content UUID"
+                    value={contentKey}
+                    onChange={(e) => onKeyChange(e.target.value)}
+                    className="w-full"
                 />
-                <Button variant="outline" size="sm" onClick={onReset}>
+            </div>
+            <div className="flex items-end gap-2">
+                <div className="flex-1 flex flex-col gap-2">
+                    <label className="text-sm font-medium">Chunk Size (MB)</label>
+                    <Input
+                        type="number"
+                        placeholder="1"
+                        value={chunkSize}
+                        onChange={(e) => onChunkSizeChange(e.target.value)}
+                        min="1"
+                        className="w-full"
+                    />
+                </div>
+                <Button variant="outline" size="default" onClick={onReset} className="mb-0">
                     Reset
                 </Button>
             </div>
