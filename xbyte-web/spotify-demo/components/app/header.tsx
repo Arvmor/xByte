@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Copy, Home, Upload, User2 } from "lucide-react";
 import { usePrivy, User, useWallets } from "@privy-io/react-auth";
 import { xByteEvmClient } from "xbyte-sdk";
+import { formatFromDecimals } from "@/lib/utils";
 
 const xbyteEvmClient = new xByteEvmClient(process.env.NEXT_PUBLIC_RPC_URL);
 
@@ -85,7 +86,7 @@ function UserInfo({ user }: { user: User }) {
         xbyteEvmClient
             .getVaultERC20Balance(address, USDC_ADDRESS)
             .then((balance: bigint) => {
-                const formatted = formatUSDC(balance);
+                const formatted = formatFromDecimals(balance, 6n);
                 setUsdcBalance(formatted);
             })
             .catch(() => {
@@ -130,20 +131,4 @@ function UserInfo({ user }: { user: User }) {
             </div>
         </div>
     );
-}
-
-function formatUSDC(balance: bigint): string {
-    const usdcDecimals = 6n;
-    const divisor = 10n ** usdcDecimals;
-    const whole = balance / divisor;
-    const fractional = balance % divisor;
-
-    if (fractional === 0n) {
-        return whole.toString();
-    }
-
-    const fractionalStr = fractional.toString().padStart(6, "0");
-    const trimmed = fractionalStr.replace(/0+$/, "");
-
-    return trimmed ? `${whole}.${trimmed}` : whole.toString();
 }
