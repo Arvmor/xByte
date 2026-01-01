@@ -134,11 +134,6 @@ const errorMessages = {
     failedToSetPrice: "Failed to set price:",
 };
 
-const clientConfig = {
-    name: "platformA",
-    wallet: "0x1234567890123456789012345678901234567890",
-};
-
 const vaultConfig = {
     chainId: 84532,
     checkDelay: 3000,
@@ -258,6 +253,7 @@ function OnboardingSection() {
 }
 
 function IntegrateProviderSection() {
+    const { user } = usePrivy();
     const [buckets, setBuckets] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
@@ -276,9 +272,13 @@ function IntegrateProviderSection() {
         setIsConnected(false);
 
         try {
+            if (!user?.id || !user?.wallet?.address) {
+                throw new Error("User not authenticated");
+            }
+
             const { status: clientStatus, data: client } = await xbyteClient.createClient({
-                name: clientConfig.name,
-                wallet: clientConfig.wallet,
+                name: user.id,
+                wallet: user.wallet.address,
             });
             if (clientStatus !== "Success" || !client.id) {
                 setIsLoading(false);
