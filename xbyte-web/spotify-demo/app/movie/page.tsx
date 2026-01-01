@@ -10,7 +10,7 @@ const propTrack: ItemProps = {
 };
 
 export default function MoviePage() {
-    const { title, name, image, size } = propTrack;
+    const { title, name } = propTrack;
 
     return (
         <div className="min-h-screen bg-background">
@@ -28,12 +28,7 @@ export default function MoviePage() {
                                     </p>
                                 </div>
                                 <div className="w-full">
-                                    <MoviePlayer
-                                        title={title}
-                                        name={name}
-                                        image={image}
-                                        size={size}
-                                    />
+                                    <MoviePlayer />
                                 </div>
                             </div>
                         </CardContent>

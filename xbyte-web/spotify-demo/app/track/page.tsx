@@ -40,12 +40,7 @@ export default function TrackPage() {
                                     </p>
                                 </div>
                                 <div className="w-full">
-                                    <TrackPlayer
-                                        title={title}
-                                        name={name}
-                                        image={image}
-                                        size={size}
-                                    />
+                                    <TrackPlayer />
                                 </div>
                             </div>
                         </CardContent>

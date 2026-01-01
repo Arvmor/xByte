@@ -2,7 +2,6 @@
 
 import { useCallback, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import TrackItem, { ItemProps } from "@/components/track/item";
 import XPay, { useXPayAsync } from "@/components/privy/pay";
 import { Download, FastForward, Pause, Play, Rewind } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,7 +30,7 @@ interface ChunkState {
 }
 
 /** The track player component */
-export default function TrackPlayer({ title, name, image, size }: ItemProps) {
+export default function TrackPlayer() {
     return (
         <XPay>
             <StreamingPlayer mimeType={AUDIO_MIME} />
@@ -243,7 +242,7 @@ export function StreamingPlayer({ mimeType }: StreamingPlayerProps) {
 }
 
 /** Movie Player component */
-export function MoviePlayer({ title, name }: ItemProps) {
+export function MoviePlayer() {
     return (
         <XPay>
             <StreamingPlayer mimeType={VIDEO_MIME} />
