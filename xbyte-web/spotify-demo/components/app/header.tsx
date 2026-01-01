@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Copy, Home, Upload, User2 } from "lucide-react";
-import { usePrivy, User, useWallets } from "@privy-io/react-auth";
+import { usePrivy, User } from "@privy-io/react-auth";
 import { xByteEvmClient } from "xbyte-sdk";
 import { formatFromDecimals } from "@/lib/utils";
 
@@ -14,8 +14,6 @@ const xbyteEvmClient = new xByteEvmClient(process.env.NEXT_PUBLIC_RPC_URL);
 /** The header component for the app */
 export default function AppHeader() {
     const { user, login } = usePrivy();
-    const { wallets } = useWallets();
-    wallets?.forEach((w) => w.switchChain(Number(process.env.NEXT_PUBLIC_CHAIN_ID)));
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
