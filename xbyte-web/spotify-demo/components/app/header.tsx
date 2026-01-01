@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Copy, Home, Upload, User2 } from "lucide-react";
+import { Copy, Home, User2 } from "lucide-react";
 import { usePrivy, User } from "@privy-io/react-auth";
 import { xByteEvmClient } from "xbyte-sdk";
 import { formatFromDecimals } from "@/lib/utils";
@@ -37,11 +37,6 @@ export default function AppHeader() {
                             placeholder="What do you want to play?"
                             className="w-full hidden sm:flex"
                         />
-                        <Link href="/publish">
-                            <Button variant="ghost" size="icon">
-                                <Upload className="size-4" />
-                            </Button>
-                        </Link>
                     </div>
 
                     {/* User info*/}
@@ -73,7 +68,7 @@ function Onboarding({ onClick }: { onClick: () => void }) {
 function UserInfo({ user }: { user: User }) {
     const address = user.wallet?.address as `0x${string}` | undefined;
     const shortAddress = address ? `${address.slice(0, 8)}...${address.slice(-8)}` : "";
-    const [usdcBalance, setUsdcBalance] = useState<string | null>(null);
+    const [usdcBalance, setUsdcBalance] = useState<string>("0");
     const [isLoadingBalance, setIsLoadingBalance] = useState(false);
 
     useEffect(() => {
@@ -87,7 +82,7 @@ function UserInfo({ user }: { user: User }) {
                 setUsdcBalance(formatted);
             })
             .catch(() => {
-                setUsdcBalance(null);
+                setUsdcBalance("0");
             })
             .finally(() => {
                 setIsLoadingBalance(false);
@@ -106,11 +101,7 @@ function UserInfo({ user }: { user: User }) {
             {address && (
                 <div className="hidden sm:flex bg-accent px-3 py-2 rounded-md items-center gap-2">
                     <p className="text-sm font-medium">
-                        {isLoadingBalance
-                            ? "..."
-                            : usdcBalance !== null
-                              ? `${usdcBalance} USDC`
-                              : "—"}
+                        {isLoadingBalance ? "..." : usdcBalance} USDC
                     </p>
                 </div>
             )}
