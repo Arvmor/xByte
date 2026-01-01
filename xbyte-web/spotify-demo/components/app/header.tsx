@@ -69,8 +69,6 @@ function Onboarding({ onClick }: { onClick: () => void }) {
     );
 }
 
-const USDC_ADDRESS = "0x036CbD53842c5426634e7929541eC2318f3dCF7e" as `0x${string}`;
-
 /** The user info component for the app */
 function UserInfo({ user }: { user: User }) {
     const address = user.wallet?.address as `0x${string}` | undefined;
@@ -83,7 +81,7 @@ function UserInfo({ user }: { user: User }) {
 
         setIsLoadingBalance(true);
         xbyteEvmClient
-            .getVaultERC20Balance(address, USDC_ADDRESS)
+            .getVaultERC20Balance(address, process.env.NEXT_PUBLIC_USDC_ADDRESS as `0x${string}`)
             .then((balance: bigint) => {
                 const formatted = formatFromDecimals(balance, 6n);
                 setUsdcBalance(formatted);

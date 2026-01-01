@@ -33,7 +33,7 @@ export default function TrackItem({ title, name, image, size }: ItemProps) {
                     </div>
                 </div>
             </div>
-            <div className="flex flex-col gap-1 min-h-[3.5rem]">
+            <div className="flex flex-col gap-1 min-h-14">
                 <h2 className="text-sm sm:text-base font-semibold line-clamp-1 group-hover/item:text-primary transition-colors">
                     {title}
                 </h2>
