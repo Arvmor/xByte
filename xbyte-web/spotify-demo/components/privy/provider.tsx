@@ -5,11 +5,7 @@ import { PrivyClientConfig, PrivyProvider } from "@privy-io/react-auth";
 const PRIVY_APP_ID = "cmigyzusl00qhl20cl7qtnczl";
 const PRIVY_CLIENT_ID = "client-WY6TMNBR45a7ie2SwSpVPK8vHJFEsGvHnPf7Ph2n4LBnN";
 const config: PrivyClientConfig = {
-    embeddedWallets: {
-        ethereum: {
-            createOnLogin: "users-without-wallets",
-        },
-    },
+    loginMethods: ["wallet"],
 };
 
 export default function Providers({ children }: { children: React.ReactNode }) {

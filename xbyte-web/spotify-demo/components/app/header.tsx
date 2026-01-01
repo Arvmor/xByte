@@ -8,7 +8,7 @@ import { usePrivy, User } from "@privy-io/react-auth";
 
 /** The header component for the app */
 export default function AppHeader() {
-    const { user, connectOrCreateWallet } = usePrivy();
+    const { user, login } = usePrivy();
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -44,7 +44,7 @@ export default function AppHeader() {
                         {user ? (
                             <UserInfo user={user} />
                         ) : (
-                            <Onboarding onClick={connectOrCreateWallet} />
+                            <Onboarding onClick={login} />
                         )}
                     </div>
                 </div>
