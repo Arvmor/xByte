@@ -11,8 +11,9 @@ import Optionable from "@/components/platform/optionable";
 import CallToAction from "@/components/platform/callToAction";
 import { xByteClient, xByteEvmClient, XBYTE_FACTORY_ADDRESS } from "xbyte-sdk";
 import { usePrivy } from "@privy-io/react-auth";
-import { CheckCircle2, Loader2, Wallet, CheckCircle, Dot } from "lucide-react";
+import { CheckCircle2, Loader2, CheckCircle, Dot } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { NoWalletAlert } from "@/components/privy/connect";
 
 /**
  * The steps of the setup process.
@@ -82,8 +83,6 @@ const setWalletSection = {
         "Create a vault contract to receive and manage payments. This is a one-time transaction.",
     createVaultButton: "Create Vault",
     creatingVault: "Creating Vault...",
-    walletNotConnectedTitle: "Wallet Not Connected",
-    walletNotConnectedMessage: "Please connect your wallet to continue with the setup.",
 };
 
 const setPriceSection = {
@@ -408,19 +407,7 @@ function SetWalletSection() {
     }
 
     if (!wallet) {
-        return (
-            <div className="space-y-4 text-center py-8">
-                <Wallet className="size-12 mx-auto text-muted-foreground" />
-                <div className="space-y-2">
-                    <h3 className="text-lg font-semibold">
-                        {setWalletSection.walletNotConnectedTitle}
-                    </h3>
-                    <p className="text-muted-foreground">
-                        {setWalletSection.walletNotConnectedMessage}
-                    </p>
-                </div>
-            </div>
-        );
+        return <NoWalletAlert />;
     }
 
     return (
