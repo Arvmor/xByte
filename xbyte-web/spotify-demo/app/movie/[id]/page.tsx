@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { MoviePlayer } from "@/components/track/player";
+import TrackPlayer, { MimeType } from "@/components/track/player";
 import { Card, CardContent } from "@/components/ui/card";
 import { movies } from "@/lib/data";
 import { UUID } from "crypto";
@@ -17,7 +17,6 @@ interface MoviePageProps {
 export default async function MoviePage({ params }: MoviePageProps) {
     const { id } = await params;
     const movie = movies.find((m) => m.uuid === id);
-
     if (!movie) {
         notFound();
     }
@@ -40,7 +39,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
                                     </p>
                                 </div>
                                 <div className="w-full">
-                                    <MoviePlayer />
+                                    <TrackPlayer mimeType={MimeType.Video} contentKey={id} />
                                 </div>
                             </div>
                         </CardContent>

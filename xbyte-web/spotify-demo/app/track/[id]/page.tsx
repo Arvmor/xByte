@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import TrackPlayer from "@/components/track/player";
+import TrackPlayer, { MimeType } from "@/components/track/player";
 import { Card, CardContent } from "@/components/ui/card";
 import { tracks } from "@/lib/data";
 import { UUID } from "crypto";
@@ -18,7 +18,6 @@ interface TrackPageProps {
 export default async function TrackPage({ params }: TrackPageProps) {
     const { id } = await params;
     const track = tracks.find((t) => t.uuid === id);
-
     if (!track) {
         notFound();
     }
@@ -52,7 +51,7 @@ export default async function TrackPage({ params }: TrackPageProps) {
                                     </p>
                                 </div>
                                 <div className="w-full">
-                                    <TrackPlayer />
+                                    <TrackPlayer mimeType={MimeType.Audio} contentKey={id} />
                                 </div>
                             </div>
                         </CardContent>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import XPay, { useXPayAsync } from "@/components/privy/pay";
 import { Download, FastForward, Pause, Play, Rewind } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,8 +11,10 @@ import { UUID } from "crypto";
 const PLAY_URL = `${process.env.NEXT_PUBLIC_XBYTE_URL}/s3/bucket`;
 
 /** The MIME types */
-const AUDIO_MIME = "audio/mpeg";
-const VIDEO_MIME = "video/mp4";
+export enum MimeType {
+    Audio = "audio/mpeg",
+    Video = "video/mp4",
+}
 
 /** Default chunk size in bytes (1MB) */
 const DEFAULT_CHUNK_SIZE = 1024 * 1024;
@@ -30,25 +31,23 @@ interface ChunkState {
 }
 
 /** The track player component */
-export default function TrackPlayer() {
+export default function TrackPlayer({ mimeType, contentKey }: StreamingPlayerProps) {
     return (
         <XPay>
-            <StreamingPlayer mimeType={AUDIO_MIME} />
+            <StreamingPlayer mimeType={mimeType} contentKey={contentKey} />
         </XPay>
     );
 }
 
 interface StreamingPlayerProps {
-    mimeType: typeof AUDIO_MIME | typeof VIDEO_MIME;
+    contentKey: string;
+    mimeType: MimeType;
 }
 
 /** Streaming player with chunk-based payment */
-export function StreamingPlayer({ mimeType }: StreamingPlayerProps) {
-    const searchParams = useSearchParams();
-    const keyFromUrl = searchParams.get("key") ?? "";
-
-    const [contentKey, setContentKey] = useState(keyFromUrl);
-    const [chunkSize, setChunkSize] = useState("");
+export function StreamingPlayer({ mimeType, contentKey: initialKey }: StreamingPlayerProps) {
+    const [contentKey, setContentKey] = useState(initialKey);
+    const [chunkSize, setChunkSize] = useState("0.5");
     const [chunkState, setChunkState] = useState<ChunkState | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
@@ -56,7 +55,7 @@ export function StreamingPlayer({ mimeType }: StreamingPlayerProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [totalBytes, setTotalBytes] = useState(0);
 
-    const isAudio = mimeType === AUDIO_MIME;
+    const isAudio = mimeType === MimeType.Audio;
     const ref = useRef<HTMLAudioElement | HTMLVideoElement | null>(null);
     const xPayAsync = useXPayAsync();
 
@@ -241,15 +240,6 @@ export function StreamingPlayer({ mimeType }: StreamingPlayerProps) {
     );
 }
 
-/** Movie Player component */
-export function MoviePlayer() {
-    return (
-        <XPay>
-            <StreamingPlayer mimeType={VIDEO_MIME} />
-        </XPay>
-    );
-}
-
 /** Updates the player source by combining all chunks */
 function updatePlayerSource(
     player: HTMLAudioElement | HTMLVideoElement,
@@ -312,10 +302,11 @@ function ContentKeyInput({
                     <label className="text-sm font-medium">Chunk Size (MB)</label>
                     <Input
                         type="number"
-                        placeholder="1"
+                        step="0.25"
+                        placeholder="e.g. 1 (MB)"
                         value={chunkSize}
                         onChange={(e) => onChunkSizeChange(e.target.value)}
-                        min="1"
+                        min="0"
                         className="w-full"
                     />
                 </div>
