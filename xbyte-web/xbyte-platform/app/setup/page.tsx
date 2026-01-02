@@ -14,6 +14,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { CheckCircle2, Loader2, CheckCircle, Dot } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NoWalletAlert } from "@/components/privy/connect";
+import AppPageHeader, { PageProps } from "@/components/app/appPage";
 
 /**
  * The steps of the setup process.
@@ -44,7 +45,7 @@ const stepSection = new Map<SetupStep, React.ReactNode>([
 
 const stepLabels = ["Welcome", "Connect", "Set Wallet", "Set Pricing", "Get SDK", "Complete"];
 
-const pageHeader = {
+const pageHeader: PageProps = {
     title: "Setup xByte Integration",
     description: "Follow these steps to integrate xByte into your platform",
 };
@@ -172,10 +173,7 @@ export default function SetupPage() {
 
     return (
         <div className="space-y-12 max-w-4xl mx-auto">
-            <div className="space-y-4">
-                <h1 className="text-3xl font-bold">{pageHeader.title}</h1>
-                <p className="text-muted-foreground">{pageHeader.description}</p>
-            </div>
+            <AppPageHeader {...pageHeader} />
 
             <ProgressStepper currentStep={step} totalSteps={stepLabels.length} />
 
