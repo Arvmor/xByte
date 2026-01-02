@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Copy, Home, User2 } from "lucide-react";
+import { Copy, Home, LogOut, User2 } from "lucide-react";
 import { usePrivy, User } from "@privy-io/react-auth";
 import { xByteEvmClient } from "xbyte-sdk";
 import { formatFromDecimals } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const xbyteEvmClient = new xByteEvmClient(process.env.NEXT_PUBLIC_RPC_URL);
 
@@ -66,6 +67,7 @@ function Onboarding({ onClick }: { onClick: () => void }) {
 
 /** The user info component for the app */
 function UserInfo({ user }: { user: User }) {
+    const { logout } = usePrivy();
     const address = user.wallet?.address as `0x${string}` | undefined;
     const shortAddress = address ? `${address.slice(0, 8)}...${address.slice(-8)}` : "";
     const [usdcBalance, setUsdcBalance] = useState<string>("0");
@@ -97,14 +99,6 @@ function UserInfo({ user }: { user: User }) {
 
     return (
         <div className="flex items-center gap-2">
-            {/* USDC Balance */}
-            {address && (
-                <div className="hidden sm:flex bg-accent px-3 py-2 rounded-md items-center gap-2">
-                    <p className="text-sm font-medium">
-                        {isLoadingBalance ? "..." : usdcBalance} USDC
-                    </p>
-                </div>
-            )}
             {/* Address */}
             <div className="hidden sm:flex bg-accent px-3 py-2 rounded-md items-center gap-2 hover:bg-accent/80 transition-colors cursor-pointer group">
                 <Copy
@@ -113,10 +107,39 @@ function UserInfo({ user }: { user: User }) {
                 />
                 <p className="text-sm font-mono">{shortAddress}</p>
             </div>
-            {/* Avatar */}
-            <div className="size-9 sm:size-10 rounded-full bg-accent flex items-center justify-center hover:bg-accent/80 transition-colors cursor-pointer">
-                <User2 className="size-4 sm:size-5" />
-            </div>
+            {/* Avatar with Popover */}
+            <Popover>
+                <PopoverTrigger asChild>
+                    <div className="size-9 sm:size-10 rounded-full bg-accent flex items-center justify-center hover:bg-accent/80 transition-colors cursor-pointer">
+                        <User2 className="size-4 sm:size-5" />
+                    </div>
+                </PopoverTrigger>
+                <PopoverContent className="w-40 flex flex-col gap-4" align="end">
+                    {/* Faucet Link */}
+                    <div className="flex flex-col gap-2">
+                        <p className="text-sm font-semibold">Base Faucet</p>
+                        <Link
+                            href="https://faucet.circle.com/"
+                            target="_blank"
+                            className="text-xs text-muted-foreground underline underline-offset-3 hover:text-foreground"
+                        >
+                            Testnet USDC Faucet
+                        </Link>
+                    </div>
+                    {/* USDC Balance */}
+                    <div className="flex flex-col gap-2">
+                        <p className="text-sm font-semibold">Balance</p>
+                        <p className="text-sm text-muted-foreground">
+                            {isLoadingBalance ? "Loading..." : `${usdcBalance} USDC`}
+                        </p>
+                    </div>
+                    {/* Logout Button */}
+                    <Button variant="secondary" onClick={logout} className="w-full">
+                        <LogOut className="size-4" />
+                        Logout
+                    </Button>
+                </PopoverContent>
+            </Popover>
         </div>
     );
 }

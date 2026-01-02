@@ -11,8 +11,10 @@ import Optionable from "@/components/platform/optionable";
 import CallToAction from "@/components/platform/callToAction";
 import { xByteClient, xByteEvmClient, XBYTE_FACTORY_ADDRESS } from "xbyte-sdk";
 import { usePrivy } from "@privy-io/react-auth";
-import { CheckCircle2, Loader2, Wallet, CheckCircle, Dot } from "lucide-react";
+import { CheckCircle2, Loader2, CheckCircle, Dot } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { NoWalletAlert } from "@/components/privy/connect";
+import AppPageHeader, { PageProps } from "@/components/app/appPage";
 
 /**
  * The steps of the setup process.
@@ -43,7 +45,7 @@ const stepSection = new Map<SetupStep, React.ReactNode>([
 
 const stepLabels = ["Welcome", "Connect", "Set Wallet", "Set Pricing", "Get SDK", "Complete"];
 
-const pageHeader = {
+const pageHeader: PageProps = {
     title: "Setup xByte Integration",
     description: "Follow these steps to integrate xByte into your platform",
 };
@@ -82,8 +84,6 @@ const setWalletSection = {
         "Create a vault contract to receive and manage payments. This is a one-time transaction.",
     createVaultButton: "Create Vault",
     creatingVault: "Creating Vault...",
-    walletNotConnectedTitle: "Wallet Not Connected",
-    walletNotConnectedMessage: "Please connect your wallet to continue with the setup.",
 };
 
 const setPriceSection = {
@@ -173,10 +173,7 @@ export default function SetupPage() {
 
     return (
         <div className="space-y-12 max-w-4xl mx-auto">
-            <div className="space-y-4">
-                <h1 className="text-3xl font-bold">{pageHeader.title}</h1>
-                <p className="text-muted-foreground">{pageHeader.description}</p>
-            </div>
+            <AppPageHeader {...pageHeader} />
 
             <ProgressStepper currentStep={step} totalSteps={stepLabels.length} />
 
@@ -408,19 +405,7 @@ function SetWalletSection() {
     }
 
     if (!wallet) {
-        return (
-            <div className="space-y-4 text-center py-8">
-                <Wallet className="size-12 mx-auto text-muted-foreground" />
-                <div className="space-y-2">
-                    <h3 className="text-lg font-semibold">
-                        {setWalletSection.walletNotConnectedTitle}
-                    </h3>
-                    <p className="text-muted-foreground">
-                        {setWalletSection.walletNotConnectedMessage}
-                    </p>
-                </div>
-            </div>
-        );
+        return <NoWalletAlert />;
     }
 
     return (

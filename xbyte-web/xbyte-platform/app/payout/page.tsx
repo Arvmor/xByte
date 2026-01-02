@@ -6,21 +6,15 @@ import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 import { xByteEvmClient } from "xbyte-sdk";
 import { usePrivy } from "@privy-io/react-auth";
-import {
-    CheckCircle2,
-    Loader2,
-    Wallet,
-    ArrowDownCircle,
-    Coins,
-    History,
-    ExternalLink,
-} from "lucide-react";
+import { CheckCircle2, Loader2, ArrowDownCircle, Coins, History, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Address, formatEther, formatUnits } from "viem";
+import { NoWalletAlert } from "@/components/privy/connect";
+import AppPageHeader, { PageProps } from "@/components/app/appPage";
 
 const xbyteEvmClient = new xByteEvmClient(process.env.NEXT_PUBLIC_RPC_URL);
 
-const pageHeader = {
+const pageHeader: PageProps = {
     title: "xByte Payout",
     description: "View your vault status, balances, and withdraw funds",
 };
@@ -87,30 +81,12 @@ export default function PayoutPage() {
     const wallet = user?.wallet?.address as `0x${string}` | undefined;
 
     if (!wallet) {
-        return (
-            <div className="space-y-12 max-w-4xl mx-auto">
-                <div className="space-y-4">
-                    <h1 className="text-3xl font-bold">{pageHeader.title}</h1>
-                    <p className="text-muted-foreground">{pageHeader.description}</p>
-                </div>
-
-                <div className="bg-card border rounded-lg p-8 space-y-8 text-center">
-                    <Wallet className="size-12 mx-auto text-muted-foreground" />
-                    <div className="space-y-2">
-                        <h3 className="text-lg font-semibold">Wallet Not Connected</h3>
-                        <p className="text-muted-foreground">{errorMessages.walletNotConnected}</p>
-                    </div>
-                </div>
-            </div>
-        );
+        return <NoWalletAlert />;
     }
 
     return (
         <div className="space-y-12 max-w-4xl mx-auto">
-            <div className="space-y-4">
-                <h1 className="text-3xl font-bold">{pageHeader.title}</h1>
-                <p className="text-muted-foreground">{pageHeader.description}</p>
-            </div>
+            <AppPageHeader {...pageHeader} />
 
             <BalanceSection wallet={wallet} />
             <WithdrawSection wallet={wallet} />

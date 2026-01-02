@@ -1,17 +1,28 @@
 import Image from "next/image";
-import { ItemProps } from "@/components/track/item";
-import TrackPlayer from "@/components/track/player";
+import { notFound } from "next/navigation";
+import TrackPlayer, { MimeType } from "@/components/track/player";
 import { Card, CardContent } from "@/components/ui/card";
+import { tracks } from "@/lib/data";
+import { UUID } from "crypto";
 
-const propTrack: ItemProps = {
-    title: "Track 1",
-    name: "Artist 1",
-    image: "/placeholder.jpg",
-    size: 400,
-};
+export function generateStaticParams() {
+    return tracks.map((track) => ({
+        id: track.uuid,
+    }));
+}
 
-export default function TrackPage() {
-    const { title, name, image, size } = propTrack;
+interface TrackPageProps {
+    params: Promise<{ id: UUID }>;
+}
+
+export default async function TrackPage({ params }: TrackPageProps) {
+    const { id } = await params;
+    const track = tracks.find((t) => t.uuid === id);
+    if (!track) {
+        notFound();
+    }
+
+    const { title, name, image, size } = track;
 
     return (
         <div className="min-h-screen bg-background">
@@ -40,7 +51,7 @@ export default function TrackPage() {
                                     </p>
                                 </div>
                                 <div className="w-full">
-                                    <TrackPlayer />
+                                    <TrackPlayer mimeType={MimeType.Audio} contentKey={id} />
                                 </div>
                             </div>
                         </CardContent>

@@ -1,6 +1,6 @@
-import { Separator } from "@/components/ui/separator";
+import AppLegal, { LegalProps, LegalSection } from "@/components/app/appLegal";
 
-const PRIVACY_SECTIONS = [
+const PRIVACY_SECTIONS: LegalSection[] = [
     {
         title: "Information We Collect",
         content:
@@ -53,33 +53,18 @@ const PRIVACY_SECTIONS = [
     },
 ];
 
-const PAGE_DETAILS = {
+const PAGE_DETAILS: LegalProps = {
     title: "Privacy Policy",
-    lastUpdated: new Date("2025-12-31").toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-    }),
+    lastUpdated: new Date("2025-12-31"),
+    sections: PRIVACY_SECTIONS,
 };
 
 export default function PrivacyPage() {
     return (
-        <div className="max-w-3xl mx-auto py-8">
-            <div className="space-y-8">
-                <div>
-                    <h1 className="text-4xl font-bold mb-4">{PAGE_DETAILS.title}</h1>
-                    <p className="text-muted-foreground">Updated {PAGE_DETAILS.lastUpdated}</p>
-                </div>
-
-                <Separator />
-
-                {PRIVACY_SECTIONS.map((section, index) => (
-                    <section key={index} className="space-y-4">
-                        <h2 className="text-2xl font-semibold">{section.title}</h2>
-                        <p className="text-muted-foreground">{section.content}</p>
-                    </section>
-                ))}
-            </div>
-        </div>
+        <AppLegal
+            title={PAGE_DETAILS.title}
+            lastUpdated={PAGE_DETAILS.lastUpdated}
+            sections={PAGE_DETAILS.sections}
+        />
     );
 }
