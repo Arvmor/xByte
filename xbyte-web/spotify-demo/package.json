@@ -14,6 +14,7 @@
     },
     "dependencies": {
         "@privy-io/react-auth": "*",
+        "@radix-ui/react-popover": "*",
         "@radix-ui/react-slider": "*",
         "@radix-ui/react-slot": "*",
         "@solana-program/system": "*",
