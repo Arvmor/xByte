@@ -1,16 +1,28 @@
-import { ItemProps } from "@/components/track/item";
+import { notFound } from "next/navigation";
 import { MoviePlayer } from "@/components/track/player";
 import { Card, CardContent } from "@/components/ui/card";
+import { movies } from "@/lib/data";
+import { UUID } from "crypto";
 
-const propTrack: ItemProps = {
-    title: "Movie 1",
-    name: "Actor 1",
-    image: "/placeholder.jpg",
-    size: 400,
-};
+export function generateStaticParams() {
+    return movies.map((movie) => ({
+        id: movie.uuid,
+    }));
+}
 
-export default function MoviePage() {
-    const { title, name } = propTrack;
+interface MoviePageProps {
+    params: Promise<{ id: UUID }>;
+}
+
+export default async function MoviePage({ params }: MoviePageProps) {
+    const { id } = await params;
+    const movie = movies.find((m) => m.uuid === id);
+
+    if (!movie) {
+        notFound();
+    }
+
+    const { title, name } = movie;
 
     return (
         <div className="min-h-screen bg-background">
