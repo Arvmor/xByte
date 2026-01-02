@@ -42,9 +42,9 @@ export const tracks: TrackItem[] = [
 
 export const movies: MovieItem[] = [
     {
-        uuid: "123e4567-e89b-12d3-a456-426614174004",
-        title: "Movie 1",
-        name: "Actor 1",
+        uuid: "e41b9041-9820-4ebe-b9b2-d1435b524220",
+        title: "FonkETH",
+        name: "P2P Protocol-Agnostic Mining Layer",
         image: "https://picsum.photos/200/200?random=5",
         size: 200,
     },
