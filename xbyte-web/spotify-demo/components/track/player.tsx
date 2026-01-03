@@ -1,12 +1,23 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import XPay, { useXPayAsync } from "@/components/privy/pay";
-import { Download, FastForward, Pause, Play, Rewind } from "lucide-react";
+import {
+    Download,
+    FastForward,
+    Pause,
+    Play,
+    Rewind,
+    DollarSign,
+    Package,
+    TrendingUp,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "../ui/input";
 import { UUID } from "crypto";
+import { xByteClient } from "xbyte-sdk";
+import { formatFromDecimals } from "@/lib/utils";
 
 const PLAY_URL = `${process.env.NEXT_PUBLIC_XBYTE_URL}/s3/bucket`;
 
@@ -18,6 +29,8 @@ const DEFAULT_CHUNK_SIZE = 1024 * 1024;
 
 /** Maximum payment value per chunk */
 const MAX_PAYMENT_VALUE = BigInt(1000);
+
+const client = new xByteClient(process.env.NEXT_PUBLIC_XBYTE_URL);
 
 /** Chunk state for managing streaming */
 interface ChunkState {
@@ -50,6 +63,7 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
     const [duration, setDuration] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [totalBytes, setTotalBytes] = useState(0);
+    const [price, setPrice] = useState(0);
 
     const isAudio = mimeType === "audio/mpeg";
     const ref = useRef<HTMLAudioElement | HTMLVideoElement | null>(null);
@@ -60,6 +74,15 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
         setCurrentTime(ref.current.currentTime);
         setDuration(ref.current.duration);
     };
+
+    useEffect(() => {
+        const getPrice = async () => {
+            const result = await client.getPrice("xbyte-runtime", contentKey);
+            if (result.status !== "Success") return setPrice(1000);
+            setPrice(result.data);
+        };
+        getPrice();
+    }, [contentKey]);
 
     const fetchNextChunk = useCallback(async () => {
         if (!contentKey || isLoading) return;
@@ -106,18 +129,6 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
         setIsPlaying(!isPlaying);
     };
 
-    const resetPlayer = () => {
-        setChunkState(null);
-        setTotalBytes(0);
-        setCurrentTime(0);
-        setDuration(0);
-        setIsPlaying(false);
-        if (ref.current) {
-            URL.revokeObjectURL(ref.current.src);
-            ref.current.src = "";
-        }
-    };
-
     const hasContent = chunkState !== null && chunkState.chunks.length > 0;
 
     const formatTime = (seconds: number): string => {
@@ -155,12 +166,6 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
 
     return (
         <div className="flex flex-col gap-6 w-full">
-            <ContentKeyInput
-                chunkSize={chunkSize}
-                onChunkSizeChange={setChunkSize}
-                onReset={resetPlayer}
-            />
-
             {PlayerElement}
 
             <div className="flex flex-col gap-4">
@@ -195,6 +200,14 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
                 onFetchNextChunk={fetchNextChunk}
                 contentKey={contentKey}
                 isLoading={isLoading}
+            />
+
+            <ContentKeyInput
+                price={price}
+                loadedBytes={totalBytes}
+                chunkSize={chunkSize}
+                onChunkSizeChange={setChunkSize}
+                chunkState={chunkState}
             />
         </div>
     );
@@ -302,30 +315,69 @@ function formatBytes(bytes: number): string {
 function ContentKeyInput({
     chunkSize,
     onChunkSizeChange,
-    onReset,
+    price,
+    chunkState,
+    loadedBytes,
 }: {
     chunkSize: string;
     onChunkSizeChange: (size: string) => void;
-    onReset: () => void;
+    price: number;
+    chunkState: ChunkState | null;
+    loadedBytes: number;
 }) {
+    const chunkSizeNum = parseFloat(chunkSize) || 0;
+    const pricePerChunk = price * chunkSizeNum;
+    const numChunks = chunkState?.chunks.length ?? 0;
+    const totalCost = pricePerChunk * (loadedBytes / 1024 / 1024);
+    const isValidChunkSize = chunkSizeNum > 0;
+
     return (
-        <div className="flex flex-col gap-3 p-4 rounded-lg border bg-muted/50">
-            <div className="flex items-end gap-2">
-                <div className="flex-1 flex flex-col gap-2">
-                    <label className="text-sm font-medium">Chunk Size (MB)</label>
+        <div className="flex flex-col gap-4 p-4 sm:p-5 rounded-xl border bg-card shadow-sm transition-all hover:shadow-md">
+            <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                    <label className="text-sm font-semibold text-foreground">Chunk Size</label>
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 px-2.5 py-1 rounded-md">
+                        <DollarSign className="size-3" />
+                        <span className="font-medium">
+                            {formatFromDecimals(BigInt(price), 6n)} USDC / MB
+                        </span>
+                    </div>
+                </div>
+                <div className="relative">
                     <Input
                         type="number"
                         step="0.25"
-                        placeholder="e.g. 1 (MB)"
+                        placeholder="Enter chunk size (e.g. 1)"
                         value={chunkSize}
                         onChange={(e) => onChunkSizeChange(e.target.value)}
                         min="0"
-                        className="w-full"
+                        className={`w-full transition-all ${
+                            isValidChunkSize
+                                ? "border-primary/50 focus-visible:border-primary"
+                                : "border-input"
+                        }`}
                     />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <span className="text-xs text-muted-foreground font-medium">MB</span>
+                    </div>
                 </div>
-                <Button variant="outline" size="default" onClick={onReset} className="mb-0">
-                    Reset
-                </Button>
+            </div>
+
+            <div className="flex items-center gap-4 text-sm pt-2 border-t">
+                <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <DollarSign className="size-3.5" />
+                    {formatFromDecimals(BigInt(pricePerChunk), 6n)} / chunk
+                </span>
+
+                <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <Package className="size-3.5" />
+                    {numChunks} {numChunks === 1 ? "chunk" : "chunks"}
+                </span>
+
+                <span className="flex items-center gap-1.5 text-green-600 dark:text-green-400 font-medium">
+                    <TrendingUp className="size-3.5" />${formatFromDecimals(BigInt(totalCost), 6n)}{" "}
+                    Total Spent
+                </span>
             </div>
         </div>
     );
