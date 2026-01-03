@@ -134,25 +134,24 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
         }
     };
 
-    const PlayerElement = () =>
-        isAudio ? (
-            <audio
-                ref={ref as React.RefObject<HTMLAudioElement>}
+    const PlayerElement = isAudio ? (
+        <audio
+            ref={ref as React.RefObject<HTMLAudioElement>}
+            onTimeUpdate={onTimeUpdate}
+            onLoadedMetadata={onTimeUpdate}
+            hidden
+        />
+    ) : (
+        <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black">
+            <video
+                ref={ref as React.RefObject<HTMLVideoElement>}
                 onTimeUpdate={onTimeUpdate}
                 onLoadedMetadata={onTimeUpdate}
-                hidden
+                className="w-full h-full object-contain"
+                controls={false}
             />
-        ) : (
-            <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black">
-                <video
-                    ref={ref as React.RefObject<HTMLVideoElement>}
-                    onTimeUpdate={onTimeUpdate}
-                    onLoadedMetadata={onTimeUpdate}
-                    className="w-full h-full object-contain"
-                    controls={false}
-                />
-            </div>
-        );
+        </div>
+    );
 
     return (
         <div className="flex flex-col gap-6 w-full">
@@ -162,7 +161,7 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
                 onReset={resetPlayer}
             />
 
-            <PlayerElement />
+            {PlayerElement}
 
             <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-3">
