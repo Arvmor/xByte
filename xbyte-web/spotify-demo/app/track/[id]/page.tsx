@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import TrackPlayer, { MimeType } from "@/components/track/player";
+import TrackPlayer from "@/components/track/player";
 import { Card, CardContent } from "@/components/ui/card";
 import { tracks } from "@/lib/data";
 import { UUID } from "crypto";
@@ -51,7 +51,7 @@ export default async function TrackPage({ params }: TrackPageProps) {
                                     </p>
                                 </div>
                                 <div className="w-full">
-                                    <TrackPlayer mimeType={MimeType.Audio} contentKey={id} />
+                                    <TrackPlayer mimeType="audio/mpeg" contentKey={id} />
                                 </div>
                             </div>
                         </CardContent>

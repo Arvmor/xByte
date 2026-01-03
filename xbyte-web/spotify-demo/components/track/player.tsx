@@ -11,10 +11,7 @@ import { UUID } from "crypto";
 const PLAY_URL = `${process.env.NEXT_PUBLIC_XBYTE_URL}/s3/bucket`;
 
 /** The MIME types */
-export enum MimeType {
-    Audio = "audio/mpeg",
-    Video = "video/mp4",
-}
+export type MimeType = "audio/mpeg" | "video/mp4";
 
 /** Default chunk size in bytes (1MB) */
 const DEFAULT_CHUNK_SIZE = 1024 * 1024;
@@ -55,7 +52,7 @@ export function StreamingPlayer({ mimeType, contentKey: initialKey }: StreamingP
     const [isLoading, setIsLoading] = useState(false);
     const [totalBytes, setTotalBytes] = useState(0);
 
-    const isAudio = mimeType === MimeType.Audio;
+    const isAudio = mimeType === "audio/mpeg";
     const ref = useRef<HTMLAudioElement | HTMLVideoElement | null>(null);
     const xPayAsync = useXPayAsync();
 
@@ -138,6 +135,26 @@ export function StreamingPlayer({ mimeType, contentKey: initialKey }: StreamingP
         }
     };
 
+    const PlayerElement = () =>
+        isAudio ? (
+            <audio
+                ref={ref as React.RefObject<HTMLAudioElement>}
+                onTimeUpdate={onTimeUpdate}
+                onLoadedMetadata={onTimeUpdate}
+                hidden
+            />
+        ) : (
+            <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black">
+                <video
+                    ref={ref as React.RefObject<HTMLVideoElement>}
+                    onTimeUpdate={onTimeUpdate}
+                    onLoadedMetadata={onTimeUpdate}
+                    className="w-full h-full object-contain"
+                    controls={false}
+                />
+            </div>
+        );
+
     return (
         <div className="flex flex-col gap-6 w-full">
             <ContentKeyInput
@@ -148,24 +165,7 @@ export function StreamingPlayer({ mimeType, contentKey: initialKey }: StreamingP
                 onReset={resetPlayer}
             />
 
-            {isAudio ? (
-                <audio
-                    ref={ref as React.RefObject<HTMLAudioElement>}
-                    onTimeUpdate={onTimeUpdate}
-                    onLoadedMetadata={onTimeUpdate}
-                    hidden
-                />
-            ) : (
-                <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black">
-                    <video
-                        ref={ref as React.RefObject<HTMLVideoElement>}
-                        onTimeUpdate={onTimeUpdate}
-                        onLoadedMetadata={onTimeUpdate}
-                        className="w-full h-full object-contain"
-                        controls={false}
-                    />
-                </div>
-            )}
+            <PlayerElement />
 
             <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-3">
