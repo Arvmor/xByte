@@ -343,7 +343,7 @@ function ContentKeyInput({
 
     return (
         <div className="flex flex-col gap-4 p-4 sm:p-5 rounded-xl border bg-card shadow-sm transition-all hover:shadow-md">
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 {/* Chunk size input */}
                 <InputGroup>
                     <InputGroupInput
@@ -362,7 +362,9 @@ function ContentKeyInput({
                     </InputGroupAddon>
                 </InputGroup>
 
-                <Repeat2 className="size-12 text-muted-foreground" />
+                <span>
+                    <Repeat2 className="size-6 text-muted-foreground" />
+                </span>
 
                 {/* Total cost input */}
                 <InputGroup>
