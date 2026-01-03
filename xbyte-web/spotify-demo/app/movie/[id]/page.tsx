@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import TrackPlayer, { MimeType } from "@/components/track/player";
+import TrackPlayer from "@/components/track/player";
 import { Card, CardContent } from "@/components/ui/card";
 import { movies } from "@/lib/data";
 import { UUID } from "crypto";
@@ -39,7 +39,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
                                     </p>
                                 </div>
                                 <div className="w-full">
-                                    <TrackPlayer mimeType={MimeType.Video} contentKey={id} />
+                                    <TrackPlayer mimeType="video/mp4" contentKey={id} />
                                 </div>
                             </div>
                         </CardContent>
