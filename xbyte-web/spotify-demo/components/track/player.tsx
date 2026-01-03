@@ -9,15 +9,21 @@ import {
     Play,
     Rewind,
     DollarSign,
-    Package,
     TrendingUp,
+    Save,
+    Repeat2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { Input } from "../ui/input";
 import { UUID } from "crypto";
 import { xByteClient } from "xbyte-sdk";
 import { formatFromDecimals } from "@/lib/utils";
+import {
+    InputGroup,
+    InputGroupInput,
+    InputGroupAddon,
+    InputGroupButton,
+} from "@/components/ui/input-group";
 
 const PLAY_URL = `${process.env.NEXT_PUBLIC_XBYTE_URL}/s3/bucket`;
 
@@ -56,7 +62,7 @@ interface StreamingPlayerProps {
 
 /** Streaming player with chunk-based payment */
 export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) {
-    const [chunkSize, setChunkSize] = useState("0.5");
+    const [chunkSize, setChunkSize] = useState(0.5);
     const [chunkState, setChunkState] = useState<ChunkState | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
@@ -87,7 +93,7 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
     const fetchNextChunk = useCallback(async () => {
         if (!contentKey || isLoading) return;
 
-        const size = Number(chunkSize) * DEFAULT_CHUNK_SIZE;
+        const size = Math.round(chunkSize * DEFAULT_CHUNK_SIZE);
         const currentOffset = chunkState?.offset ?? 0;
 
         setIsLoading(true);
@@ -131,13 +137,6 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
 
     const hasContent = chunkState !== null && chunkState.chunks.length > 0;
 
-    const formatTime = (seconds: number): string => {
-        if (!isFinite(seconds) || isNaN(seconds)) return "0:00";
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins}:${secs.toString().padStart(2, "0")}`;
-    };
-
     const handleSeek = (value: number[]) => {
         if (ref.current && duration > 0) {
             ref.current.currentTime = value[0];
@@ -168,30 +167,12 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
         <div className="flex flex-col gap-6 w-full">
             {PlayerElement}
 
-            <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                    <Slider
-                        value={[currentTime]}
-                        max={duration || 1}
-                        step={0.1}
-                        onValueChange={handleSeek}
-                        className="flex-1"
-                        disabled={!hasContent}
-                    />
-                </div>
-
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
-                        <span>{formatTime(currentTime)}</span>
-                        <span>/</span>
-                        <span>{formatTime(duration)}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <span>Loaded: {formatBytes(totalBytes)}</span>
-                        {chunkState && <span>• {chunkState.chunks.length} chunks</span>}
-                    </div>
-                </div>
-            </div>
+            <PlayerSlider
+                currentTime={currentTime}
+                duration={duration}
+                handleSeek={handleSeek}
+                hasContent={hasContent}
+            />
 
             <PlayerControllers
                 isPlaying={isPlaying}
@@ -207,7 +188,6 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
                 loadedBytes={totalBytes}
                 chunkSize={chunkSize}
                 onChunkSizeChange={setChunkSize}
-                chunkState={chunkState}
             />
         </div>
     );
@@ -280,11 +260,46 @@ export function PlayerControllers({
     );
 }
 
+export interface PlayerSliderProps {
+    currentTime: number;
+    duration: number;
+    handleSeek: (value: number[]) => void;
+    hasContent: boolean;
+}
+
+export function PlayerSlider({ currentTime, duration, handleSeek, hasContent }: PlayerSliderProps) {
+    const formatTime = (seconds: number): string => {
+        if (!isFinite(seconds) || isNaN(seconds)) return "0:00";
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, "0")}`;
+    };
+
+    return (
+        <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+                <Slider
+                    value={[currentTime]}
+                    max={duration || 1}
+                    step={0.1}
+                    onValueChange={handleSeek}
+                    className="flex-1"
+                    disabled={!hasContent}
+                />
+            </div>
+
+            <div className="text-xs sm:text-sm text-muted-foreground">
+                {formatTime(currentTime)} / {formatTime(duration)}
+            </div>
+        </div>
+    );
+}
+
 /** Updates the player source by combining all chunks */
 function updatePlayerSource(
     player: HTMLAudioElement | HTMLVideoElement,
     chunks: Uint8Array[],
-    mimeType: string,
+    type: string,
 ) {
     const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0);
     const combined = new Uint8Array(totalLength);
@@ -295,7 +310,7 @@ function updatePlayerSource(
         offset += chunk.length;
     });
 
-    const blob = new Blob([combined], { type: mimeType });
+    const blob = new Blob([combined], { type });
     const currentTime = player.currentTime;
 
     URL.revokeObjectURL(player.src);
@@ -316,67 +331,75 @@ function ContentKeyInput({
     chunkSize,
     onChunkSizeChange,
     price,
-    chunkState,
     loadedBytes,
 }: {
-    chunkSize: string;
-    onChunkSizeChange: (size: string) => void;
+    chunkSize: number;
+    onChunkSizeChange: (size: number) => void;
     price: number;
-    chunkState: ChunkState | null;
     loadedBytes: number;
 }) {
-    const chunkSizeNum = parseFloat(chunkSize) || 0;
-    const pricePerChunk = price * chunkSizeNum;
-    const numChunks = chunkState?.chunks.length ?? 0;
-    const totalCost = pricePerChunk * (loadedBytes / 1024 / 1024);
-    const isValidChunkSize = chunkSizeNum > 0;
+    const pricePerChunk = price * chunkSize;
+    const totalCost = price * (loadedBytes / DEFAULT_CHUNK_SIZE);
 
     return (
         <div className="flex flex-col gap-4 p-4 sm:p-5 rounded-xl border bg-card shadow-sm transition-all hover:shadow-md">
-            <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                    <label className="text-sm font-semibold text-foreground">Chunk Size</label>
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 px-2.5 py-1 rounded-md">
-                        <DollarSign className="size-3" />
-                        <span className="font-medium">
-                            {formatFromDecimals(BigInt(price), 6n)} USDC / MB
-                        </span>
-                    </div>
-                </div>
-                <div className="relative">
-                    <Input
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                {/* Chunk size input */}
+                <InputGroup>
+                    <InputGroupInput
+                        placeholder="Chunk size in Megabytes"
                         type="number"
-                        step="0.25"
-                        placeholder="Enter chunk size (e.g. 1)"
+                        min={0}
+                        step={0.25}
                         value={chunkSize}
-                        onChange={(e) => onChunkSizeChange(e.target.value)}
-                        min="0"
-                        className={`w-full transition-all ${
-                            isValidChunkSize
-                                ? "border-primary/50 focus-visible:border-primary"
-                                : "border-input"
-                        }`}
+                        onChange={(e) => onChunkSizeChange(Number(e.target.value))}
                     />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                        <span className="text-xs text-muted-foreground font-medium">MB</span>
-                    </div>
-                </div>
+                    <InputGroupAddon>
+                        <Save />
+                    </InputGroupAddon>
+                    <InputGroupAddon align="inline-end">
+                        <InputGroupButton disabled>MB</InputGroupButton>
+                    </InputGroupAddon>
+                </InputGroup>
+
+                <span>
+                    <Repeat2 className="size-6 text-muted-foreground" />
+                </span>
+
+                {/* Total cost input */}
+                <InputGroup>
+                    <InputGroupInput
+                        placeholder="Total cost in USDC"
+                        type="number"
+                        min={0}
+                        step={0.0001}
+                        value={formatFromDecimals(BigInt(Math.round(pricePerChunk)), 6n)}
+                        onChange={(e) => {
+                            const inputValue = parseFloat(e.target.value);
+                            if (isNaN(inputValue) || price === 0) return;
+                            const priceInSmallestUnit = Math.round(inputValue * 1e6);
+                            const newChunkSize = priceInSmallestUnit / price;
+                            onChunkSizeChange(Math.max(0, newChunkSize));
+                        }}
+                    />
+                    <InputGroupAddon>
+                        <DollarSign />
+                    </InputGroupAddon>
+                    <InputGroupAddon align="inline-end">
+                        <InputGroupButton disabled>USDC</InputGroupButton>
+                    </InputGroupAddon>
+                </InputGroup>
             </div>
 
-            <div className="flex items-center gap-4 text-sm pt-2 border-t">
-                <span className="flex items-center gap-1.5 text-muted-foreground">
-                    <DollarSign className="size-3.5" />
-                    {formatFromDecimals(BigInt(pricePerChunk), 6n)} / chunk
+            <div className="flex items-center gap-6 text-sm pt-4 border-t text-green-600 dark:text-green-400 font-medium">
+                <span className="flex items-center gap-1.5">
+                    <Save className="size-3.5" />
+                    Paid for {formatBytes(loadedBytes)}
                 </span>
 
-                <span className="flex items-center gap-1.5 text-muted-foreground">
-                    <Package className="size-3.5" />
-                    {numChunks} {numChunks === 1 ? "chunk" : "chunks"}
-                </span>
-
-                <span className="flex items-center gap-1.5 text-green-600 dark:text-green-400 font-medium">
-                    <TrendingUp className="size-3.5" />${formatFromDecimals(BigInt(totalCost), 6n)}{" "}
-                    Total Spent
+                <span className="flex items-center gap-1.5">
+                    <TrendingUp className="size-3.5" />$
+                    {formatFromDecimals(BigInt(Math.round(totalCost)), 6n)} Total Spent
                 </span>
             </div>
         </div>
