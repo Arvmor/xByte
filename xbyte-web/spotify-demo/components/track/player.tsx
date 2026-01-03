@@ -190,52 +190,83 @@ export function StreamingPlayer({ mimeType, contentKey: initialKey }: StreamingP
                         {chunkState && <span>• {chunkState.chunks.length} chunks</span>}
                     </div>
                 </div>
-
-                <div className="flex items-center justify-center gap-2 sm:gap-4">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        disabled={!hasContent}
-                        className="size-10 sm:size-12"
-                    >
-                        <Rewind className="size-5" />
-                    </Button>
-
-                    <Button
-                        variant="default"
-                        size="icon"
-                        onClick={handlePlayPause}
-                        disabled={!hasContent}
-                        className="size-14 sm:size-16 rounded-full shadow-lg hover:scale-105 transition-transform"
-                    >
-                        {isPlaying ? (
-                            <Pause className="size-6 sm:size-7 fill-current" />
-                        ) : (
-                            <Play className="size-6 sm:size-7 fill-current ml-0.5" />
-                        )}
-                    </Button>
-
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        disabled={!hasContent}
-                        className="size-10 sm:size-12"
-                    >
-                        <FastForward className="size-5" />
-                    </Button>
-
-                    <Button
-                        variant="secondary"
-                        size="icon"
-                        onClick={fetchNextChunk}
-                        disabled={!contentKey || isLoading}
-                        title="Fetch & pay for next chunk"
-                        className="size-10 sm:size-12"
-                    >
-                        <Download className={`size-5 ${isLoading ? "animate-pulse" : ""}`} />
-                    </Button>
-                </div>
             </div>
+
+            <PlayerControllers
+                isPlaying={isPlaying}
+                hasContent={hasContent}
+                onPlayPause={handlePlayPause}
+                onFetchNextChunk={fetchNextChunk}
+                contentKey={contentKey}
+                isLoading={isLoading}
+            />
+        </div>
+    );
+}
+
+interface PlayerControllersProps {
+    isPlaying: boolean;
+    hasContent: boolean;
+    onPlayPause: () => void;
+    onFetchNextChunk: () => void;
+    contentKey: string;
+    isLoading: boolean;
+}
+
+export function PlayerControllers({
+    isPlaying,
+    hasContent,
+    onPlayPause,
+    onFetchNextChunk,
+    contentKey,
+    isLoading,
+}: PlayerControllersProps) {
+    const playerIcon = isPlaying ? (
+        <Pause className="size-6 sm:size-7 fill-current" />
+    ) : (
+        <Play className="size-6 sm:size-7 fill-current ml-0.5" />
+    );
+
+    return (
+        <div className="flex items-center justify-center gap-2 sm:gap-4">
+            <Button
+                variant="ghost"
+                size="icon"
+                disabled={!hasContent}
+                className="size-10 sm:size-12"
+            >
+                <Rewind className="size-5" />
+            </Button>
+
+            <Button
+                variant="default"
+                size="icon"
+                onClick={onPlayPause}
+                disabled={!hasContent}
+                className="size-14 sm:size-16 rounded-full shadow-lg hover:scale-105 transition-transform"
+            >
+                {playerIcon}
+            </Button>
+
+            <Button
+                variant="ghost"
+                size="icon"
+                disabled={!hasContent}
+                className="size-10 sm:size-12"
+            >
+                <FastForward className="size-5" />
+            </Button>
+
+            <Button
+                variant="secondary"
+                size="icon"
+                onClick={onFetchNextChunk}
+                disabled={!contentKey || isLoading}
+                title="Fetch & pay for next chunk"
+                className="size-10 sm:size-12"
+            >
+                <Download className={`size-5 ${isLoading ? "animate-pulse" : ""}`} />
+            </Button>
         </div>
     );
 }
