@@ -42,8 +42,7 @@ interface StreamingPlayerProps {
 }
 
 /** Streaming player with chunk-based payment */
-export function StreamingPlayer({ mimeType, contentKey: initialKey }: StreamingPlayerProps) {
-    const [contentKey, setContentKey] = useState(initialKey);
+export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) {
     const [chunkSize, setChunkSize] = useState("0.5");
     const [chunkState, setChunkState] = useState<ChunkState | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -158,9 +157,7 @@ export function StreamingPlayer({ mimeType, contentKey: initialKey }: StreamingP
     return (
         <div className="flex flex-col gap-6 w-full">
             <ContentKeyInput
-                contentKey={contentKey}
                 chunkSize={chunkSize}
-                onKeyChange={setContentKey}
                 onChunkSizeChange={setChunkSize}
                 onReset={resetPlayer}
             />
@@ -304,30 +301,16 @@ function formatBytes(bytes: number): string {
 }
 
 function ContentKeyInput({
-    contentKey,
     chunkSize,
-    onKeyChange,
     onChunkSizeChange,
     onReset,
 }: {
-    contentKey: string;
     chunkSize: string;
-    onKeyChange: (key: string) => void;
     onChunkSizeChange: (size: string) => void;
     onReset: () => void;
 }) {
     return (
         <div className="flex flex-col gap-3 p-4 rounded-lg border bg-muted/50">
-            <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium">Content Key</label>
-                <Input
-                    type="text"
-                    placeholder="Enter content UUID"
-                    value={contentKey}
-                    onChange={(e) => onKeyChange(e.target.value)}
-                    className="w-full"
-                />
-            </div>
             <div className="flex items-end gap-2">
                 <div className="flex-1 flex flex-col gap-2">
                     <label className="text-sm font-medium">Chunk Size (MB)</label>
