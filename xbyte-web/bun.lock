@@ -45,7 +45,7 @@
         "@radix-ui/react-label": "*",
         "@radix-ui/react-popover": "*",
         "@radix-ui/react-slider": "*",
-        "@radix-ui/react-slot": "*",
+        "@radix-ui/react-slot": "^1.2.4",
         "@solana-program/system": "*",
         "@solana-program/token": "*",
         "@solana/kit": "*",
