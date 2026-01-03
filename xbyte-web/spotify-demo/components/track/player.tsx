@@ -137,13 +137,6 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
 
     const hasContent = chunkState !== null && chunkState.chunks.length > 0;
 
-    const formatTime = (seconds: number): string => {
-        if (!isFinite(seconds) || isNaN(seconds)) return "0:00";
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins}:${secs.toString().padStart(2, "0")}`;
-    };
-
     const handleSeek = (value: number[]) => {
         if (ref.current && duration > 0) {
             ref.current.currentTime = value[0];
@@ -174,22 +167,12 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
         <div className="flex flex-col gap-6 w-full">
             {PlayerElement}
 
-            <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                    <Slider
-                        value={[currentTime]}
-                        max={duration || 1}
-                        step={0.1}
-                        onValueChange={handleSeek}
-                        className="flex-1"
-                        disabled={!hasContent}
-                    />
-                </div>
-
-                <div className="text-xs sm:text-sm text-muted-foreground">
-                    {formatTime(currentTime)} / {formatTime(duration)}
-                </div>
-            </div>
+            <PlayerSlider
+                currentTime={currentTime}
+                duration={duration}
+                handleSeek={handleSeek}
+                hasContent={hasContent}
+            />
 
             <PlayerControllers
                 isPlaying={isPlaying}
@@ -273,6 +256,41 @@ export function PlayerControllers({
             >
                 <Download className={`size-5 ${isLoading ? "animate-pulse" : ""}`} />
             </Button>
+        </div>
+    );
+}
+
+export interface PlayerSliderProps {
+    currentTime: number;
+    duration: number;
+    handleSeek: (value: number[]) => void;
+    hasContent: boolean;
+}
+
+export function PlayerSlider({ currentTime, duration, handleSeek, hasContent }: PlayerSliderProps) {
+    const formatTime = (seconds: number): string => {
+        if (!isFinite(seconds) || isNaN(seconds)) return "0:00";
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, "0")}`;
+    };
+
+    return (
+        <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+                <Slider
+                    value={[currentTime]}
+                    max={duration || 1}
+                    step={0.1}
+                    onValueChange={handleSeek}
+                    className="flex-1"
+                    disabled={!hasContent}
+                />
+            </div>
+
+            <div className="text-xs sm:text-sm text-muted-foreground">
+                {formatTime(currentTime)} / {formatTime(duration)}
+            </div>
         </div>
     );
 }
