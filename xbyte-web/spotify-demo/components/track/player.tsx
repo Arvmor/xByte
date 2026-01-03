@@ -93,7 +93,7 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
     const fetchNextChunk = useCallback(async () => {
         if (!contentKey || isLoading) return;
 
-        const size = Number(chunkSize) * DEFAULT_CHUNK_SIZE;
+        const size = Math.round(chunkSize * DEFAULT_CHUNK_SIZE);
         const currentOffset = chunkState?.offset ?? 0;
 
         setIsLoading(true);
@@ -281,7 +281,7 @@ export function PlayerControllers({
 function updatePlayerSource(
     player: HTMLAudioElement | HTMLVideoElement,
     chunks: Uint8Array[],
-    mimeType: string,
+    type: string,
 ) {
     const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0);
     const combined = new Uint8Array(totalLength);
@@ -292,7 +292,7 @@ function updatePlayerSource(
         offset += chunk.length;
     });
 
-    const blob = new Blob([combined], { type: mimeType });
+    const blob = new Blob([combined], { type });
     const currentTime = player.currentTime;
 
     URL.revokeObjectURL(player.src);
