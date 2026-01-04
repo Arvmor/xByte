@@ -3,13 +3,13 @@ import { loadEnvFile } from "process";
 
 try {
     loadEnvFile("../../.env");
-} catch (error) {
-    console.warn("Error loading .env file", error);
+} catch {
+    console.warn("Error loading .env file");
 }
 
 const nextConfig: NextConfig = {
     output: "export",
-    transpilePackages: ["xbyte-sdk"],
+    transpilePackages: ["xbyte-sdk", "xbyte-components"],
     images: {
         unoptimized: true,
     },

@@ -2,10 +2,10 @@
     "name": "xbyte-web",
     "private": true,
     "workspaces": [
-        "spotify-demo",
-        "xbyte-platform",
         "xbyte-sdk",
-        "xbyte-components"
+        "xbyte-components",
+        "spotify-demo",
+        "xbyte-platform"
     ],
     "scripts": {
         "build": "bun run --workspaces build",
