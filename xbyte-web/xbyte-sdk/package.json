@@ -5,9 +5,7 @@
     "keywords": [],
     "license": "MIT",
     "type": "module",
-    "exports": {
-        "./index": "./src/index.ts"
-    },
+    "exports": "./src/index.ts",
     "scripts": {
         "build": "tsc",
         "lint": "oxlint",
