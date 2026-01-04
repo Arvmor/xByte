@@ -9,6 +9,23 @@
         "format": "oxfmt",
         "format:check": "oxfmt --check"
     },
+    "dependencies": {
+        "@privy-io/react-auth": "*",
+        "@radix-ui/react-label": "*",
+        "@radix-ui/react-popover": "*",
+        "@radix-ui/react-separator": "*",
+        "@radix-ui/react-slider": "*",
+        "@radix-ui/react-slot": "*",
+        "class-variance-authority": "*",
+        "clsx": "*",
+        "lucide-react": "*",
+        "next": "*",
+        "next-themes": "*",
+        "react": "*",
+        "react-dom": "*",
+        "tailwind-merge": "*",
+        "xbyte-sdk": "workspace:*"
+    },
     "devDependencies": {
         "@types/bun": "*"
     },

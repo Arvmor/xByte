@@ -4,6 +4,7 @@
     "private": true,
     "scripts": {
         "dev": "next dev",
+        "prebuild": "cd ../xbyte-sdk && bun run build",
         "build": "next build",
         "start": "next start",
         "lint": "oxlint",
@@ -22,6 +23,7 @@
         "react": "*",
         "react-dom": "*",
         "tailwind-merge": "*",
+        "viem": "*",
         "xbyte-sdk": "workspace:*"
     },
     "devDependencies": {
