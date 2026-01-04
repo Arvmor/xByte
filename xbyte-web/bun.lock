@@ -133,7 +133,9 @@
         "viem": "*",
       },
       "devDependencies": {
-        "@types/node": "*",
+        "@types/bun": "*",
+      },
+      "peerDependencies": {
         "typescript": "*",
       },
     },

@@ -4,25 +4,12 @@
     "description": "xbyte SDK",
     "keywords": [],
     "license": "MIT",
-    "files": [
-        "dist"
-    ],
     "type": "module",
-    "main": "./dist/index.js",
-    "module": "./dist/index.js",
-    "types": "./dist/index.d.ts",
     "exports": {
-        ".": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.js"
-        },
-        "./*": {
-            "types": "./dist/*.d.ts",
-            "import": "./dist/*.js"
-        }
+        "./index": "./src/index.ts"
     },
     "scripts": {
-        "build": "tsc -b",
+        "build": "tsc",
         "lint": "oxlint",
         "lint:fix": "oxlint --fix",
         "format": "oxfmt",
@@ -32,7 +19,9 @@
         "viem": "*"
     },
     "devDependencies": {
-        "@types/node": "*",
+        "@types/bun": "*"
+    },
+    "peerDependencies": {
         "typescript": "*"
     }
 }
