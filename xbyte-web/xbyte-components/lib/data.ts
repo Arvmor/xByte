@@ -1,5 +1,5 @@
-import { ItemProps } from "@/components/track/item";
-import { UUID } from "crypto";
+import type { ItemProps } from "@/components/track/item";
+import type { UUID } from "crypto";
 
 export interface TrackItem extends ItemProps {
     uuid: UUID;

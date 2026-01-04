@@ -8,6 +8,9 @@
         "jsx": "react-jsx",
         "allowJs": true,
         "baseUrl": ".",
+        "paths": {
+            "@/*": ["./*"]
+        },
         "skipLibCheck": true,
         "strict": true,
         "noEmit": true,
@@ -15,8 +18,12 @@
         "moduleResolution": "bundler",
         "resolveJsonModule": true,
         "isolatedModules": true,
-        "incremental": true
+        "incremental": true,
+        "plugins": [
+            {
+                "name": "next"
+            }
+        ]
     },
-    "include": ["src/**/*"],
     "exclude": ["node_modules"]
 }

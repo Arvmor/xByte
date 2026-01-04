@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { UUID } from "crypto";
+import type { UUID } from "crypto";
 import { xByteClient } from "xbyte-sdk";
 import { formatFromDecimals } from "@/lib/utils";
 import {

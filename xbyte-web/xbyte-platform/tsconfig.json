@@ -18,7 +18,10 @@
                 "name": "next"
             }
         ],
+        "baseUrl": ".",
         "paths": {
+            "@/components/*": ["../xbyte-components/components/*"],
+            "@/lib/*": ["../xbyte-components/lib/*"],
             "@/*": ["./*"]
         }
     },
