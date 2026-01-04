@@ -2,7 +2,8 @@
     "name": "xbyte-components",
     "type": "module",
     "exports": {
-        "./components/*/index": "./components/*",
+        "./styles/*": "./styles/*",
+        "./components/*": "./components/*",
         "./lib/*": "./lib/*"
     },
     "scripts": {
