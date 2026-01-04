@@ -1,7 +1,10 @@
 {
     "name": "xbyte-components",
     "type": "module",
-    "module": "index.ts",
+    "exports": {
+        "./components/*/index": "./components/*",
+        "./lib/*": "./lib/*"
+    },
     "scripts": {
         "build": "tsc",
         "lint": "oxlint",
