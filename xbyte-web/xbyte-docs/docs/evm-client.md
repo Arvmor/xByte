@@ -13,9 +13,11 @@ The `xByteEvmClient` provides methods to interact with xByte smart contracts on 
 Creates a new xByte EVM client instance.
 
 **Parameters:**
+
 - `rpcUrl` (optional): The RPC URL for the Base Sepolia chain. Defaults to `https://sepolia.base.org`
 
 **Example:**
+
 ```typescript
 const evmClient = new xByteEvmClient("https://sepolia.base.org");
 ```
@@ -29,6 +31,7 @@ Gets the owner address of the xByteFactory contract.
 **Returns:** `Promise<Address>`
 
 **Example:**
+
 ```typescript
 const owner = await evmClient.getOwner();
 console.log("Factory owner:", owner);
@@ -41,6 +44,7 @@ Gets the vault relay address configured in the factory.
 **Returns:** `Promise<Address>`
 
 **Example:**
+
 ```typescript
 const relay = await evmClient.getVaultRelay();
 console.log("Vault relay:", relay);
@@ -51,11 +55,13 @@ console.log("Vault relay:", relay);
 Gets the vault address for a specific owner.
 
 **Parameters:**
+
 - `owner`: The address of the vault owner
 
 **Returns:** `Promise<Address[]>`
 
 **Example:**
+
 ```typescript
 const vaults = await evmClient.getVault("0x1234...");
 console.log("Vaults:", vaults);
@@ -66,11 +72,13 @@ console.log("Vaults:", vaults);
 Computes the vault address for an owner without creating it.
 
 **Parameters:**
+
 - `owner`: The address of the vault owner
 
 **Returns:** `Promise<Address>`
 
 **Example:**
+
 ```typescript
 const computedAddress = await evmClient.getComputeVaultAddress("0x1234...");
 console.log("Computed vault address:", computedAddress);
@@ -87,6 +95,7 @@ Gets the encoded function data for creating a vault.
 **Returns:** `string` (hex-encoded function data)
 
 **Example:**
+
 ```typescript
 const signature = evmClient.signatureCreateVault();
 console.log("Create vault signature:", signature);
@@ -99,6 +108,7 @@ Gets the encoded function data for withdrawing native tokens from the factory.
 **Returns:** `string` (hex-encoded function data)
 
 **Example:**
+
 ```typescript
 const signature = evmClient.signatureWithdraw();
 console.log("Withdraw signature:", signature);
@@ -109,11 +119,13 @@ console.log("Withdraw signature:", signature);
 Gets the encoded function data for withdrawing ERC20 tokens from the factory.
 
 **Parameters:**
+
 - `tokenAddress`: The address of the ERC20 token contract
 
 **Returns:** `string` (hex-encoded function data)
 
 **Example:**
+
 ```typescript
 const usdcAddress = "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
 const signature = evmClient.signatureWithdrawERC20(usdcAddress);
@@ -127,11 +139,13 @@ console.log("Withdraw ERC20 signature:", signature);
 Gets the native token (ETH) balance of a vault.
 
 **Parameters:**
+
 - `vaultAddress`: The address of the vault
 
 **Returns:** `Promise<bigint>` (balance in wei)
 
 **Example:**
+
 ```typescript
 const balance = await evmClient.getVaultBalance("0x5678...");
 console.log("Vault balance (wei):", balance);
@@ -143,12 +157,14 @@ console.log("Vault balance (ETH):", Number(balance) / 1e18);
 Gets the ERC20 token balance of a vault.
 
 **Parameters:**
+
 - `vaultAddress`: The address of the vault
 - `tokenAddress`: The address of the ERC20 token contract
 
 **Returns:** `Promise<bigint>` (token balance)
 
 **Example:**
+
 ```typescript
 const usdcAddress = "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
 const balance = await evmClient.getVaultERC20Balance("0x5678...", usdcAddress);
@@ -162,6 +178,7 @@ console.log("USDC balance:", balance);
 Retrieves vault events (WithdrawNative and Withdraw) for a specific vault.
 
 **Parameters:**
+
 - `address`: The vault address to query events for
 - `fromBlock` (optional): Starting block number. If not provided, defaults to 100,000 blocks before the latest
 - `toBlock` (optional): Ending block number. If not provided, defaults to the latest block
@@ -169,6 +186,7 @@ Retrieves vault events (WithdrawNative and Withdraw) for a specific vault.
 **Returns:** `Promise<Log[]>`
 
 **Example:**
+
 ```typescript
 const events = await evmClient.getVaultEvents("0x5678...");
 console.log("Vault events:", events);
@@ -210,4 +228,3 @@ await window.ethereum.request({
   }],
 });
 ```
-

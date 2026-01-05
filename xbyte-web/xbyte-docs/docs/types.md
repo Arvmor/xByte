@@ -19,15 +19,18 @@ type ApiResponse<T, E> =
 ```
 
 **Type Parameters:**
+
 - `T`: The type of data returned on success
 - `E`: The type of error data returned on failure
 
 **Status Values:**
+
 - `"Success"`: Operation completed successfully
 - `"Error"`: An error occurred
 - `"PaymentRequired"`: Payment is required to complete the operation
 
 **Example:**
+
 ```typescript
 const response: ApiResponse<string, string> = await client.health();
 
@@ -53,11 +56,13 @@ interface Client {
 ```
 
 **Properties:**
+
 - `id` (optional): The unique identifier for the client (UUID)
 - `name`: The name of the client
 - `wallet`: The wallet address associated with the client
 
 **Example:**
+
 ```typescript
 const client: Client = {
   name: "My Content Platform",
@@ -79,10 +84,12 @@ interface RegisterRequest {
 ```
 
 **Properties:**
+
 - `bucket`: The name of the bucket to register
 - `client`: The UUID of the client that owns the bucket
 
 **Example:**
+
 ```typescript
 const request: RegisterRequest = {
   bucket: "my-content-bucket",
@@ -103,11 +110,13 @@ interface SetPriceRequest {
 ```
 
 **Properties:**
+
 - `bucket`: The name of the bucket containing the object
 - `object`: The name/path of the object
 - `price`: The price per byte (in USDC)
 
 **Example:**
+
 ```typescript
 const request: SetPriceRequest = {
   bucket: "my-content-bucket",
@@ -128,10 +137,12 @@ interface RangeRequest {
 ```
 
 **Properties:**
+
 - `offset`: The starting byte offset
 - `length`: The number of bytes to retrieve
 
 **Example:**
+
 ```typescript
 const request: RangeRequest = {
   offset: 0,
@@ -165,6 +176,7 @@ interface X402PaymentPayload {
 ```
 
 **Properties:**
+
 - `x402Version`: The version of the x402 protocol
 - `scheme`: The payment scheme (e.g., "exact")
 - `network`: The blockchain network (e.g., "base-sepolia")
@@ -177,6 +189,7 @@ interface X402PaymentPayload {
 - `payload.authorization.nonce`: Unique nonce for the payment
 
 **Example:**
+
 ```typescript
 const payment: X402PaymentPayload = {
   x402Version: 1,
@@ -207,6 +220,7 @@ import { UUID } from "crypto";
 ```
 
 **Example:**
+
 ```typescript
 const clientId: UUID = "550e8400-e29b-41d4-a716-446655440000";
 ```
@@ -220,6 +234,7 @@ import { Address } from "viem";
 ```
 
 **Example:**
+
 ```typescript
 const wallet: Address = "0x1234567890123456789012345678901234567890";
 ```
@@ -247,7 +262,7 @@ async function safeApiCall<T>(
   apiCall: () => Promise<ApiResponse<T, string>>
 ): Promise<T> {
   const response = await apiCall();
-  
+
   if (response.status === "Success") {
     return response.data;
   } else {
@@ -255,7 +270,7 @@ async function safeApiCall<T>(
   }
 }
 
-const price = await safeApiCall(() => 
+const price = await safeApiCall(() =>
   client.getPrice("bucket", "object")
 );
 ```
@@ -274,4 +289,3 @@ if (isSuccess(response)) {
   console.log("Price:", response.data);
 }
 ```
-

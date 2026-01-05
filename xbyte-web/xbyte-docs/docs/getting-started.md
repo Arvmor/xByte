@@ -164,4 +164,3 @@ if (response.status === "Success") {
 - Explore [EVM Client features](./evm-client) for blockchain interactions
 - Check out [practical examples](./examples)
 - Review the [types reference](./types)
-

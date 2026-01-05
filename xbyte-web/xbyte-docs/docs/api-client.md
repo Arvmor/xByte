@@ -13,9 +13,11 @@ The `xByteClient` provides methods to interact with the xByte API server for con
 Creates a new xByte API client instance.
 
 **Parameters:**
+
 - `xbyteUrl` (optional): The URL of the xByte API server. Defaults to `http://localhost:80`
 
 **Example:**
+
 ```typescript
 const client = new xByteClient("https://api.xbyte.com");
 ```
@@ -29,6 +31,7 @@ Checks the health status of the xByte server.
 **Returns:** `Promise<ApiResponse<string, string>>`
 
 **Example:**
+
 ```typescript
 const response = await client.health();
 if (response.status === "Success") {
@@ -43,6 +46,7 @@ Gets the version of the xByte API.
 **Returns:** `Promise<ApiResponse<string, string>>`
 
 **Example:**
+
 ```typescript
 const response = await client.version();
 if (response.status === "Success") {
@@ -57,13 +61,15 @@ if (response.status === "Success") {
 Creates a new client in the xByte system.
 
 **Parameters:**
+
 - `request`: A `Client` object with:
-  - `name`: The name of the client
-  - `wallet`: The wallet address associated with the client
+    - `name`: The name of the client
+    - `wallet`: The wallet address associated with the client
 
 **Returns:** `Promise<ApiResponse<Client, string>>`
 
 **Example:**
+
 ```typescript
 const response = await client.createClient({
   name: "My Content Platform",
@@ -81,11 +87,13 @@ if (response.status === "Success") {
 Retrieves a client by its ID.
 
 **Parameters:**
+
 - `id`: The UUID of the client
 
 **Returns:** `Promise<ApiResponse<Client, string>>`
 
 **Example:**
+
 ```typescript
 const response = await client.getClient("550e8400-e29b-41d4-a716-446655440000");
 if (response.status === "Success") {
@@ -100,13 +108,15 @@ if (response.status === "Success") {
 Registers a new bucket for storing content.
 
 **Parameters:**
+
 - `request`: A `RegisterRequest` object with:
-  - `bucket`: The name of the bucket
-  - `client`: The UUID of the client that owns the bucket
+    - `bucket`: The name of the bucket
+    - `client`: The UUID of the client that owns the bucket
 
 **Returns:** `Promise<ApiResponse<string, string>>`
 
 **Example:**
+
 ```typescript
 const response = await client.registerBucket({
   bucket: "my-content-bucket",
@@ -125,6 +135,7 @@ Retrieves all buckets in the system.
 **Returns:** `Promise<ApiResponse<string[], string>>`
 
 **Example:**
+
 ```typescript
 const response = await client.getAllBuckets();
 if (response.status === "Success") {
@@ -137,11 +148,13 @@ if (response.status === "Success") {
 Gets all objects in a specific bucket.
 
 **Parameters:**
+
 - `bucket`: The name of the bucket
 
 **Returns:** `Promise<ApiResponse<string[], string>>`
 
 **Example:**
+
 ```typescript
 const response = await client.getAllObjects("my-content-bucket");
 if (response.status === "Success") {
@@ -156,14 +169,16 @@ if (response.status === "Success") {
 Sets the per-byte price for a content object.
 
 **Parameters:**
+
 - `request`: A `SetPriceRequest` object with:
-  - `bucket`: The name of the bucket containing the object
-  - `object`: The name/path of the object
-  - `price`: The price per byte (in USDC)
+    - `bucket`: The name of the bucket containing the object
+    - `object`: The name/path of the object
+    - `price`: The price per byte (in USDC)
 
 **Returns:** `Promise<ApiResponse<string, string>>`
 
 **Example:**
+
 ```typescript
 const response = await client.setPrice({
   bucket: "my-content-bucket",
@@ -181,12 +196,14 @@ if (response.status === "Success") {
 Retrieves the price for a specific content object.
 
 **Parameters:**
+
 - `bucket`: The name of the bucket
 - `object`: The name/path of the object
 
 **Returns:** `Promise<ApiResponse<number, string>>`
 
 **Example:**
+
 ```typescript
 const response = await client.getPrice("my-content-bucket", "my-video.mp4");
 if (response.status === "Success") {
@@ -203,6 +220,7 @@ All methods return an `ApiResponse<T, E>` which can have one of three statuses:
 - `"PaymentRequired"`: Payment is required to complete the operation
 
 **Example error handling:**
+
 ```typescript
 const response = await client.getPrice("bucket", "object");
 
@@ -218,4 +236,3 @@ switch (response.status) {
     break;
 }
 ```
-

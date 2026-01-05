@@ -282,4 +282,3 @@ async function createVaultWithWallet() {
   return txHash;
 }
 ```
-
