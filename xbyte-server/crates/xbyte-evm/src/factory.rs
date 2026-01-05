@@ -1,3 +1,4 @@
+use crate::vault::xByteVault;
 use alloy_primitives::{Address, B256, Bytes, address, bytes};
 use alloy_provider::Provider;
 use alloy_sol_types::{SolCall, SolValue, sol};
@@ -6,11 +7,6 @@ use std::ops::Deref;
 sol! {
     #[sol(rpc)]
     "contracts/xByteFactory.sol"
-}
-
-sol! {
-    #[sol(rpc)]
-    "contracts/xByteVault.sol"
 }
 
 /// Factory Interface for [`xByteFactory`] contract.
