@@ -126,6 +126,7 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
 
         if (ref.current) {
             updatePlayerSource(ref.current, allChunks, mimeType);
+            handlePlayPause();
         }
     }, [contentKey, chunkSize, chunkState, isLoading, xPayAsync, mimeType]);
 
@@ -152,6 +153,7 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
             ref={ref as React.RefObject<HTMLAudioElement>}
             onTimeUpdate={onTimeUpdate}
             onLoadedMetadata={onTimeUpdate}
+            onEnded={handlePlayPause}
             hidden
         />
     ) : (
@@ -160,6 +162,7 @@ export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) 
                 ref={ref as React.RefObject<HTMLVideoElement>}
                 onTimeUpdate={onTimeUpdate}
                 onLoadedMetadata={onTimeUpdate}
+                onEnded={handlePlayPause}
                 className="w-full h-full object-contain"
                 controls={false}
             />
@@ -220,44 +223,32 @@ export function PlayerControllers({
     );
 
     return (
-        <div className="flex items-center justify-center gap-2 sm:gap-4">
-            <Button
-                variant="ghost"
-                size="icon"
-                disabled={!hasContent}
-                className="size-10 sm:size-12"
-            >
-                <Rewind className="size-5" />
-            </Button>
+        <div className="flex flex-col gap-4 w-fit mx-auto">
+            {/* Player controls */}
+            <div className="flex items-center justify-center gap-2 sm:gap-4">
+                <Button variant="ghost" size="icon" disabled={!hasContent}>
+                    <Rewind className="size-5" />
+                </Button>
 
-            <Button
-                variant="default"
-                size="icon"
-                onClick={onPlayPause}
-                disabled={!hasContent}
-                className="size-14 sm:size-16 rounded-full shadow-lg hover:scale-105 transition-transform"
-            >
-                {playerIcon}
-            </Button>
+                <Button
+                    variant="default"
+                    size="icon"
+                    onClick={onPlayPause}
+                    disabled={!hasContent}
+                    className="size-14 sm:size-16 rounded-full shadow-lg hover:scale-105 transition-transform"
+                >
+                    {playerIcon}
+                </Button>
 
-            <Button
-                variant="ghost"
-                size="icon"
-                disabled={!hasContent}
-                className="size-10 sm:size-12"
-            >
-                <FastForward className="size-5" />
-            </Button>
+                <Button variant="ghost" size="icon" disabled={!hasContent}>
+                    <FastForward className="size-5" />
+                </Button>
+            </div>
 
-            <Button
-                variant="secondary"
-                size="icon"
-                onClick={onFetchNextChunk}
-                disabled={!contentKey || isLoading}
-                title="Fetch & pay for next chunk"
-                className="size-10 sm:size-12"
-            >
-                <Download className={`size-5 ${isLoading ? "animate-pulse" : ""}`} />
+            {/* Pay to play button */}
+            <Button onClick={onFetchNextChunk} disabled={!contentKey || isLoading}>
+                <Download className="size-5" />
+                Pay
             </Button>
         </div>
     );
