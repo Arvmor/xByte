@@ -1,0 +1,284 @@
+---
+sidebar_position: 6
+---
+
+# Examples
+
+This page contains practical examples of using the xByte SDK in common scenarios.
+
+## Complete Setup Flow
+
+This example shows the complete flow from creating a client to setting content prices:
+
+```typescript
+import { xByteClient } from "xbyte-sdk";
+
+async function setupContentPlatform() {
+  const client = new xByteClient("https://api.xbyte.com");
+
+  const clientResponse = await client.createClient({
+    name: "My Music Platform",
+    wallet: "0x1234567890123456789012345678901234567890",
+  });
+
+  if (clientResponse.status !== "Success") {
+    throw new Error(`Failed to create client: ${clientResponse.data}`);
+  }
+
+  const clientId = clientResponse.data.id!;
+
+  const bucketResponse = await client.registerBucket({
+    bucket: "music-content",
+    client: clientId,
+  });
+
+  if (bucketResponse.status !== "Success") {
+    throw new Error(`Failed to register bucket: ${bucketResponse.data}`);
+  }
+
+  console.log("Setup complete! Client ID:", clientId);
+  return clientId;
+}
+```
+
+## Setting Prices for Multiple Files
+
+```typescript
+import { xByteClient } from "xbyte-sdk";
+
+async function setPricesForFiles(
+  client: xByteClient,
+  bucket: string,
+  files: Array<{ name: string; price: number }>
+) {
+  const results = await Promise.allSettled(
+    files.map((file) =>
+      client.setPrice({
+        bucket,
+        object: file.name,
+        price: file.price,
+      })
+    )
+  );
+
+  results.forEach((result, index) => {
+    if (result.status === "fulfilled" && result.value.status === "Success") {
+      console.log(`✓ Price set for ${files[index].name}`);
+    } else {
+      console.error(`✗ Failed to set price for ${files[index].name}`);
+    }
+  });
+}
+
+const client = new xByteClient();
+await setPricesForFiles(client, "music-content", [
+  { name: "song1.mp3", price: 0.001 },
+  { name: "song2.mp3", price: 0.0015 },
+  { name: "album.zip", price: 0.002 },
+]);
+```
+
+## Checking Vault Balance
+
+```typescript
+import { xByteEvmClient } from "xbyte-sdk";
+
+async function checkVaultEarnings(ownerAddress: string) {
+  const evmClient = new xByteEvmClient();
+
+  const vaultAddress = await evmClient.getComputeVaultAddress(ownerAddress);
+  const nativeBalance = await evmClient.getVaultBalance(vaultAddress);
+  const usdcAddress = "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
+  const usdcBalance = await evmClient.getVaultERC20Balance(
+    vaultAddress,
+    usdcAddress
+  );
+
+  console.log("Vault Address:", vaultAddress);
+  console.log("Native Balance (ETH):", Number(nativeBalance) / 1e18);
+  console.log("USDC Balance:", Number(usdcBalance) / 1e6);
+}
+```
+
+## Monitoring Vault Events
+
+```typescript
+import { xByteEvmClient } from "xbyte-sdk";
+
+async function monitorVaultWithdrawals(vaultAddress: string) {
+  const evmClient = new xByteEvmClient();
+
+  const events = await evmClient.getVaultEvents(vaultAddress);
+
+  events.forEach((event) => {
+    if (event.eventName === "WithdrawNative") {
+      console.log("Native withdrawal:", {
+        amount: event.args.amount,
+        owner: event.args.owner,
+        blockNumber: event.blockNumber,
+      });
+    } else if (event.eventName === "Withdraw") {
+      console.log("ERC20 withdrawal:", {
+        amount: event.args.amount,
+        token: event.args.token,
+        owner: event.args.owner,
+        blockNumber: event.blockNumber,
+      });
+    }
+  });
+}
+```
+
+## Error Handling Wrapper
+
+```typescript
+import { xByteClient, ApiResponse } from "xbyte-sdk";
+
+class XByteService {
+  constructor(private client: xByteClient) {}
+
+  async safeCall<T>(
+    operation: () => Promise<ApiResponse<T, string>>,
+    errorMessage: string
+  ): Promise<T> {
+    const response = await operation();
+
+    if (response.status === "Success") {
+      return response.data;
+    } else if (response.status === "PaymentRequired") {
+      throw new Error(`Payment required: ${response.data}`);
+    } else {
+      throw new Error(`${errorMessage}: ${response.data}`);
+    }
+  }
+
+  async getPriceSafe(bucket: string, object: string): Promise<number> {
+    return this.safeCall(
+      () => this.client.getPrice(bucket, object),
+      "Failed to get price"
+    );
+  }
+
+  async setPriceSafe(
+    bucket: string,
+    object: string,
+    price: number
+  ): Promise<void> {
+    await this.safeCall(
+      () => this.client.setPrice({ bucket, object, price }),
+      "Failed to set price"
+    );
+  }
+}
+
+const service = new XByteService(new xByteClient());
+const price = await service.getPriceSafe("bucket", "object");
+```
+
+## React Hook Example
+
+```typescript
+import { useState, useEffect } from "react";
+import { xByteClient, ApiResponse } from "xbyte-sdk";
+
+function useXBytePrice(bucket: string, object: string) {
+  const [price, setPrice] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const client = new xByteClient("https://api.xbyte.com");
+
+    client
+      .getPrice(bucket, object)
+      .then((response: ApiResponse<number, string>) => {
+        if (response.status === "Success") {
+          setPrice(response.data);
+        } else {
+          setError(response.data);
+        }
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [bucket, object]);
+
+  return { price, loading, error };
+}
+
+function ContentPrice({ bucket, object }: { bucket: string; object: string }) {
+  const { price, loading, error } = useXBytePrice(bucket, object);
+
+  if (loading) return <div>Loading price...</div>;
+  if (error) return <div>Error: {error}</div>;
+  return <div>Price: {price} USDC per byte</div>;
+}
+```
+
+## Batch Operations
+
+```typescript
+import { xByteClient } from "xbyte-sdk";
+
+async function batchGetPrices(
+  client: xByteClient,
+  bucket: string,
+  objects: string[]
+): Promise<Map<string, number>> {
+  const priceMap = new Map<string, number>();
+
+  await Promise.all(
+    objects.map(async (object) => {
+      const response = await client.getPrice(bucket, object);
+      if (response.status === "Success") {
+        priceMap.set(object, response.data);
+      }
+    })
+  );
+
+  return priceMap;
+}
+
+const client = new xByteClient();
+const prices = await batchGetPrices(client, "music-content", [
+  "song1.mp3",
+  "song2.mp3",
+  "song3.mp3",
+]);
+
+prices.forEach((price, object) => {
+  console.log(`${object}: ${price} USDC per byte`);
+});
+```
+
+## Integration with Wallet
+
+```typescript
+import { xByteEvmClient } from "xbyte-sdk";
+
+async function createVaultWithWallet() {
+  const evmClient = new xByteEvmClient();
+  const signature = evmClient.signatureCreateVault();
+
+  if (!window.ethereum) {
+    throw new Error("MetaMask not found");
+  }
+
+  const accounts = await window.ethereum.request({
+    method: "eth_requestAccounts",
+  });
+
+  const txHash = await window.ethereum.request({
+    method: "eth_sendTransaction",
+    params: [
+      {
+        from: accounts[0],
+        to: "0x4957cDc66a60FfBf6E78baE23d18973a5dcC3e05",
+        data: signature,
+      },
+    ],
+  });
+
+  console.log("Transaction hash:", txHash);
+  return txHash;
+}
+```
