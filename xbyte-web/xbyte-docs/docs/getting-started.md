@@ -26,7 +26,7 @@ yarn add xbyte-sdk
 
 - Node.js 18+ or Bun
 - TypeScript (recommended)
-- An xByte API endpoint URL (or use the default localhost)
+- An xByte API endpoint URL (or use the default)
 
 ## Basic Setup
 
@@ -41,10 +41,10 @@ import { xByteClient, xByteEvmClient } from "xbyte-sdk";
 The `xByteClient` is used to interact with the xByte API server:
 
 ```typescript
-const client = new xByteClient("https://api.xbyte.com");
+const client = new xByteClient();
 ```
 
-If no URL is provided, it defaults to `http://localhost:80`:
+If no URL is provided, it defaults to `https://xbyte-api.onrender.com`:
 
 ```typescript
 const client = new xByteClient();
@@ -67,7 +67,7 @@ Let's start with a simple health check:
 ```typescript
 import { xByteClient } from "xbyte-sdk";
 
-const client = new xByteClient("https://api.xbyte.com");
+const client = new xByteClient();
 
 const response = await client.health();
 

@@ -30,7 +30,7 @@ The xByte SDK consists of two main clients:
 ```typescript
 import { xByteClient } from "xbyte-sdk";
 
-const client = new xByteClient("https://api.xbyte.com");
+const client = new xByteClient();
 
 const health = await client.health();
 console.log(health); // { status: "Success", data: "OK" }

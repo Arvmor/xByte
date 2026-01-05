@@ -14,12 +14,12 @@ Creates a new xByte API client instance.
 
 **Parameters:**
 
-- `xbyteUrl` (optional): The URL of the xByte API server. Defaults to `http://localhost:80`
+- `xbyteUrl` (optional): The URL of the xByte API server. Defaults to `https://xbyte-api.onrender.com`
 
 **Example:**
 
 ```typescript
-const client = new xByteClient("https://api.xbyte.com");
+const client = new xByteClient();
 ```
 
 ## Health & Version

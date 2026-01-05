@@ -14,7 +14,7 @@ This example shows the complete flow from creating a client to setting content p
 import { xByteClient } from "xbyte-sdk";
 
 async function setupContentPlatform() {
-  const client = new xByteClient("https://api.xbyte.com");
+  const client = new xByteClient();
 
   const clientResponse = await client.createClient({
     name: "My Music Platform",
@@ -187,7 +187,7 @@ function useXBytePrice(bucket: string, object: string) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const client = new xByteClient("https://api.xbyte.com");
+    const client = new xByteClient();
 
     client
       .getPrice(bucket, object)
