@@ -5,12 +5,12 @@ use std::ops::Deref;
 
 sol! {
     #[sol(rpc)]
-    "../../../xbyte-contracts/src/xByteFactory.sol"
+    "contracts/xByteFactory.sol"
 }
 
 sol! {
     #[sol(rpc)]
-    "../../../xbyte-contracts/src/xByteVault.sol"
+    "contracts/xByteVault.sol"
 }
 
 /// Factory Interface for [`xByteFactory`] contract.

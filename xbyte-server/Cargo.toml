@@ -2,6 +2,13 @@
 resolver = "3"
 members = ["crates/xbyte-api", "crates/xbyte-app", "crates/xbyte-evm"]
 
+[workspace.package]
+authors = ["Arvin Moravej <moravej.arvin@gmail.com>"]
+description = "xByte Infra"
+repository = "https://github.com/Arvmor/xbyte"
+keywords = ["xbyte", "x402", "monetization", "web3", "blockchain"]
+license = "MIT"
+
 [workspace.dependencies]
 # Local Crates
 xbyte_api = { path = "crates/xbyte-api" }

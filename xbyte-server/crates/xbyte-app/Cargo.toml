@@ -2,6 +2,11 @@
 name = "xbyte_app"
 version = "0.1.0"
 edition = "2024"
+authors.workspace = true
+description.workspace = true
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
 
 [dependencies]
 xbyte_api.workspace = true
