@@ -1,4 +1,7 @@
-use alloy_provider::{DynProvider, Provider, network::Ethereum};
+use crate::{Factory, Relay};
+use alloy_primitives::Address;
+use alloy_provider::network::Ethereum;
+use alloy_provider::{DynProvider, Provider};
 use std::ops::Deref;
 
 /// xByte EVM Client
@@ -6,10 +9,21 @@ use std::ops::Deref;
 pub struct Client(DynProvider<Ethereum>);
 
 impl Client {
+    /// Initialize a new EVM Client
     pub fn new(url: &str) -> anyhow::Result<Self> {
         let url = url.parse()?;
         let provider = DynProvider::builder().connect_http(url).erased();
         Ok(Self(provider))
+    }
+
+    /// Get a new Factory instance
+    pub fn get_factory(self) -> Factory<Self> {
+        Factory::new(self)
+    }
+
+    /// Get a new Relay instance
+    pub fn get_relay(self, address: Address) -> Relay<Self> {
+        Relay::new(address, self)
     }
 }
 
