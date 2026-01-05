@@ -144,11 +144,11 @@ function UserInfo({ user, balance }: { user: User; balance: string }) {
     return (
         <div className="flex items-center gap-2">
             {/* Address */}
-            <div className="hidden sm:flex bg-accent px-3 py-2 rounded-md items-center gap-2 hover:bg-accent/80 transition-colors cursor-pointer group">
-                <Copy
-                    className="size-4 text-muted-foreground group-hover:text-foreground transition-colors"
-                    onClick={handleCopy}
-                />
+            <div
+                className="hidden sm:flex bg-accent px-3 py-2 rounded-md items-center gap-2 hover:bg-accent/80 transition-colors cursor-pointer group"
+                onClick={handleCopy}
+            >
+                <Copy className="size-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                 <p className="text-sm font-mono">{shortAddress}</p>
             </div>
             {/* Avatar with Popover */}
