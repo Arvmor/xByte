@@ -2,46 +2,54 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Introduction
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Welcome to the **xByte SDK** documentation! xByte is a pay-per-byte infrastructure protocol that enables content monetization through x402 payments.
 
-## Getting Started
+## What is xByte?
 
-Get started by **creating a new site**.
+xByte is a decentralized infrastructure protocol that allows content creators to monetize their content (audio, video, files, etc.) on a per-byte basis. Users pay for exactly what they consume using x402 payment authorization, enabling micro-payments for content streaming.
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+## Features
 
-### What you'll need
+- **Pay-per-byte monetization**: Set prices for your content and get paid for every byte consumed
+- **x402 payment integration**: Seamless payment authorization using the x402 standard
+- **EVM contract support**: Interact with xByte smart contracts on Base Sepolia
+- **Type-safe SDK**: Full TypeScript support with comprehensive type definitions
+- **Simple API**: Easy-to-use client interfaces for both API and blockchain interactions
 
-- [Node.js](https://nodejs.org/en/download/) version 20.0 or above:
-    - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+## SDK Components
 
-## Generate a new site
+The xByte SDK consists of two main clients:
 
-Generate a new Docusaurus site using the **classic template**.
+1. **xByteClient**: Interact with the xByte API server for content management and retrieval
+2. **xByteEvmClient**: Interact with xByte smart contracts on the blockchain
 
-The classic template will automatically be added to your project after you run the command:
+## Quick Start
 
-```bash
-npm init docusaurus@latest my-website classic
+```typescript
+import { xByteClient } from "xbyte-sdk";
+
+const client = new xByteClient("https://api.xbyte.com");
+
+const health = await client.health();
+console.log(health); // { status: "Success", data: "OK" }
 ```
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
+## Installation
 
 ```bash
-cd my-website
-npm run start
+npm install xbyte-sdk
+# or
+pnpm add xbyte-sdk
+# or
+yarn add xbyte-sdk
 ```
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
+## What's Next?
 
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+- [Get Started](./getting-started) - Set up the SDK and make your first API call
+- [API Client Reference](./api-client) - Learn about the xByteClient methods
+- [EVM Client Reference](./evm-client) - Learn about blockchain interactions
+- [Types Reference](./types) - Understand the TypeScript types and interfaces
+- [Examples](./examples) - See practical code examples

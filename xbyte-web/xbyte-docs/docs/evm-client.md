@@ -1,0 +1,213 @@
+---
+sidebar_position: 4
+---
+
+# EVM Client Reference
+
+The `xByteEvmClient` provides methods to interact with xByte smart contracts on the Base Sepolia blockchain. This client uses [viem](https://viem.sh/) for blockchain interactions.
+
+## Constructor
+
+### `new xByteEvmClient(rpcUrl?: string)`
+
+Creates a new xByte EVM client instance.
+
+**Parameters:**
+- `rpcUrl` (optional): The RPC URL for the Base Sepolia chain. Defaults to `https://sepolia.base.org`
+
+**Example:**
+```typescript
+const evmClient = new xByteEvmClient("https://sepolia.base.org");
+```
+
+## Factory Contract Methods
+
+### `getOwner()`
+
+Gets the owner address of the xByteFactory contract.
+
+**Returns:** `Promise<Address>`
+
+**Example:**
+```typescript
+const owner = await evmClient.getOwner();
+console.log("Factory owner:", owner);
+```
+
+### `getVaultRelay()`
+
+Gets the vault relay address configured in the factory.
+
+**Returns:** `Promise<Address>`
+
+**Example:**
+```typescript
+const relay = await evmClient.getVaultRelay();
+console.log("Vault relay:", relay);
+```
+
+### `getVault(owner: Address)`
+
+Gets the vault address for a specific owner.
+
+**Parameters:**
+- `owner`: The address of the vault owner
+
+**Returns:** `Promise<Address[]>`
+
+**Example:**
+```typescript
+const vaults = await evmClient.getVault("0x1234...");
+console.log("Vaults:", vaults);
+```
+
+### `getComputeVaultAddress(owner: Address)`
+
+Computes the vault address for an owner without creating it.
+
+**Parameters:**
+- `owner`: The address of the vault owner
+
+**Returns:** `Promise<Address>`
+
+**Example:**
+```typescript
+const computedAddress = await evmClient.getComputeVaultAddress("0x1234...");
+console.log("Computed vault address:", computedAddress);
+```
+
+## Function Signatures
+
+These methods return encoded function data that can be used with wallet providers or other tools.
+
+### `signatureCreateVault()`
+
+Gets the encoded function data for creating a vault.
+
+**Returns:** `string` (hex-encoded function data)
+
+**Example:**
+```typescript
+const signature = evmClient.signatureCreateVault();
+console.log("Create vault signature:", signature);
+```
+
+### `signatureWithdraw()`
+
+Gets the encoded function data for withdrawing native tokens from the factory.
+
+**Returns:** `string` (hex-encoded function data)
+
+**Example:**
+```typescript
+const signature = evmClient.signatureWithdraw();
+console.log("Withdraw signature:", signature);
+```
+
+### `signatureWithdrawERC20(tokenAddress: Address)`
+
+Gets the encoded function data for withdrawing ERC20 tokens from the factory.
+
+**Parameters:**
+- `tokenAddress`: The address of the ERC20 token contract
+
+**Returns:** `string` (hex-encoded function data)
+
+**Example:**
+```typescript
+const usdcAddress = "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
+const signature = evmClient.signatureWithdrawERC20(usdcAddress);
+console.log("Withdraw ERC20 signature:", signature);
+```
+
+## Vault Balance Methods
+
+### `getVaultBalance(vaultAddress: Address)`
+
+Gets the native token (ETH) balance of a vault.
+
+**Parameters:**
+- `vaultAddress`: The address of the vault
+
+**Returns:** `Promise<bigint>` (balance in wei)
+
+**Example:**
+```typescript
+const balance = await evmClient.getVaultBalance("0x5678...");
+console.log("Vault balance (wei):", balance);
+console.log("Vault balance (ETH):", Number(balance) / 1e18);
+```
+
+### `getVaultERC20Balance(vaultAddress: Address, tokenAddress: Address)`
+
+Gets the ERC20 token balance of a vault.
+
+**Parameters:**
+- `vaultAddress`: The address of the vault
+- `tokenAddress`: The address of the ERC20 token contract
+
+**Returns:** `Promise<bigint>` (token balance)
+
+**Example:**
+```typescript
+const usdcAddress = "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
+const balance = await evmClient.getVaultERC20Balance("0x5678...", usdcAddress);
+console.log("USDC balance:", balance);
+```
+
+## Event Queries
+
+### `getVaultEvents(address: Address, fromBlock?: bigint, toBlock?: bigint)`
+
+Retrieves vault events (WithdrawNative and Withdraw) for a specific vault.
+
+**Parameters:**
+- `address`: The vault address to query events for
+- `fromBlock` (optional): Starting block number. If not provided, defaults to 100,000 blocks before the latest
+- `toBlock` (optional): Ending block number. If not provided, defaults to the latest block
+
+**Returns:** `Promise<Log[]>`
+
+**Example:**
+```typescript
+const events = await evmClient.getVaultEvents("0x5678...");
+console.log("Vault events:", events);
+
+const recentEvents = await evmClient.getVaultEvents(
+  "0x5678...",
+  1000000n,
+  2000000n
+);
+console.log("Events in range:", recentEvents);
+```
+
+## Contract Addresses
+
+The SDK includes the following contract addresses:
+
+- **xByteFactory**: `0x4957cDc66a60FfBf6E78baE23d18973a5dcC3e05` (Base Sepolia)
+
+## Network
+
+The EVM client is configured for **Base Sepolia** testnet by default. Make sure you're connected to the correct network when using this client.
+
+## Integration with Wallet Providers
+
+The function signatures returned by this client can be used with wallet providers like MetaMask, WalletConnect, or other Web3 libraries:
+
+```typescript
+import { xByteEvmClient } from "xbyte-sdk";
+
+const evmClient = new xByteEvmClient();
+
+const createVaultSignature = evmClient.signatureCreateVault();
+
+await window.ethereum.request({
+  method: "eth_sendTransaction",
+  params: [{
+    to: "0x4957cDc66a60FfBf6E78baE23d18973a5dcC3e05",
+    data: createVaultSignature,
+  }],
+});
+```
+
