@@ -35,7 +35,7 @@ export type MimeType = "audio/mpeg" | "video/mp4";
 const DEFAULT_CHUNK_SIZE = 1024 * 1024;
 
 /** Maximum payment value per chunk */
-const MAX_PAYMENT_VALUE = BigInt(1000);
+const MAX_PAYMENT_VALUE = BigInt(10000000);
 
 const client = new xByteClient(process.env.NEXT_PUBLIC_XBYTE_URL);
 
