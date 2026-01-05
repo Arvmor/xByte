@@ -14,8 +14,8 @@ A discriminated union type representing API responses from the xByte API.
 
 ```typescript
 type ApiResponse<T, E> =
-  | { status: "Success"; data: T }
-  | { status: "Error" | "PaymentRequired"; data: E };
+    | { status: "Success"; data: T }
+    | { status: "Error" | "PaymentRequired"; data: E };
 ```
 
 **Type Parameters:**
@@ -35,9 +35,9 @@ type ApiResponse<T, E> =
 const response: ApiResponse<string, string> = await client.health();
 
 if (response.status === "Success") {
-  const data: string = response.data;
+    const data: string = response.data;
 } else {
-  const error: string = response.data;
+    const error: string = response.data;
 }
 ```
 
@@ -49,9 +49,9 @@ Represents a client in the xByte system.
 
 ```typescript
 interface Client {
-  id?: UUID;
-  name: string;
-  wallet: string;
+    id?: UUID;
+    name: string;
+    wallet: string;
 }
 ```
 
@@ -65,8 +65,8 @@ interface Client {
 
 ```typescript
 const client: Client = {
-  name: "My Content Platform",
-  wallet: "0x1234567890123456789012345678901234567890",
+    name: "My Content Platform",
+    wallet: "0x1234567890123456789012345678901234567890",
 };
 ```
 
@@ -78,8 +78,8 @@ Request to register a new bucket.
 
 ```typescript
 interface RegisterRequest {
-  bucket: string;
-  client: UUID;
+    bucket: string;
+    client: UUID;
 }
 ```
 
@@ -92,8 +92,8 @@ interface RegisterRequest {
 
 ```typescript
 const request: RegisterRequest = {
-  bucket: "my-content-bucket",
-  client: "550e8400-e29b-41d4-a716-446655440000",
+    bucket: "my-content-bucket",
+    client: "550e8400-e29b-41d4-a716-446655440000",
 };
 ```
 
@@ -103,9 +103,9 @@ Request to set the price for a content object.
 
 ```typescript
 interface SetPriceRequest {
-  bucket: string;
-  object: string;
-  price: number;
+    bucket: string;
+    object: string;
+    price: number;
 }
 ```
 
@@ -119,9 +119,9 @@ interface SetPriceRequest {
 
 ```typescript
 const request: SetPriceRequest = {
-  bucket: "my-content-bucket",
-  object: "my-video.mp4",
-  price: 0.001,
+    bucket: "my-content-bucket",
+    object: "my-video.mp4",
+    price: 0.001,
 };
 ```
 
@@ -131,8 +131,8 @@ Request for a byte range of content.
 
 ```typescript
 interface RangeRequest {
-  offset: number;
-  length: number;
+    offset: number;
+    length: number;
 }
 ```
 
@@ -145,8 +145,8 @@ interface RangeRequest {
 
 ```typescript
 const request: RangeRequest = {
-  offset: 0,
-  length: 1024 * 1024,
+    offset: 0,
+    length: 1024 * 1024,
 };
 ```
 
@@ -158,20 +158,20 @@ Represents an x402 payment authorization payload.
 
 ```typescript
 interface X402PaymentPayload {
-  x402Version: number;
-  scheme: string;
-  network: string;
-  payload: {
-    signature: string;
-    authorization: {
-      from: string;
-      to: string;
-      value: string;
-      validAfter: string;
-      validBefore: string;
-      nonce: string;
+    x402Version: number;
+    scheme: string;
+    network: string;
+    payload: {
+        signature: string;
+        authorization: {
+            from: string;
+            to: string;
+            value: string;
+            validAfter: string;
+            validBefore: string;
+            nonce: string;
+        };
     };
-  };
 }
 ```
 
@@ -192,20 +192,20 @@ interface X402PaymentPayload {
 
 ```typescript
 const payment: X402PaymentPayload = {
-  x402Version: 1,
-  scheme: "exact",
-  network: "base-sepolia",
-  payload: {
-    signature: "0x1234...",
-    authorization: {
-      from: "0xabcd...",
-      to: "0x5678...",
-      value: "1000",
-      validAfter: "0",
-      validBefore: "1893456000",
-      nonce: "0xef01...",
+    x402Version: 1,
+    scheme: "exact",
+    network: "base-sepolia",
+    payload: {
+        signature: "0x1234...",
+        authorization: {
+            from: "0xabcd...",
+            to: "0x5678...",
+            value: "1000",
+            validAfter: "0",
+            validBefore: "1893456000",
+            nonce: "0xef01...",
+        },
     },
-  },
 };
 ```
 
@@ -245,11 +245,11 @@ You can use TypeScript's type narrowing with the `ApiResponse` type:
 
 ```typescript
 function handleResponse<T>(response: ApiResponse<T, string>) {
-  if (response.status === "Success") {
-    return response.data;
-  } else {
-    throw new Error(response.data);
-  }
+    if (response.status === "Success") {
+        return response.data;
+    } else {
+        throw new Error(response.data);
+    }
 }
 ```
 
@@ -258,34 +258,28 @@ function handleResponse<T>(response: ApiResponse<T, string>) {
 ### Error Handling Pattern
 
 ```typescript
-async function safeApiCall<T>(
-  apiCall: () => Promise<ApiResponse<T, string>>
-): Promise<T> {
-  const response = await apiCall();
+async function safeApiCall<T>(apiCall: () => Promise<ApiResponse<T, string>>): Promise<T> {
+    const response = await apiCall();
 
-  if (response.status === "Success") {
-    return response.data;
-  } else {
-    throw new Error(`API Error: ${response.data}`);
-  }
+    if (response.status === "Success") {
+        return response.data;
+    } else {
+        throw new Error(`API Error: ${response.data}`);
+    }
 }
 
-const price = await safeApiCall(() =>
-  client.getPrice("bucket", "object")
-);
+const price = await safeApiCall(() => client.getPrice("bucket", "object"));
 ```
 
 ### Type-Safe Response Handling
 
 ```typescript
-function isSuccess<T, E>(
-  response: ApiResponse<T, E>
-): response is { status: "Success"; data: T } {
-  return response.status === "Success";
+function isSuccess<T, E>(response: ApiResponse<T, E>): response is { status: "Success"; data: T } {
+    return response.status === "Success";
 }
 
 const response = await client.getPrice("bucket", "object");
 if (isSuccess(response)) {
-  console.log("Price:", response.data);
+    console.log("Price:", response.data);
 }
 ```

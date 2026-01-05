@@ -72,9 +72,9 @@ const client = new xByteClient();
 const response = await client.health();
 
 if (response.status === "Success") {
-  console.log("Server is healthy:", response.data);
+    console.log("Server is healthy:", response.data);
 } else {
-  console.error("Error:", response.data);
+    console.error("Error:", response.data);
 }
 ```
 
@@ -86,13 +86,13 @@ Before you can upload content or set prices, you need to create a client:
 
 ```typescript
 const clientResponse = await client.createClient({
-  name: "My Content Platform",
-  wallet: "0x1234567890123456789012345678901234567890",
+    name: "My Content Platform",
+    wallet: "0x1234567890123456789012345678901234567890",
 });
 
 if (clientResponse.status === "Success") {
-  console.log("Client created:", clientResponse.data);
-  const clientId = clientResponse.data.id;
+    console.log("Client created:", clientResponse.data);
+    const clientId = clientResponse.data.id;
 }
 ```
 
@@ -102,12 +102,12 @@ After creating a client, register a bucket to store your content:
 
 ```typescript
 const bucketResponse = await client.registerBucket({
-  bucket: "my-content-bucket",
-  client: clientId,
+    bucket: "my-content-bucket",
+    client: clientId,
 });
 
 if (bucketResponse.status === "Success") {
-  console.log("Bucket registered:", bucketResponse.data);
+    console.log("Bucket registered:", bucketResponse.data);
 }
 ```
 
@@ -117,13 +117,13 @@ Once you have a bucket, you can set prices for your content:
 
 ```typescript
 const priceResponse = await client.setPrice({
-  bucket: "my-content-bucket",
-  object: "my-video.mp4",
-  price: 0.001, // Price per byte in USDC
+    bucket: "my-content-bucket",
+    object: "my-video.mp4",
+    price: 0.001, // Price per byte in USDC
 });
 
 if (priceResponse.status === "Success") {
-  console.log("Price set successfully");
+    console.log("Price set successfully");
 }
 ```
 
@@ -132,13 +132,10 @@ if (priceResponse.status === "Success") {
 Get the price for a specific content object:
 
 ```typescript
-const priceResponse = await client.getPrice(
-  "my-content-bucket",
-  "my-video.mp4"
-);
+const priceResponse = await client.getPrice("my-content-bucket", "my-video.mp4");
 
 if (priceResponse.status === "Success") {
-  console.log("Price:", priceResponse.data);
+    console.log("Price:", priceResponse.data);
 }
 ```
 
@@ -150,11 +147,11 @@ All API methods return an `ApiResponse<T, E>` type. Always check the `status` fi
 const response = await client.getPrice("bucket", "object");
 
 if (response.status === "Success") {
-  const price = response.data;
+    const price = response.data;
 } else if (response.status === "Error") {
-  console.error("API Error:", response.data);
+    console.error("API Error:", response.data);
 } else if (response.status === "PaymentRequired") {
-  console.log("Payment required:", response.data);
+    console.log("Payment required:", response.data);
 }
 ```
 

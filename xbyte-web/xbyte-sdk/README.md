@@ -49,9 +49,9 @@ Sets the per-byte price for content.
 
 ```typescript
 await client.setPrice({
-  key: "550e8400-e29b-41d4-a716-446655440000",
-  // USDC per byte
-  price: 0.001,
+    key: "550e8400-e29b-41d4-a716-446655440000",
+    // USDC per byte
+    price: 0.001,
 });
 ```
 
@@ -61,9 +61,7 @@ Retrieves the price for a specific content.
 
 ```typescript
 // { status: "Success", data: "0.001" }
-const { status, data } = await client.getPrice(
-  "550e8400-e29b-41d4-a716-446655440000",
-);
+const { status, data } = await client.getPrice("550e8400-e29b-41d4-a716-446655440000");
 ```
 
 - ### `play(body, payment)`
@@ -72,27 +70,27 @@ Requests a byte range of content with x402 payment authorization.
 
 ```typescript
 const response = await client.play(
-  {
-    key: "550e8400-e29b-41d4-a716-446655440000",
-    offset: 0,
-    length: 1024 * 1024, // 1MB
-  },
-  {
-    x402Version: 1,
-    scheme: "exact",
-    network: "base-sepolia",
-    payload: {
-      signature: "0x...",
-      authorization: {
-        from: "0x...",
-        to: "0x...",
-        value: "1000",
-        validAfter: "0",
-        validBefore: "1893456000",
-        nonce: "0x...",
-      },
+    {
+        key: "550e8400-e29b-41d4-a716-446655440000",
+        offset: 0,
+        length: 1024 * 1024, // 1MB
     },
-  },
+    {
+        x402Version: 1,
+        scheme: "exact",
+        network: "base-sepolia",
+        payload: {
+            signature: "0x...",
+            authorization: {
+                from: "0x...",
+                to: "0x...",
+                value: "1000",
+                validAfter: "0",
+                validBefore: "1893456000",
+                nonce: "0x...",
+            },
+        },
+    },
 );
 // { status: "Success", data: [/* byte array */] }
 ```
@@ -121,8 +119,8 @@ const { status, data } = await client.version();
 
 ```typescript
 interface ApiResponse<T, E> {
-  status: "Success" | "Error" | "PaymentRequired";
-  data: T | E;
+    status: "Success" | "Error" | "PaymentRequired";
+    data: T | E;
 }
 ```
 
@@ -130,9 +128,9 @@ interface ApiResponse<T, E> {
 
 ```typescript
 interface PlayRequest {
-  key: UUID;
-  offset: number;
-  length: number;
+    key: UUID;
+    offset: number;
+    length: number;
 }
 ```
 
@@ -140,8 +138,8 @@ interface PlayRequest {
 
 ```typescript
 interface SetPriceRequest {
-  key: UUID;
-  price: number;
+    key: UUID;
+    price: number;
 }
 ```
 
@@ -149,20 +147,20 @@ interface SetPriceRequest {
 
 ```typescript
 interface X402PaymentPayload {
-  x402Version: number;
-  scheme: string;
-  network: string;
-  payload: {
-    signature: string;
-    authorization: {
-      from: string;
-      to: string;
-      value: string;
-      validAfter: string;
-      validBefore: string;
-      nonce: string;
+    x402Version: number;
+    scheme: string;
+    network: string;
+    payload: {
+        signature: string;
+        authorization: {
+            from: string;
+            to: string;
+            value: string;
+            validAfter: string;
+            validBefore: string;
+            nonce: string;
+        };
     };
-  };
 }
 ```
 

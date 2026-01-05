@@ -35,7 +35,7 @@ Checks the health status of the xByte server.
 ```typescript
 const response = await client.health();
 if (response.status === "Success") {
-  console.log(response.data); // "OK"
+    console.log(response.data); // "OK"
 }
 ```
 
@@ -50,7 +50,7 @@ Gets the version of the xByte API.
 ```typescript
 const response = await client.version();
 if (response.status === "Success") {
-  console.log(response.data); // "1.0.0"
+    console.log(response.data); // "1.0.0"
 }
 ```
 
@@ -72,13 +72,13 @@ Creates a new client in the xByte system.
 
 ```typescript
 const response = await client.createClient({
-  name: "My Content Platform",
-  wallet: "0x1234567890123456789012345678901234567890",
+    name: "My Content Platform",
+    wallet: "0x1234567890123456789012345678901234567890",
 });
 
 if (response.status === "Success") {
-  const clientData = response.data;
-  console.log("Client ID:", clientData.id);
+    const clientData = response.data;
+    console.log("Client ID:", clientData.id);
 }
 ```
 
@@ -97,7 +97,7 @@ Retrieves a client by its ID.
 ```typescript
 const response = await client.getClient("550e8400-e29b-41d4-a716-446655440000");
 if (response.status === "Success") {
-  console.log("Client:", response.data);
+    console.log("Client:", response.data);
 }
 ```
 
@@ -119,12 +119,12 @@ Registers a new bucket for storing content.
 
 ```typescript
 const response = await client.registerBucket({
-  bucket: "my-content-bucket",
-  client: "550e8400-e29b-41d4-a716-446655440000",
+    bucket: "my-content-bucket",
+    client: "550e8400-e29b-41d4-a716-446655440000",
 });
 
 if (response.status === "Success") {
-  console.log("Bucket registered:", response.data);
+    console.log("Bucket registered:", response.data);
 }
 ```
 
@@ -139,7 +139,7 @@ Retrieves all buckets in the system.
 ```typescript
 const response = await client.getAllBuckets();
 if (response.status === "Success") {
-  console.log("Buckets:", response.data);
+    console.log("Buckets:", response.data);
 }
 ```
 
@@ -158,7 +158,7 @@ Gets all objects in a specific bucket.
 ```typescript
 const response = await client.getAllObjects("my-content-bucket");
 if (response.status === "Success") {
-  console.log("Objects:", response.data);
+    console.log("Objects:", response.data);
 }
 ```
 
@@ -181,13 +181,13 @@ Sets the per-byte price for a content object.
 
 ```typescript
 const response = await client.setPrice({
-  bucket: "my-content-bucket",
-  object: "my-video.mp4",
-  price: 0.001,
+    bucket: "my-content-bucket",
+    object: "my-video.mp4",
+    price: 0.001,
 });
 
 if (response.status === "Success") {
-  console.log("Price set successfully");
+    console.log("Price set successfully");
 }
 ```
 
@@ -207,7 +207,7 @@ Retrieves the price for a specific content object.
 ```typescript
 const response = await client.getPrice("my-content-bucket", "my-video.mp4");
 if (response.status === "Success") {
-  console.log("Price per byte:", response.data);
+    console.log("Price per byte:", response.data);
 }
 ```
 
@@ -225,14 +225,14 @@ All methods return an `ApiResponse<T, E>` which can have one of three statuses:
 const response = await client.getPrice("bucket", "object");
 
 switch (response.status) {
-  case "Success":
-    console.log("Price:", response.data);
-    break;
-  case "Error":
-    console.error("Error:", response.data);
-    break;
-  case "PaymentRequired":
-    console.log("Payment required:", response.data);
-    break;
+    case "Success":
+        console.log("Price:", response.data);
+        break;
+    case "Error":
+        console.error("Error:", response.data);
+        break;
+    case "PaymentRequired":
+        console.log("Payment required:", response.data);
+        break;
 }
 ```

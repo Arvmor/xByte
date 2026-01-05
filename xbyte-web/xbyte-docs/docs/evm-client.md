@@ -191,11 +191,7 @@ Retrieves vault events (WithdrawNative and Withdraw) for a specific vault.
 const events = await evmClient.getVaultEvents("0x5678...");
 console.log("Vault events:", events);
 
-const recentEvents = await evmClient.getVaultEvents(
-  "0x5678...",
-  1000000n,
-  2000000n
-);
+const recentEvents = await evmClient.getVaultEvents("0x5678...", 1000000n, 2000000n);
 console.log("Events in range:", recentEvents);
 ```
 
@@ -221,10 +217,12 @@ const evmClient = new xByteEvmClient();
 const createVaultSignature = evmClient.signatureCreateVault();
 
 await window.ethereum.request({
-  method: "eth_sendTransaction",
-  params: [{
-    to: "0x4957cDc66a60FfBf6E78baE23d18973a5dcC3e05",
-    data: createVaultSignature,
-  }],
+    method: "eth_sendTransaction",
+    params: [
+        {
+            to: "0x4957cDc66a60FfBf6E78baE23d18973a5dcC3e05",
+            data: createVaultSignature,
+        },
+    ],
 });
 ```
