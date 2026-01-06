@@ -1,9 +1,23 @@
 {
     "name": "xbyte-sdk",
-    "version": "0.0.1",
-    "description": "xbyte SDK",
-    "keywords": [],
+    "version": "0.0.2",
+    "description": "TypeScript SDK for xByte Infra - The pay-per-byte content monetization protocol.",
+    "keywords": [
+        "blockchain",
+        "monetization",
+        "web3",
+        "x402",
+        "xbyte"
+    ],
+    "homepage": "https://xbyte.sh/",
+    "bugs": "https://github.com/Arvmor/xbyte/issues",
     "license": "MIT",
+    "author": "Arvin Moravej <moravej.arvin@gmail.com>",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Arvmor/xbyte.git",
+        "directory": "xbyte-web/xbyte-sdk"
+    },
     "type": "module",
     "exports": "./src/index.ts",
     "scripts": {

@@ -4,7 +4,8 @@ members = ["crates/xbyte-api", "crates/xbyte-app", "crates/xbyte-evm"]
 
 [workspace.package]
 authors = ["Arvin Moravej <moravej.arvin@gmail.com>"]
-description = "xByte Infra"
+description = "xByte Infra - The pay-per-byte content monetization protocol."
+homepage = "https://xbyte.sh/"
 repository = "https://github.com/Arvmor/xbyte"
 keywords = ["xbyte", "x402", "monetization", "web3", "blockchain"]
 license = "MIT"
