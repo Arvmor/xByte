@@ -1,4 +1,4 @@
-# [xByte](https://xByte.sh/) &emsp; [![xByte Server]][Action Server] [![xByte Client]][Action Client] [![xByte Contracts]][Action Contracts] [![Latest Version]][crates.io] [![npm version]][Version NPM]
+# [xByte](https://xbyte.sh) &emsp; [![xByte Server]][Action Server] [![xByte Client]][Action Client] [![xByte Contracts]][Action Contracts] [![Latest Version]][crates.io] [![npm version]][Version NPM]
 
 [xByte Server]: https://github.com/Arvmor/xByte/actions/workflows/ci-xbyte-server.yml/badge.svg
 [Action Server]: https://github.com/Arvmor/xByte/actions/workflows/ci-xbyte-server.yml

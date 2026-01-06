@@ -14,7 +14,7 @@ Creates a new xByte API client instance.
 
 **Parameters:**
 
-- `xbyteUrl` (optional): The URL of the xByte API server. Defaults to `https://xbyte-api.onrender.com`
+- `xbyteUrl` (optional): The URL of the xByte API server. Defaults to `https://api.xbyte.sh`
 
 **Example:**
 

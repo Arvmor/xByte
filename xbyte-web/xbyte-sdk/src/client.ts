@@ -1,6 +1,6 @@
 import { ApiResponse, Client, RegisterRequest, SetPriceRequest } from "./types";
 
-const DEFAULT_XBYTE_URL = "https://xbyte-api.onrender.com";
+const DEFAULT_XBYTE_URL = "https://api.xbyte.sh";
 
 /**
  * The client for the xByte API

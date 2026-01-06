@@ -44,7 +44,7 @@ The `xByteClient` is used to interact with the xByte API server:
 const client = new xByteClient();
 ```
 
-If no URL is provided, it defaults to `https://xbyte-api.onrender.com`:
+If no URL is provided, it defaults to `https://api.xbyte.sh`:
 
 ```typescript
 const client = new xByteClient();
