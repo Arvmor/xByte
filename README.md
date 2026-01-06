@@ -1,6 +1,24 @@
-# xByte Introduction
+# xByte
+
+[![xByte Server]][Action Server]
+[![xByte Client]][Action Client]
+[![xByte Contracts]][Action Contracts]
+[![Latest Version]][crates.io]
+
+[xByte Server]: https://github.com/Arvmor/xByte/actions/workflows/ci-xbyte-server.yml/badge.svg
+[Action Server]: https://github.com/Arvmor/xByte/actions/workflows/ci-xbyte-server.yml
+[xByte Contracts]: https://github.com/Arvmor/xByte/actions/workflows/ci-xbyte-contracts.yml/badge.svg
+[Action Contracts]: https://github.com/Arvmor/xByte/actions/workflows/ci-xbyte-contracts.yml
+[xByte Client]: https://github.com/Arvmor/xByte/actions/workflows/ci-xbyte-client.yml/badge.svg
+[Action Client]: https://github.com/Arvmor/xByte/actions/workflows/ci-xbyte-client.yml
+[Latest Version]: https://img.shields.io/crates/v/xbyte-evm.svg
+[crates.io]: https://crates.io/crates/xbyte-evm
+
+[Website](https://xbyte.sh) | [Demo](https://demo.xbyte.sh) | [Documentation](https://docs.xbyte.sh) | [API](https://api.xbyte.sh)
 
 xByte, the infra-as-a-service protocol.
+
+## Introduction
 
 Facilitates "Pay-per-Byte" x402 payments, allows content-agnostic monetization model for platforms (Netflix, Spotify, Twitch, etc.), instead of monthly subscriptions! [more information](./docs/xByte_slides.pdf)
 
