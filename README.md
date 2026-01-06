@@ -1,9 +1,4 @@
-# xByte
-
-[![xByte Server]][Action Server]
-[![xByte Client]][Action Client]
-[![xByte Contracts]][Action Contracts]
-[![Latest Version]][crates.io]
+# [xByte](https://xByte.sh/) &emsp; [![xByte Server]][Action Server] [![xByte Client]][Action Client] [![xByte Contracts]][Action Contracts] [![Latest Version]][crates.io] [![npm version]][Version NPM]
 
 [xByte Server]: https://github.com/Arvmor/xByte/actions/workflows/ci-xbyte-server.yml/badge.svg
 [Action Server]: https://github.com/Arvmor/xByte/actions/workflows/ci-xbyte-server.yml
@@ -13,6 +8,8 @@
 [Action Client]: https://github.com/Arvmor/xByte/actions/workflows/ci-xbyte-client.yml
 [Latest Version]: https://img.shields.io/crates/v/xbyte-evm.svg
 [crates.io]: https://crates.io/crates/xbyte-evm
+[npm version]: https://img.shields.io/npm/v/xbyte-sdk.svg?style=flat
+[Version NPM]: https://www.npmjs.com/package/xbyte-sdk
 
 [Website](https://xbyte.sh) | [Demo](https://demo.xbyte.sh) | [Documentation](https://docs.xbyte.sh) | [API](https://api.xbyte.sh)
 
