@@ -31,7 +31,7 @@ uuid = { version = "1.19.0", features = ["v4", "serde"] }
 actix-web = { version = "4.12.1", features = ["rustls"] }
 actix-multipart = "0.7.2"
 actix-cors = "0.7.1"
-url = "2.5.7"
+url = { version = "2.5.8", features = ["serde"] }
 
 # AWS dependencies
 aws-config = { version = "1.8.5", features = [
