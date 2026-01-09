@@ -22,6 +22,7 @@
         "next": "*",
         "react": "*",
         "react-dom": "*",
+        "simple-icons": "*",
         "tailwind-merge": "*",
         "viem": "*",
         "xbyte-components": "workspace:*",
