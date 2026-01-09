@@ -30,6 +30,93 @@ import {
     Lock,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { motion, useInView, Variants } from "motion/react";
+import { useRef } from "react";
+
+const fadeInUp: Variants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: { opacity: 1, y: 0 },
+};
+
+const fadeIn: Variants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+};
+
+const staggerContainer: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1, delayChildren: 0.1 },
+    },
+};
+
+const staggerItem: Variants = {
+    hidden: { opacity: 0, y: 30, scale: 0.95 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { type: "spring", stiffness: 100, damping: 15 },
+    },
+};
+
+const slideInFromLeft: Variants = {
+    hidden: { opacity: 0, x: -60 },
+    visible: { opacity: 1, x: 0 },
+};
+
+const scaleIn: Variants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { opacity: 1, scale: 1 },
+};
+
+interface AnimatedSectionProps {
+    children: React.ReactNode;
+    className?: string;
+    variants?: Variants;
+    delay?: number;
+}
+
+function AnimatedSection({ children, className, variants = fadeInUp, delay = 0 }: AnimatedSectionProps) {
+    const ref = useRef<HTMLDivElement>(null);
+    const isInView = useInView(ref, { once: true, margin: "-80px" });
+
+    return (
+        <motion.div
+            ref={ref}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            variants={variants}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay }}
+            className={className}
+        >
+            {children}
+        </motion.div>
+    );
+}
+
+interface StaggeredGridProps {
+    children: React.ReactNode;
+    className?: string;
+}
+
+function StaggeredGrid({ children, className }: StaggeredGridProps) {
+    const ref = useRef<HTMLDivElement>(null);
+    const isInView = useInView(ref, { once: true, margin: "-60px" });
+
+    return (
+        <motion.div
+            ref={ref}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            variants={staggerContainer}
+            className={className}
+        >
+            {children}
+        </motion.div>
+    );
+}
 
 const heroSection: CallToActionProps = {
     titleText: "Infra for Pay-per-Byte Monetization",
@@ -315,97 +402,149 @@ export default function Home() {
     return (
         <>
             {/* Start Integrating */}
-            <CallToAction
-                {...heroSection}
-                buttonAction={goToSetupPage}
-                secondaryButtonAction={goToLearnMorePage}
-            />
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            >
+                <CallToAction
+                    {...heroSection}
+                    buttonAction={goToSetupPage}
+                    secondaryButtonAction={goToLearnMorePage}
+                />
+            </motion.div>
 
             {/* Payment Flow */}
-            <div className="my-16">
+            <AnimatedSection className="my-16" variants={scaleIn}>
                 <SectionHeader {...sectionPaymentFlow} />
                 <PaymentFlow steps={paymentFlowSteps} />
-            </div>
+            </AnimatedSection>
 
-            <Separator className="my-16" />
+            <AnimatedSection variants={fadeIn}>
+                <Separator className="my-16" />
+            </AnimatedSection>
 
             {/* Key Features */}
             <div>
-                <SectionHeader {...sectionKeyFeatures} />
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <AnimatedSection>
+                    <SectionHeader {...sectionKeyFeatures} />
+                </AnimatedSection>
+                <StaggeredGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {keyFeatures.map((feature, index) => (
-                        <InfoCard key={index} {...feature} />
+                        <motion.div key={index} variants={staggerItem}>
+                            <InfoCard {...feature} />
+                        </motion.div>
                     ))}
-                </div>
+                </StaggeredGrid>
             </div>
 
-            <Separator className="my-16" />
+            <AnimatedSection variants={fadeIn}>
+                <Separator className="my-16" />
+            </AnimatedSection>
 
             {/* How It Works */}
             <div>
-                <SectionHeader {...sectionHowItWorks} />
-                <ProcessSteps steps={howItWorksSteps} />
+                <AnimatedSection>
+                    <SectionHeader {...sectionHowItWorks} />
+                </AnimatedSection>
+                <AnimatedSection variants={slideInFromLeft} delay={0.2}>
+                    <ProcessSteps steps={howItWorksSteps} />
+                </AnimatedSection>
             </div>
 
-            <Separator className="my-16" />
+            <AnimatedSection variants={fadeIn}>
+                <Separator className="my-16" />
+            </AnimatedSection>
 
             {/* Storage Options */}
             <div>
-                <SectionHeader {...sectionStorageOptions} />
-                <div className="flex flex-col md:flex-row gap-4">
+                <AnimatedSection>
+                    <SectionHeader {...sectionStorageOptions} />
+                </AnimatedSection>
+                <StaggeredGrid className="flex flex-col md:flex-row gap-4">
                     {integrationOptions.map((option, index) => (
-                        <Optionable key={index} {...option} />
+                        <motion.div key={index} variants={staggerItem} className="flex-1">
+                            <Optionable {...option} />
+                        </motion.div>
                     ))}
-                </div>
+                </StaggeredGrid>
             </div>
 
-            <Separator className="my-16" />
+            <AnimatedSection variants={fadeIn}>
+                <Separator className="my-16" />
+            </AnimatedSection>
 
             {/* Use Cases */}
             <div>
-                <SectionHeader {...sectionUseCases} />
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <AnimatedSection>
+                    <SectionHeader {...sectionUseCases} />
+                </AnimatedSection>
+                <StaggeredGrid className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {useCases.map((useCase, index) => (
-                        <InfoCard key={index} {...useCase} />
+                        <motion.div key={index} variants={staggerItem}>
+                            <InfoCard {...useCase} />
+                        </motion.div>
                     ))}
-                </div>
+                </StaggeredGrid>
             </div>
 
-            <Separator className="my-16" />
+            <AnimatedSection variants={fadeIn}>
+                <Separator className="my-16" />
+            </AnimatedSection>
 
             {/* Benefits */}
             <div>
-                <SectionHeader {...sectionBenefits} />
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <AnimatedSection>
+                    <SectionHeader {...sectionBenefits} />
+                </AnimatedSection>
+                <StaggeredGrid className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {benifis.map((benefit, index) => (
-                        <InfoCard key={index} {...benefit} />
+                        <motion.div key={index} variants={staggerItem}>
+                            <InfoCard {...benefit} />
+                        </motion.div>
                     ))}
-                </div>
+                </StaggeredGrid>
             </div>
 
-            <Separator className="my-16" />
+            <AnimatedSection variants={fadeIn}>
+                <Separator className="my-16" />
+            </AnimatedSection>
 
             {/* Why Choose xByte? */}
             <div>
-                <SectionHeader {...sectionWhyChoose} />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <AnimatedSection>
+                    <SectionHeader {...sectionWhyChoose} />
+                </AnimatedSection>
+                <StaggeredGrid className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {whyChooseItems.map((item, index) => (
-                        <InfoCard key={index} {...item} />
+                        <motion.div key={index} variants={staggerItem}>
+                            <InfoCard {...item} />
+                        </motion.div>
                     ))}
-                </div>
+                </StaggeredGrid>
             </div>
 
-            <Separator className="my-16" />
+            <AnimatedSection variants={fadeIn}>
+                <Separator className="my-16" />
+            </AnimatedSection>
 
             {/* FAQ Section */}
             <div>
-                <SectionHeader {...sectionFAQ} />
-                <FAQAccordion items={faqItems} />
+                <AnimatedSection>
+                    <SectionHeader {...sectionFAQ} />
+                </AnimatedSection>
+                <AnimatedSection variants={fadeInUp} delay={0.15}>
+                    <FAQAccordion items={faqItems} />
+                </AnimatedSection>
             </div>
 
-            <Separator className="my-16" />
+            <AnimatedSection variants={fadeIn}>
+                <Separator className="my-16" />
+            </AnimatedSection>
 
-            <CallToAction {...ctaFinal} buttonAction={goToSetupPage} />
+            <AnimatedSection variants={scaleIn}>
+                <CallToAction {...ctaFinal} buttonAction={goToSetupPage} />
+            </AnimatedSection>
         </>
     );
 }
