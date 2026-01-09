@@ -375,7 +375,11 @@ function ProgressStepper({ currentStep, totalSteps }: { currentStep: number; tot
                 );
 
                 return (
-                    <motion.div key={index} className="flex items-center flex-1" variants={staggerItem}>
+                    <motion.div
+                        key={index}
+                        className="flex items-center flex-1"
+                        variants={staggerItem}
+                    >
                         <div className="flex flex-col items-center flex-1">
                             <motion.div
                                 className={className}
@@ -497,7 +501,10 @@ function IntegrateProviderSection() {
                 <Paragraph {...paragraph} title={undefined} />
             </motion.div>
 
-            <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-4" variants={staggerContainer}>
+            <motion.div
+                className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                variants={staggerContainer}
+            >
                 {integrationOptions.map((option, index) => (
                     <motion.div key={index} className="relative" variants={staggerItem}>
                         <Optionable
@@ -527,12 +534,18 @@ function IntegrateProviderSection() {
                             className="space-y-2"
                             initial="hidden"
                             animate="visible"
-                            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.05 } } }}
+                            variants={{
+                                hidden: {},
+                                visible: { transition: { staggerChildren: 0.05 } },
+                            }}
                         >
                             {buckets.map((bucket, index) => (
                                 <motion.div
                                     key={index}
-                                    variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}
+                                    variants={{
+                                        hidden: { opacity: 0, x: -10 },
+                                        visible: { opacity: 1, x: 0 },
+                                    }}
                                     className="flex items-center gap-2 p-3 bg-background rounded-sm border"
                                 >
                                     <Dot className="size-8" />
@@ -893,7 +906,9 @@ function SetPriceSection() {
                         >
                             <div className="flex items-center gap-2">
                                 <CheckCircle2 className="size-5 text-primary" />
-                                <span className="font-medium">{setPriceSection.priceSetSuccess}</span>
+                                <span className="font-medium">
+                                    {setPriceSection.priceSetSuccess}
+                                </span>
                             </div>
                         </motion.div>
                     )}

@@ -78,7 +78,12 @@ interface AnimatedSectionProps {
     delay?: number;
 }
 
-function AnimatedSection({ children, className, variants = fadeInUp, delay = 0 }: AnimatedSectionProps) {
+function AnimatedSection({
+    children,
+    className,
+    variants = fadeInUp,
+    delay = 0,
+}: AnimatedSectionProps) {
     const ref = useRef<HTMLDivElement>(null);
     const isInView = useInView(ref, { once: true, margin: "-80px" });
 

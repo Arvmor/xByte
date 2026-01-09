@@ -542,7 +542,9 @@ function WithdrawSection({ wallet }: { wallet: `0x${string}` }) {
                         >
                             <div className="flex items-center gap-2">
                                 <CheckCircle2 className="size-5 text-primary" />
-                                <span className="font-medium">{withdrawSection.withdrawSuccess}</span>
+                                <span className="font-medium">
+                                    {withdrawSection.withdrawSuccess}
+                                </span>
                             </div>
                         </motion.div>
                     )}
