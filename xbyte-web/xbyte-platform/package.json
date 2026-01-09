@@ -18,6 +18,7 @@
         "class-variance-authority": "*",
         "clsx": "*",
         "lucide-react": "*",
+        "motion": "*",
         "next": "*",
         "react": "*",
         "react-dom": "*",
