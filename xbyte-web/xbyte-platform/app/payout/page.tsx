@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { xByteEvmClient } from "xbyte-sdk";
 import { usePrivy } from "@privy-io/react-auth";
 import { CheckCircle2, Loader2, ArrowDownCircle, Coins, History, ExternalLink } from "lucide-react";
@@ -11,8 +11,60 @@ import { cn } from "@/lib/utils";
 import { Address, formatEther, formatUnits } from "viem";
 import { NoWalletAlert } from "@/components/privy/connect";
 import AppPageHeader, { PageProps } from "@/components/app/appPage";
+import { motion, useInView, Variants, AnimatePresence } from "motion/react";
 
 const xbyteEvmClient = new xByteEvmClient(process.env.NEXT_PUBLIC_RPC_URL);
+
+const fadeInUp: Variants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0 },
+};
+
+const staggerContainer: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: { staggerChildren: 0.15, delayChildren: 0.1 },
+    },
+};
+
+const staggerItem: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { type: "spring", stiffness: 100, damping: 15 },
+    },
+};
+
+const scaleIn: Variants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: { opacity: 1, scale: 1 },
+};
+
+interface AnimatedCardProps {
+    children: React.ReactNode;
+    className?: string;
+    delay?: number;
+}
+
+function AnimatedCard({ children, className, delay = 0 }: AnimatedCardProps) {
+    const ref = useRef<HTMLDivElement>(null);
+    const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+    return (
+        <motion.div
+            ref={ref}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            variants={fadeInUp}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay }}
+            className={className}
+        >
+            {children}
+        </motion.div>
+    );
+}
 
 const pageHeader: PageProps = {
     title: "xByte Payout",
@@ -85,14 +137,32 @@ export default function PayoutPage() {
     }
 
     return (
-        <div className="space-y-12 max-w-4xl mx-auto">
-            <AppPageHeader {...pageHeader} />
+        <motion.div
+            className="space-y-12 max-w-4xl mx-auto"
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+        >
+            <motion.div variants={staggerItem}>
+                <AppPageHeader {...pageHeader} />
+            </motion.div>
 
-            <BalanceSection wallet={wallet} />
-            <WithdrawSection wallet={wallet} />
-            <VaultStatusSection wallet={wallet} />
-            <HistorySection wallet={wallet} />
-        </div>
+            <motion.div variants={staggerItem}>
+                <BalanceSection wallet={wallet} />
+            </motion.div>
+
+            <motion.div variants={staggerItem}>
+                <WithdrawSection wallet={wallet} />
+            </motion.div>
+
+            <motion.div variants={staggerItem}>
+                <VaultStatusSection wallet={wallet} />
+            </motion.div>
+
+            <motion.div variants={staggerItem}>
+                <HistorySection wallet={wallet} />
+            </motion.div>
+        </motion.div>
     );
 }
 
@@ -158,7 +228,10 @@ function VaultStatusSection({ wallet }: { wallet: `0x${string}` }) {
                 </div>
 
                 {!isChecking && (
-                    <div
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
                         className={cn(
                             "p-4 rounded-lg border",
                             isDeployed
@@ -183,7 +256,7 @@ function VaultStatusSection({ wallet }: { wallet: `0x${string}` }) {
                                 </>
                             )}
                         </div>
-                    </div>
+                    </motion.div>
                 )}
             </div>
         </div>
@@ -458,14 +531,22 @@ function WithdrawSection({ wallet }: { wallet: `0x${string}` }) {
                     </div>
                 </div>
 
-                {withdrawSuccess && (
-                    <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
-                        <div className="flex items-center gap-2">
-                            <CheckCircle2 className="size-5 text-primary" />
-                            <span className="font-medium">{withdrawSection.withdrawSuccess}</span>
-                        </div>
-                    </div>
-                )}
+                <AnimatePresence>
+                    {withdrawSuccess && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                            transition={{ duration: 0.3 }}
+                            className="p-4 bg-primary/10 border border-primary/20 rounded-lg"
+                        >
+                            <div className="flex items-center gap-2">
+                                <CheckCircle2 className="size-5 text-primary" />
+                                <span className="font-medium">{withdrawSection.withdrawSuccess}</span>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );
@@ -529,11 +610,23 @@ function HistorySection({ wallet }: { wallet: `0x${string}` }) {
                     </span>
                 </div>
             ) : events.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-center py-8 text-muted-foreground"
+                >
                     {historySection.noHistory}
-                </div>
+                </motion.div>
             ) : (
-                <div className="space-y-4">
+                <motion.div
+                    className="space-y-4"
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                        hidden: { opacity: 0 },
+                        visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+                    }}
+                >
                     {events.map((event, index) => {
                         const eventName =
                             (event as any).eventName || (event as any).event?.name || "Unknown";
@@ -543,7 +636,15 @@ function HistorySection({ wallet }: { wallet: `0x${string}` }) {
                         const isNative = eventName === "WithdrawNative";
 
                         return (
-                            <div key={index} className="p-4 bg-muted rounded-lg border space-y-2">
+                            <motion.div
+                                key={index}
+                                variants={{
+                                    hidden: { opacity: 0, x: -20 },
+                                    visible: { opacity: 1, x: 0 },
+                                }}
+                                transition={{ duration: 0.3 }}
+                                className="p-4 bg-muted rounded-lg border space-y-2"
+                            >
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm font-medium">
                                         {isNative ? "Native Withdrawal" : "ERC20 Withdrawal"}
@@ -600,10 +701,10 @@ function HistorySection({ wallet }: { wallet: `0x${string}` }) {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </motion.div>
                         );
                     })}
-                </div>
+                </motion.div>
             )}
         </div>
     );
