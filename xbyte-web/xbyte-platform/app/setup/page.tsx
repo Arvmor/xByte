@@ -22,7 +22,7 @@ import {
     Users,
     Zap,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatAmount } from "@/lib/utils";
 import { NoWalletAlert } from "@/components/privy/connect";
 import AppPageHeader, { PageProps } from "@/components/app/appPage";
 import { motion, useInView, Variants, AnimatePresence } from "motion/react";
@@ -762,10 +762,11 @@ function SetPriceSection() {
         setIsSettingPrice(true);
         setPriceSet(false);
         try {
+            const priceInDecimals = formatAmount(price, 6);
             await xbyteClient.setPrice({
                 bucket: selectedBucket,
                 object: selectedObject,
-                price,
+                price: priceInDecimals,
             });
             setPriceSet(true);
         } catch (error) {
