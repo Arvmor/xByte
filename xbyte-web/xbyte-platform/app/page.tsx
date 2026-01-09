@@ -307,14 +307,25 @@ export default function Home() {
         router.push("/setup");
     }
 
+    function goToLearnMorePage() {
+        router.replace("https://docs.xbyte.sh");
+    }
+
     return (
         <>
             {/* Start Integrating */}
-            <CallToAction {...heroSection} buttonAction={goToSetupPage} />
+            <CallToAction {...heroSection} buttonAction={goToSetupPage} secondaryButtonAction={goToLearnMorePage} />
+
+            {/* Payment Flow */}
+            <div className="my-16">
+                <SectionHeader {...sectionPaymentFlow} />
+                <PaymentFlow steps={paymentFlowSteps} />
+            </div>
 
             <Separator className="my-16" />
 
-            <div className="max-w-6xl mx-auto px-4">
+            {/* Key Features */}
+            <div>
                 <SectionHeader {...sectionKeyFeatures} />
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {keyFeatures.map((feature, index) => (
@@ -325,21 +336,16 @@ export default function Home() {
 
             <Separator className="my-16" />
 
-            <div className="max-w-4xl mx-auto px-4">
+            {/* How It Works */}
+            <div>
                 <SectionHeader {...sectionHowItWorks} />
                 <ProcessSteps steps={howItWorksSteps} />
             </div>
 
             <Separator className="my-16" />
 
-            <div className="max-w-6xl mx-auto px-4">
-                <SectionHeader {...sectionPaymentFlow} />
-                <PaymentFlow steps={paymentFlowSteps} />
-            </div>
-
-            <Separator className="my-16" />
-
-            <div className="max-w-6xl mx-auto px-4">
+            {/* Storage Options */}
+            <div>
                 <SectionHeader {...sectionStorageOptions} />
                 <div className="flex flex-col md:flex-row gap-4">
                     {integrationOptions.map((option, index) => (
@@ -350,7 +356,8 @@ export default function Home() {
 
             <Separator className="my-16" />
 
-            <div className="max-w-6xl mx-auto px-4">
+            {/* Use Cases */}
+            <div>
                 <SectionHeader {...sectionUseCases} />
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {useCases.map((useCase, index) => (
@@ -361,7 +368,8 @@ export default function Home() {
 
             <Separator className="my-16" />
 
-            <div className="max-w-6xl mx-auto px-4">
+            {/* Benefits */}
+            <div>
                 <SectionHeader {...sectionBenefits} />
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {benifis.map((benefit, index) => (
@@ -372,7 +380,8 @@ export default function Home() {
 
             <Separator className="my-16" />
 
-            <div className="max-w-4xl mx-auto px-4">
+            {/* Why Choose xByte? */}
+            <div>
                 <SectionHeader {...sectionWhyChoose} />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {whyChooseItems.map((item, index) => (
@@ -383,7 +392,8 @@ export default function Home() {
 
             <Separator className="my-16" />
 
-            <div className="max-w-4xl mx-auto px-4">
+            {/* FAQ Section */}
+            <div>
                 <SectionHeader {...sectionFAQ} />
                 <FAQAccordion items={faqItems} />
             </div>
