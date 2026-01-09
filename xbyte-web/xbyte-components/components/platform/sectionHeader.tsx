@@ -23,11 +23,17 @@ export default function SectionHeader({
 
     return (
         <div className={cn("flex flex-col space-y-3 mb-12", alignmentClasses[align], className)}>
-            {subtitle && <p className="text-sm font-semibold text-primary uppercase tracking-wider">{subtitle}</p>}
+            {subtitle && (
+                <p className="text-sm font-semibold text-primary uppercase tracking-wider">
+                    {subtitle}
+                </p>
+            )}
 
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{title}</h2>
 
-            {description && <p className="text-lg text-muted-foreground max-w-2xl">{description}</p>}
+            {description && (
+                <p className="text-lg text-muted-foreground max-w-2xl">{description}</p>
+            )}
         </div>
     );
 }

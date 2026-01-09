@@ -52,7 +52,10 @@ function ProcessStepItem({
     vertical: boolean;
 }) {
     const itemClass = cn("relative flex gap-4", vertical ? "flex-row" : "flex-col min-w-[280px]");
-    const indicatorContainerClass = cn("flex", vertical ? "flex-col items-center" : "flex-row items-center gap-3");
+    const indicatorContainerClass = cn(
+        "flex",
+        vertical ? "flex-col items-center" : "flex-row items-center gap-3",
+    );
 
     return (
         <div className={itemClass}>
@@ -65,14 +68,28 @@ function ProcessStepItem({
     );
 }
 
-export default function ProcessSteps({ steps, orientation = "vertical", className }: ProcessStepsProps) {
+export default function ProcessSteps({
+    steps,
+    orientation = "vertical",
+    className,
+}: ProcessStepsProps) {
     const vertical = orientation === "vertical";
-    const containerClass = cn("relative", vertical ? "space-y-8" : "flex gap-4 overflow-x-auto pb-4", className);
+    const containerClass = cn(
+        "relative",
+        vertical ? "space-y-8" : "flex gap-4 overflow-x-auto pb-4",
+        className,
+    );
 
     return (
         <div className={containerClass}>
             {steps.map((step, index) => (
-                <ProcessStepItem key={index} step={step} index={index} isLast={index === steps.length - 1} vertical={vertical} />
+                <ProcessStepItem
+                    key={index}
+                    step={step}
+                    index={index}
+                    isLast={index === steps.length - 1}
+                    vertical={vertical}
+                />
             ))}
         </div>
     );

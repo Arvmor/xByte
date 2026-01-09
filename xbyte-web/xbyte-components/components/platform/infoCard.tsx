@@ -14,7 +14,9 @@ export interface InfoCardProps {
 function CardIcon({ Icon, highlight }: { Icon: React.ElementType; highlight: boolean }) {
     const iconContainerClass = cn(
         "rounded-lg flex items-center justify-center transition-colors",
-        highlight ? "w-14 h-14 rounded-xl bg-primary/20" : "w-12 h-12 bg-primary/10 group-hover:bg-primary/20",
+        highlight
+            ? "w-14 h-14 rounded-xl bg-primary/20"
+            : "w-12 h-12 bg-primary/10 group-hover:bg-primary/20",
     );
 
     return (
@@ -25,7 +27,10 @@ function CardIcon({ Icon, highlight }: { Icon: React.ElementType; highlight: boo
 }
 
 function ItemList({ items, highlight }: { items: string[]; highlight: boolean }) {
-    const bulletClass = cn("mt-2 w-1 h-1 rounded-full shrink-0", highlight ? "bg-primary" : "bg-muted-foreground");
+    const bulletClass = cn(
+        "mt-2 w-1 h-1 rounded-full shrink-0",
+        highlight ? "bg-primary" : "bg-muted-foreground",
+    );
 
     return (
         <ul className="space-y-2">
@@ -39,7 +44,12 @@ function ItemList({ items, highlight }: { items: string[]; highlight: boolean })
     );
 }
 
-function DetailedLayout({ title, description, items, Icon }: Omit<InfoCardProps, "variant" | "layout" | "className">) {
+function DetailedLayout({
+    title,
+    description,
+    items,
+    Icon,
+}: Omit<InfoCardProps, "variant" | "layout" | "className">) {
     return (
         <>
             <CardHeader>
@@ -51,7 +61,9 @@ function DetailedLayout({ title, description, items, Icon }: Omit<InfoCardProps,
                 <CardTitle className="text-xl">{title}</CardTitle>
             </CardHeader>
             <CardContent>
-                {description && <p className="text-muted-foreground mb-4 leading-relaxed">{description}</p>}
+                {description && (
+                    <p className="text-muted-foreground mb-4 leading-relaxed">{description}</p>
+                )}
                 {items && items.length > 0 && (
                     <ul className="space-y-3">
                         {items.map((item, index) => (
@@ -81,7 +93,11 @@ function CompactLayout({
             <div className="flex flex-col h-full">
                 {Icon && <CardIcon Icon={Icon} highlight={highlight} />}
                 <h3 className={titleClass}>{title}</h3>
-                {description && <p className="text-sm text-muted-foreground leading-relaxed mb-4">{description}</p>}
+                {description && (
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                        {description}
+                    </p>
+                )}
                 {items && items.length > 0 && <ItemList items={items} highlight={highlight} />}
             </div>
         </CardContent>
@@ -109,7 +125,13 @@ export default function InfoCard({
         layout === "detailed" ? (
             <DetailedLayout title={title} description={description} items={items} Icon={Icon} />
         ) : (
-            <CompactLayout title={title} description={description} items={items} Icon={Icon} highlight={highlight} />
+            <CompactLayout
+                title={title}
+                description={description}
+                items={items}
+                Icon={Icon}
+                highlight={highlight}
+            />
         );
 
     return <Card className={cardClass}>{content}</Card>;
