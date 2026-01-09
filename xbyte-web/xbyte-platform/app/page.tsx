@@ -213,29 +213,30 @@ const useCases: InfoCardProps[] = [
 ];
 
 const benifis: InfoCardProps[] = [
-{
-    title: "For Streaming Platforms",
-    items: [
-        "Experiment with new pricing models without rebuilding billing",
-        "Transparent unit economics per GB streamed",
-        "Solve account sharing with pay-per-byte model",
-        "Works with any media type",
-    ],
-    Icon: Smartphone,
-    variant: "highlight",
-},
-{
-    title: "For End Users",
-    description:
-        "Pay only for what you consume. Web2-friendly payments (card or PayPal). USDC and x402 under the hood.",
-    Icon: Users,
-},
-{
-    title: "For Content Creators",
-    description:
-        "Revenue scales with consumption. Transparent on-chain royalties. Instant settlement with 1% platform fee.",
-    Icon: Podcast,
-}];
+    {
+        title: "For Streaming Platforms",
+        items: [
+            "Experiment with new pricing models without rebuilding billing",
+            "Transparent unit economics per GB streamed",
+            "Solve account sharing with pay-per-byte model",
+            "Works with any media type",
+        ],
+        Icon: Smartphone,
+        variant: "highlight",
+    },
+    {
+        title: "For End Users",
+        description:
+            "Pay only for what you consume. Web2-friendly payments (card or PayPal). USDC and x402 under the hood.",
+        Icon: Users,
+    },
+    {
+        title: "For Content Creators",
+        description:
+            "Revenue scales with consumption. Transparent on-chain royalties. Instant settlement with 1% platform fee.",
+        Icon: Podcast,
+    },
+];
 
 const whyChooseItems: InfoCardProps[] = [
     {
@@ -314,7 +315,11 @@ export default function Home() {
     return (
         <>
             {/* Start Integrating */}
-            <CallToAction {...heroSection} buttonAction={goToSetupPage} secondaryButtonAction={goToLearnMorePage} />
+            <CallToAction
+                {...heroSection}
+                buttonAction={goToSetupPage}
+                secondaryButtonAction={goToLearnMorePage}
+            />
 
             {/* Payment Flow */}
             <div className="my-16">
