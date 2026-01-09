@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { xByteEvmClient } from "xbyte-sdk";
 import { usePrivy } from "@privy-io/react-auth";
 import { CheckCircle2, Loader2, ArrowDownCircle, Coins, History, ExternalLink } from "lucide-react";
@@ -11,14 +11,9 @@ import { cn } from "@/lib/utils";
 import { Address, formatEther, formatUnits } from "viem";
 import { NoWalletAlert } from "@/components/privy/connect";
 import AppPageHeader, { PageProps } from "@/components/app/appPage";
-import { motion, useInView, Variants, AnimatePresence } from "motion/react";
+import { motion, Variants, AnimatePresence } from "motion/react";
 
 const xbyteEvmClient = new xByteEvmClient(process.env.NEXT_PUBLIC_RPC_URL);
-
-const fadeInUp: Variants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0 },
-};
 
 const staggerContainer: Variants = {
     hidden: { opacity: 0 },
@@ -36,35 +31,6 @@ const staggerItem: Variants = {
         transition: { type: "spring", stiffness: 100, damping: 15 },
     },
 };
-
-const scaleIn: Variants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: { opacity: 1, scale: 1 },
-};
-
-interface AnimatedCardProps {
-    children: React.ReactNode;
-    className?: string;
-    delay?: number;
-}
-
-function AnimatedCard({ children, className, delay = 0 }: AnimatedCardProps) {
-    const ref = useRef<HTMLDivElement>(null);
-    const isInView = useInView(ref, { once: true, margin: "-50px" });
-
-    return (
-        <motion.div
-            ref={ref}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-            variants={fadeInUp}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay }}
-            className={className}
-        >
-            {children}
-        </motion.div>
-    );
-}
 
 const pageHeader: PageProps = {
     title: "xByte Payout",

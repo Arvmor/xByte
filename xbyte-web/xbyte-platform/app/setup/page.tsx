@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Paragraph, { ParagraphProps } from "@/components/platform/paragraph";
 import Feature, { FeatureProps } from "@/components/platform/feature";
 import Optionable, { OptionableProps } from "@/components/platform/optionable";
@@ -25,7 +25,7 @@ import {
 import { cn, formatAmount } from "@/lib/utils";
 import { NoWalletAlert } from "@/components/privy/connect";
 import AppPageHeader, { PageProps } from "@/components/app/appPage";
-import { motion, useInView, Variants, AnimatePresence } from "motion/react";
+import { motion, Variants, AnimatePresence } from "motion/react";
 
 export const heroSection: CallToActionProps = {
     titleText: "Integrate xByte-SDK.",
@@ -119,11 +119,6 @@ enum SetupStep {
 
 const xbyteClient = new xByteClient(process.env.NEXT_PUBLIC_XBYTE_URL);
 const xbyteEvmClient = new xByteEvmClient(process.env.NEXT_PUBLIC_RPC_URL);
-
-const fadeInUp: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-};
 
 const slideVariants: Variants = {
     enter: { opacity: 0, x: 30 },
