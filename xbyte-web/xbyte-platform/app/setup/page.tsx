@@ -4,17 +4,105 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
-import { paragraph, feature, integrationOptions, heroSection } from "../page";
-import Paragraph from "@/components/platform/paragraph";
-import Feature from "@/components/platform/feature";
-import Optionable from "@/components/platform/optionable";
-import CallToAction from "@/components/platform/callToAction";
+import Paragraph, { ParagraphProps } from "@/components/platform/paragraph";
+import Feature, { FeatureProps } from "@/components/platform/feature";
+import Optionable, { OptionableProps } from "@/components/platform/optionable";
+import CallToAction, { CallToActionProps } from "@/components/platform/callToAction";
 import { xByteClient, xByteEvmClient, XBYTE_FACTORY_ADDRESS } from "xbyte-sdk";
 import { usePrivy } from "@privy-io/react-auth";
-import { CheckCircle2, Loader2, CheckCircle, Dot } from "lucide-react";
+import {
+    CheckCircle2,
+    Loader2,
+    CheckCircle,
+    Dot,
+    Building2,
+    DollarSign,
+    Code,
+    Shield,
+    Users,
+    Zap,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NoWalletAlert } from "@/components/privy/connect";
 import AppPageHeader, { PageProps } from "@/components/app/appPage";
+
+export const heroSection: CallToActionProps = {
+    titleText: "Integrate xByte-SDK.",
+    descriptionText: "Get your API key and add xByte to your platform.",
+    buttonText: "Get API Key",
+    secondaryButtonText: "Documentation",
+};
+
+export const paragraph: ParagraphProps = {
+    title: "Integration Instructions",
+    text: "Select your preferred data storage provider above.Follow the step-by-step xByte instructions to configure access policies and permissions on AWS, GCP, Azure, or xByte Hosting.Ensure credentials are entered securely. After setup, click the Verify button below to confirm xByte's access.If verification succeeds, you will progress to wallet setup.",
+};
+
+export const integrationOptions: OptionableProps[] = [
+    {
+        titleText: "AWS",
+        descriptionText: "Connect Amazon",
+        Icon: Building2,
+    },
+    {
+        titleText: "GCP",
+        descriptionText: "Connect Google Cloud",
+        Icon: Building2,
+    },
+    {
+        titleText: "Azure",
+        descriptionText: "Connect Azure",
+        Icon: Building2,
+    },
+];
+
+export const feature: FeatureProps[] = [
+    {
+        title: "Feature 1",
+        description: "Description 1",
+        Icon: Building2,
+    },
+    {
+        title: "Feature 3",
+        description: "Description 3",
+        Icon: Building2,
+    },
+];
+
+export const features: FeatureProps[] = [
+    {
+        title: "Metered Billing",
+        description: "Pay only for bytes consumed. No monthly subscriptions or hidden fees.",
+        Icon: DollarSign,
+    },
+    {
+        title: "Easy Integration",
+        description: "Simple SDK integration. Get your API key and start monetizing content.",
+        Icon: Code,
+    },
+    {
+        title: "Transparent Payments",
+        description:
+            "On-chain payment distribution with automated fee splitting. Trustless and transparent.",
+        Icon: Shield,
+    },
+    {
+        title: "Web2 Friendly",
+        description: "Users pay with cards or PayPal. Powered by USDC and x402 under the hood.",
+        Icon: Users,
+    },
+    {
+        title: "Flexible Storage",
+        description:
+            "Connect AWS, GCP, Azure, or use xByte hosting. Your infrastructure, your choice.",
+        Icon: Building2,
+    },
+    {
+        title: "Real-time Payments",
+        description: "Instant x402 payments as content is consumed. No delays, no waiting.",
+        Icon: Zap,
+    },
+];
 
 /**
  * The steps of the setup process.
