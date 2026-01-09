@@ -31,6 +31,7 @@ const headerLinks: HeaderLinkProps[] = [
     },
     {
         label: "API Docs",
+        href: "https://docs.xbyte.sh",
     },
 ];
 
