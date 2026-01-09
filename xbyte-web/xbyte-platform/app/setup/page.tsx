@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Paragraph, { ParagraphProps } from "@/components/platform/paragraph";
 import Feature, { FeatureProps } from "@/components/platform/feature";
 import Optionable, { OptionableProps } from "@/components/platform/optionable";
@@ -25,6 +25,7 @@ import {
 import { cn } from "@/lib/utils";
 import { NoWalletAlert } from "@/components/privy/connect";
 import AppPageHeader, { PageProps } from "@/components/app/appPage";
+import { motion, useInView, Variants, AnimatePresence } from "motion/react";
 
 export const heroSection: CallToActionProps = {
     titleText: "Integrate xByte-SDK.",
@@ -118,6 +119,39 @@ enum SetupStep {
 
 const xbyteClient = new xByteClient(process.env.NEXT_PUBLIC_XBYTE_URL);
 const xbyteEvmClient = new xByteEvmClient(process.env.NEXT_PUBLIC_RPC_URL);
+
+const fadeInUp: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+};
+
+const slideVariants: Variants = {
+    enter: { opacity: 0, x: 30 },
+    center: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: -30 },
+};
+
+const staggerContainer: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1 },
+    },
+};
+
+const staggerItem: Variants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { type: "spring", stiffness: 100, damping: 15 },
+    },
+};
+
+const scaleIn: Variants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { opacity: 1, scale: 1 },
+};
 
 /**
  * The section for each step.
@@ -260,24 +294,51 @@ export default function SetupPage() {
     );
 
     return (
-        <div className="space-y-12 max-w-4xl mx-auto">
+        <motion.div
+            className="space-y-12 max-w-4xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        >
             <AppPageHeader {...pageHeader} />
 
             <ProgressStepper currentStep={step} totalSteps={stepLabels.length} />
 
-            <div className="bg-card border rounded-lg p-8 space-y-8">{StepSection}</div>
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={step}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    variants={slideVariants}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="bg-card border rounded-lg p-8 space-y-8"
+                >
+                    {StepSection}
+                </motion.div>
+            </AnimatePresence>
 
-            <div className="flex justify-end gap-4">
+            <motion.div
+                className="flex justify-end gap-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+            >
                 {step > SetupStep.Onboarding && <BackButton />}
                 {step < SetupStep.Onboarded && <NextButton />}
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }
 
 function ProgressStepper({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) {
     return (
-        <div className="flex items-center justify-between">
+        <motion.div
+            className="flex items-center justify-between"
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+        >
             {stepLabels.map((label, index) => {
                 const isCompleted = index < currentStep;
                 const isCurrent = index === currentStep;
@@ -302,38 +363,64 @@ function ProgressStepper({ currentStep, totalSteps }: { currentStep: number; tot
                 );
 
                 const stepIcon = isCompleted ? (
-                    <CheckCircle2 className="size-5" />
+                    <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                    >
+                        <CheckCircle2 className="size-5" />
+                    </motion.div>
                 ) : (
                     <span className="text-sm font-semibold">{index + 1}</span>
                 );
 
                 return (
-                    <div key={index} className="flex items-center flex-1">
+                    <motion.div key={index} className="flex items-center flex-1" variants={staggerItem}>
                         <div className="flex flex-col items-center flex-1">
-                            <div className={className}>{stepIcon}</div>
+                            <motion.div
+                                className={className}
+                                animate={isCurrent ? { scale: [1, 1.1, 1] } : {}}
+                                transition={{ duration: 0.3 }}
+                            >
+                                {stepIcon}
+                            </motion.div>
                             <span className={labelClassName}>{label}</span>
                         </div>
                         {index < totalSteps - 1 && <Separator className={separatorClassName} />}
-                    </div>
+                    </motion.div>
                 );
             })}
-        </div>
+        </motion.div>
     );
 }
 
 function OnboardingSection() {
-    const features = feature.map((option, index) => <Feature key={index} {...option} />);
-
     return (
-        <div className="space-y-8">
-            <div className="space-y-2">
+        <motion.div
+            className="space-y-8"
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+        >
+            <motion.div className="space-y-2" variants={staggerItem}>
                 <h2 className="text-2xl font-bold">{onboardingSection.title}</h2>
                 <p className="text-muted-foreground">{onboardingSection.description}</p>
-            </div>
+            </motion.div>
             <Separator />
-            <Paragraph {...paragraph} title={undefined} />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{features}</div>
-        </div>
+            <motion.div variants={staggerItem}>
+                <Paragraph {...paragraph} title={undefined} />
+            </motion.div>
+            <motion.div
+                className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                variants={staggerContainer}
+            >
+                {feature.map((option, index) => (
+                    <motion.div key={index} variants={staggerItem}>
+                        <Feature {...option} />
+                    </motion.div>
+                ))}
+            </motion.div>
+        </motion.div>
     );
 }
 
@@ -393,56 +480,83 @@ function IntegrateProviderSection() {
     };
 
     return (
-        <div className="space-y-8">
-            <div className="space-y-2">
+        <motion.div
+            className="space-y-8"
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+        >
+            <motion.div className="space-y-2" variants={staggerItem}>
                 <h2 className="text-2xl font-bold">{integrateProviderSection.title}</h2>
                 <p className="text-muted-foreground">{integrateProviderSection.description}</p>
-            </div>
+            </motion.div>
 
             <Separator />
 
-            <Paragraph {...paragraph} title={undefined} />
+            <motion.div variants={staggerItem}>
+                <Paragraph {...paragraph} title={undefined} />
+            </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-4" variants={staggerContainer}>
                 {integrationOptions.map((option, index) => (
-                    <div key={index} className="relative">
+                    <motion.div key={index} className="relative" variants={staggerItem}>
                         <Optionable
                             {...option}
                             onClick={() => handleProviderClick(option.titleText)}
                         />
                         {selectedProvider === option.titleText && <SelectIcon />}
-                    </div>
+                    </motion.div>
                 ))}
-            </div>
+            </motion.div>
 
-            {buckets.length > 0 && (
-                <div className="space-y-4 p-6 bg-muted rounded-lg">
-                    <div className="flex items-center gap-2">
-                        <CheckCircle2 className="size-5 text-primary" />
-                        <h3 className="text-lg font-semibold">
-                            {integrateProviderSection.connectedBucketsTitle}
-                        </h3>
-                    </div>
-                    <div className="space-y-2">
-                        {buckets.map((bucket, index) => (
-                            <div
-                                key={index}
-                                className="flex items-center gap-2 p-3 bg-background rounded-sm border"
-                            >
-                                <Dot className="size-8" />
-                                <span className="font-mono text-sm">{bucket}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
+            <AnimatePresence>
+                {buckets.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="space-y-4 p-6 bg-muted rounded-lg"
+                    >
+                        <div className="flex items-center gap-2">
+                            <CheckCircle2 className="size-5 text-primary" />
+                            <h3 className="text-lg font-semibold">
+                                {integrateProviderSection.connectedBucketsTitle}
+                            </h3>
+                        </div>
+                        <motion.div
+                            className="space-y-2"
+                            initial="hidden"
+                            animate="visible"
+                            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.05 } } }}
+                        >
+                            {buckets.map((bucket, index) => (
+                                <motion.div
+                                    key={index}
+                                    variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}
+                                    className="flex items-center gap-2 p-3 bg-background rounded-sm border"
+                                >
+                                    <Dot className="size-8" />
+                                    <span className="font-mono text-sm">{bucket}</span>
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-            {buckets.length === 0 && !isLoading && selectedProvider && (
-                <div className="p-4 bg-muted rounded-lg text-sm text-muted-foreground">
-                    {integrateProviderSection.noBucketsMessage}
-                </div>
-            )}
-        </div>
+            <AnimatePresence>
+                {buckets.length === 0 && !isLoading && selectedProvider && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="p-4 bg-muted rounded-lg text-sm text-muted-foreground"
+                    >
+                        {integrateProviderSection.noBucketsMessage}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.div>
     );
 }
 
@@ -497,15 +611,20 @@ function SetWalletSection() {
     }
 
     return (
-        <div className="space-y-8">
-            <div className="space-y-2">
+        <motion.div
+            className="space-y-8"
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+        >
+            <motion.div className="space-y-2" variants={staggerItem}>
                 <h2 className="text-2xl font-bold">{setWalletSection.title}</h2>
                 <p className="text-muted-foreground">{setWalletSection.description}</p>
-            </div>
+            </motion.div>
 
             <Separator />
 
-            <div className="space-y-6">
+            <motion.div className="space-y-6" variants={staggerItem}>
                 <div className="space-y-2">
                     <label className="text-sm font-medium">
                         {setWalletSection.walletAddressLabel}
@@ -541,41 +660,55 @@ function SetWalletSection() {
                     )}
                 </div>
 
-                {isDeployed ? (
-                    <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
-                        <div className="flex items-center gap-2">
-                            <CheckCircle2 className="size-5 text-primary" />
-                            <span className="font-medium">
-                                {setWalletSection.vaultDeployedMessage}
-                            </span>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="space-y-4">
-                        <div className="p-4 bg-muted rounded-lg">
-                            <p className="text-sm text-muted-foreground">
-                                {setWalletSection.createVaultDescription}
-                            </p>
-                        </div>
-                        <Button
-                            onClick={createVault}
-                            disabled={isCreating || isChecking}
-                            size="lg"
-                            className="w-full"
+                <AnimatePresence mode="wait">
+                    {isDeployed ? (
+                        <motion.div
+                            key="deployed"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="p-4 bg-primary/10 border border-primary/20 rounded-lg"
                         >
-                            {isCreating ? (
-                                <>
-                                    <Loader2 className="size-4 animate-spin" />
-                                    {setWalletSection.creatingVault}
-                                </>
-                            ) : (
-                                setWalletSection.createVaultButton
-                            )}
-                        </Button>
-                    </div>
-                )}
-            </div>
-        </div>
+                            <div className="flex items-center gap-2">
+                                <CheckCircle2 className="size-5 text-primary" />
+                                <span className="font-medium">
+                                    {setWalletSection.vaultDeployedMessage}
+                                </span>
+                            </div>
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            key="not-deployed"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="space-y-4"
+                        >
+                            <div className="p-4 bg-muted rounded-lg">
+                                <p className="text-sm text-muted-foreground">
+                                    {setWalletSection.createVaultDescription}
+                                </p>
+                            </div>
+                            <Button
+                                onClick={createVault}
+                                disabled={isCreating || isChecking}
+                                size="lg"
+                                className="w-full"
+                            >
+                                {isCreating ? (
+                                    <>
+                                        <Loader2 className="size-4 animate-spin" />
+                                        {setWalletSection.creatingVault}
+                                    </>
+                                ) : (
+                                    setWalletSection.createVaultButton
+                                )}
+                            </Button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </motion.div>
+        </motion.div>
     );
 }
 
@@ -647,23 +780,28 @@ function SetPriceSection() {
     }, []);
 
     return (
-        <div className="space-y-8">
-            <div className="space-y-2">
+        <motion.div
+            className="space-y-8"
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+        >
+            <motion.div className="space-y-2" variants={staggerItem}>
                 <h2 className="text-2xl font-bold">{setPriceSection.title}</h2>
                 <p className="text-muted-foreground">{setPriceSection.description}</p>
-            </div>
+            </motion.div>
 
             <Separator />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-4" variants={staggerItem}>
                 {integrationOptions.slice(0, 2).map((option, index) => (
                     <Optionable key={index} {...option} onClick={loadBuckets} />
                 ))}
-            </div>
+            </motion.div>
 
             <Separator />
 
-            <div className="space-y-6">
+            <motion.div className="space-y-6" variants={staggerItem}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <label className="text-sm font-medium">
@@ -744,16 +882,23 @@ function SetPriceSection() {
                     <p className="text-xs text-muted-foreground">{setPriceSection.priceHelper}</p>
                 </div>
 
-                {priceSet && (
-                    <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
-                        <div className="flex items-center gap-2">
-                            <CheckCircle2 className="size-5 text-primary" />
-                            <span className="font-medium">{setPriceSection.priceSetSuccess}</span>
-                        </div>
-                    </div>
-                )}
-            </div>
-        </div>
+                <AnimatePresence>
+                    {priceSet && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                            className="p-4 bg-primary/10 border border-primary/20 rounded-lg"
+                        >
+                            <div className="flex items-center gap-2">
+                                <CheckCircle2 className="size-5 text-primary" />
+                                <span className="font-medium">{setPriceSection.priceSetSuccess}</span>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </motion.div>
+        </motion.div>
     );
 }
 
@@ -771,17 +916,24 @@ function SetSDKSection() {
     };
 
     return (
-        <div className="space-y-8">
-            <div className="space-y-2">
+        <motion.div
+            className="space-y-8"
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+        >
+            <motion.div className="space-y-2" variants={staggerItem}>
                 <h2 className="text-2xl font-bold">{setSDKSection.title}</h2>
                 <p className="text-muted-foreground">{setSDKSection.description}</p>
-            </div>
+            </motion.div>
 
             <Separator />
 
-            <Paragraph {...paragraph} title={undefined} />
+            <motion.div variants={staggerItem}>
+                <Paragraph {...paragraph} title={undefined} />
+            </motion.div>
 
-            <div className="space-y-6">
+            <motion.div className="space-y-6" variants={staggerItem}>
                 <div className="space-y-2">
                     <label className="text-sm font-medium">{setSDKSection.apiKeyLabel}</label>
                     <div className="flex gap-2">
@@ -804,16 +956,23 @@ function SetSDKSection() {
                     <p className="text-xs text-muted-foreground">{setSDKSection.apiKeyHelper}</p>
                 </div>
 
-                {apiKey && (
-                    <div className="p-4 bg-muted rounded-lg space-y-2">
-                        <h3 className="font-semibold">{setSDKSection.nextStepsTitle}</h3>
-                        <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                            {setSDKSection.nextSteps.map((step, index) => (
-                                <li key={index}>{step}</li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
+                <AnimatePresence>
+                    {apiKey && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="p-4 bg-muted rounded-lg space-y-2 overflow-hidden"
+                        >
+                            <h3 className="font-semibold">{setSDKSection.nextStepsTitle}</h3>
+                            <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                                {setSDKSection.nextSteps.map((step, index) => (
+                                    <li key={index}>{step}</li>
+                                ))}
+                            </ul>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 <Feature
                     {...feature[0]}
@@ -822,25 +981,42 @@ function SetSDKSection() {
                     title={undefined}
                     description={undefined}
                 />
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }
 
 function OnboardedSection() {
     return (
-        <div className="space-y-8 text-center">
-            <div className="flex justify-center">
+        <motion.div
+            className="space-y-8 text-center"
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+        >
+            <motion.div
+                className="flex justify-center"
+                variants={scaleIn}
+                transition={{ type: "spring", stiffness: 200, damping: 15 }}
+            >
                 <div className="size-20 rounded-full bg-primary/10 flex items-center justify-center">
-                    <CheckCircle2 className="size-12 text-primary" />
+                    <motion.div
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ type: "spring", stiffness: 200, damping: 12, delay: 0.2 }}
+                    >
+                        <CheckCircle2 className="size-12 text-primary" />
+                    </motion.div>
                 </div>
-            </div>
-            <div className="space-y-2">
+            </motion.div>
+            <motion.div className="space-y-2" variants={staggerItem}>
                 <h2 className="text-3xl font-bold">{onboardedSection.title}</h2>
                 <p className="text-muted-foreground text-lg">{onboardedSection.description}</p>
-            </div>
+            </motion.div>
             <Separator />
-            <CallToAction {...heroSection} />
-        </div>
+            <motion.div variants={staggerItem}>
+                <CallToAction {...heroSection} />
+            </motion.div>
+        </motion.div>
     );
 }
