@@ -29,6 +29,7 @@ import { NoWalletAlert } from "@/components/privy/connect";
 import AppPageHeader, { PageProps } from "@/components/app/appPage";
 import { motion, Variants, AnimatePresence } from "motion/react";
 import SectionHeader, { SectionHeaderProps } from "@/components/platform/sectionHeader";
+import ProgressStepper from "@/components/platform/progressStepper";
 import Link from "next/link";
 
 export const paragraph: ParagraphProps = {
@@ -249,7 +250,7 @@ export default function SetupPage() {
         >
             <AppPageHeader {...pageHeader} />
 
-            <ProgressStepper currentStep={step} totalSteps={stepLabels.length} />
+            <ProgressStepper labels={stepLabels} currentStep={step} />
 
             <AnimatePresence mode="wait">
                 <motion.div
@@ -274,73 +275,6 @@ export default function SetupPage() {
                 {step > SetupStep.Onboarding && <BackButton />}
                 {step < SetupStep.Onboarded && <NextButton />}
             </motion.div>
-        </motion.div>
-    );
-}
-
-function ProgressStepper({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) {
-    return (
-        <motion.div
-            className="flex items-center justify-between"
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-        >
-            {stepLabels.map((label, index) => {
-                const isCompleted = index < currentStep;
-                const isCurrent = index === currentStep;
-                const isUpcoming = index > currentStep;
-
-                const className = cn(
-                    "flex items-center justify-center size-10 rounded-full border-2 transition-colors",
-                    isCompleted && "bg-primary border-primary text-primary-foreground",
-                    isCurrent && "bg-primary/10 border-primary text-primary",
-                    isUpcoming && "bg-muted border-muted-foreground/30 text-muted-foreground",
-                );
-
-                const labelClassName = cn(
-                    "mt-2 text-xs font-medium text-center",
-                    isCurrent && "text-foreground",
-                    !isCurrent && "text-muted-foreground",
-                );
-
-                const separatorClassName = cn(
-                    "flex-1 transition-colors",
-                    isCompleted ? "bg-primary" : "bg-muted",
-                );
-
-                const stepIcon = isCompleted ? (
-                    <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                    >
-                        <CheckCircle2 className="size-5" />
-                    </motion.div>
-                ) : (
-                    <span className="text-sm font-semibold">{index + 1}</span>
-                );
-
-                return (
-                    <motion.div
-                        key={index}
-                        className="flex items-center flex-1"
-                        variants={staggerItem}
-                    >
-                        <div className="flex flex-col items-center flex-1">
-                            <motion.div
-                                className={className}
-                                animate={isCurrent ? { scale: [1, 1.1, 1] } : {}}
-                                transition={{ duration: 0.3 }}
-                            >
-                                {stepIcon}
-                            </motion.div>
-                            <span className={labelClassName}>{label}</span>
-                        </div>
-                        {index < totalSteps - 1 && <Separator className={separatorClassName} />}
-                    </motion.div>
-                );
-            })}
         </motion.div>
     );
 }
