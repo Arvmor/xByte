@@ -26,7 +26,6 @@
         "prism-react-renderer": "^2.3.0",
         "react": "19.2.3",
         "react-dom": "19.2.3",
-        "simple-icons": "^16.4.0",
         "tailwind-merge": "^3.4.0",
         "viem": "^2.44.0",
         "xbyte-components": "workspace:*",
@@ -141,7 +140,6 @@
         "next": "*",
         "react": "*",
         "react-dom": "*",
-        "simple-icons": "*",
         "tailwind-merge": "*",
         "viem": "*",
         "xbyte-components": "workspace:*",
@@ -2975,8 +2973,6 @@
     "side-channel-weakmap": ["side-channel-weakmap@1.0.2", "", { "dependencies": { "call-bound": "^1.0.2", "es-errors": "^1.3.0", "get-intrinsic": "^1.2.5", "object-inspect": "^1.13.3", "side-channel-map": "^1.0.1" } }, "sha512-WPS/HvHQTYnHisLo9McqBHOJk2FkHO/tlpvldyrnem4aeQp4hai3gythswg6p01oSoTl58rcpiFAjF2br2Ak2A=="],
 
     "signal-exit": ["signal-exit@3.0.7", "", {}, "sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ=="],
-
-    "simple-icons": ["simple-icons@16.4.0", "", {}, "sha512-8CKtCvx1Zq3L0CBsR4RR1MjGCXkXbzdspwl2yCxs8oWkstbzj2+DatRKDee/tuj3Ffd/2CDzwEky9RgG2yggew=="],
 
     "sirv": ["sirv@2.0.4", "", { "dependencies": { "@polka/url": "^1.0.0-next.24", "mrmime": "^2.0.0", "totalist": "^3.0.0" } }, "sha512-94Bdh3cC2PKrbgSOUqTiGPWVZeSiXfKOVZNJniWoqrWrRkB1CJzBU3NEbiTsPcYy1lDsANA/THzS+9WBiy5nfQ=="],
 
