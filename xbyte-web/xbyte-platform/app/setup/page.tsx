@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import Paragraph, { ParagraphProps } from "@/components/platform/paragraph";
 import Feature, { FeatureProps } from "@/components/platform/feature";
 import Optionable, { OptionableProps } from "@/components/platform/optionable";
-import CallToAction, { CallToActionProps } from "@/components/platform/callToAction";
 import { xByteClient, xByteEvmClient, XBYTE_FACTORY_ADDRESS } from "xbyte-sdk";
 import { usePrivy } from "@privy-io/react-auth";
 import {
@@ -21,51 +20,44 @@ import {
     Shield,
     Users,
     Zap,
+    Cloud,
+    Archive,
+    MoveRight,
 } from "lucide-react";
-import { cn, formatAmount } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { NoWalletAlert } from "@/components/privy/connect";
 import AppPageHeader, { PageProps } from "@/components/app/appPage";
 import { motion, Variants, AnimatePresence } from "motion/react";
-
-export const heroSection: CallToActionProps = {
-    titleText: "Integrate xByte-SDK.",
-    descriptionText: "Get your API key and add xByte to your platform.",
-    buttonText: "Get API Key",
-    secondaryButtonText: "Documentation",
-};
+import SectionHeader, { SectionHeaderProps } from "@/components/platform/sectionHeader";
+import Link from "next/link";
 
 export const paragraph: ParagraphProps = {
     title: "Integration Instructions",
-    text: "Select your preferred data storage provider above.Follow the step-by-step xByte instructions to configure access policies and permissions on AWS, GCP, Azure, or xByte Hosting.Ensure credentials are entered securely. After setup, click the Verify button below to confirm xByte's access.If verification succeeds, you will progress to wallet setup.",
+    text: "Click continue to integrate xByte into your platform in less than 60 seconds.",
 };
 
 export const integrationOptions: OptionableProps[] = [
     {
         titleText: "AWS",
-        descriptionText: "Connect Amazon",
-        Icon: Building2,
+        descriptionText: "Connect Amazon S3",
+        Icon: Archive,
     },
     {
-        titleText: "GCP",
-        descriptionText: "Connect Google Cloud",
-        Icon: Building2,
-    },
-    {
-        titleText: "Azure",
-        descriptionText: "Connect Azure",
-        Icon: Building2,
+        titleText: "xByte Hosting",
+        descriptionText: "Upload to xByte",
+        Icon: Cloud,
     },
 ];
 
 export const feature: FeatureProps[] = [
     {
-        title: "Feature 1",
-        description: "Description 1",
+        title: "Connect Your Data",
+        description: "Connect your data storage provider to xByte.",
         Icon: Building2,
     },
     {
-        title: "Feature 3",
-        description: "Description 3",
+        title: "Monetize Your Content",
+        description: "Monetize your content as users consume.",
         Icon: Building2,
     },
 ];
@@ -112,8 +104,6 @@ enum SetupStep {
     Onboarding,
     SetupProvider,
     SetWallet,
-    SetPrice,
-    SetSDK,
     Onboarded,
 }
 
@@ -155,12 +145,10 @@ const stepSection = new Map<SetupStep, React.ReactNode>([
     [SetupStep.Onboarding, <OnboardingSection />],
     [SetupStep.SetupProvider, <IntegrateProviderSection />],
     [SetupStep.SetWallet, <SetWalletSection />],
-    [SetupStep.SetPrice, <SetPriceSection />],
-    [SetupStep.SetSDK, <SetSDKSection />],
     [SetupStep.Onboarded, <OnboardedSection />],
 ]);
 
-const stepLabels = ["Welcome", "Connect", "Set Wallet", "Set Pricing", "Get SDK", "Complete"];
+const stepLabels = ["Welcome", "Connect", "Set Wallet", "Complete"];
 
 const pageHeader: PageProps = {
     title: "Setup xByte Integration",
@@ -174,9 +162,13 @@ const buttonTexts = {
 };
 
 const onboardingSection = {
-    title: "Welcome to xByte Setup",
-    description:
-        "Get started by following these simple steps to integrate xByte into your platform.",
+    title: "Welcome to xByte",
+    description: "Connect your data, setup your wallet, and earn per byte.",
+};
+
+const providerParagraph: ParagraphProps = {
+    title: "Read-only Permissions",
+    text: "Allow xByte to access your existing data storage providers or start uploading to xByte.",
 };
 
 const integrateProviderSection = {
@@ -189,7 +181,7 @@ const integrateProviderSection = {
 
 const setWalletSection = {
     title: "Configure Your Wallet",
-    description: "Set up your wallet address and create a vault to receive payments.",
+    description: "Create a unique vault to receive monetized payments.",
     walletAddressLabel: "Your Wallet Address",
     walletAddressHelper: "This wallet will receive payments from content consumption.",
     vaultAddressLabel: "Vault Address",
@@ -203,40 +195,7 @@ const setWalletSection = {
     creatingVault: "Creating Vault...",
 };
 
-const setPriceSection = {
-    title: "Set Content Pricing",
-    description: "Configure pricing for your content. Choose between API or manual pricing.",
-    selectBucketLabel: "Select Bucket",
-    noBucketsAvailable: "No buckets available",
-    selectObjectLabel: "Select Object",
-    noObjectsAvailable: "No objects available",
-    pricePerByteLabel: "Price per Byte (USDC)",
-    pricePlaceholder: "0.0001",
-    priceHelper: "Set the price users will pay per byte consumed for this content.",
-    setPriceButton: "Set Price",
-    settingPrice: "Setting...",
-    priceSetSuccess: "Price set successfully",
-    defaultPrice: 0.0001,
-};
-
-const setSDKSection = {
-    title: "Get Your API Key",
-    description: "Generate your API key to integrate xByte SDK into your platform.",
-    apiKeyLabel: "Your API Key",
-    apiKeyPlaceholder: "Click Generate to create your API key",
-    generateButton: "Generate",
-    generating: "Generating...",
-    apiKeyHelper: "Keep this key secure. It will be used to authenticate your platform with xByte.",
-    nextStepsTitle: "Next Steps",
-    nextSteps: [
-        "Install xByte SDK in your project",
-        "Configure the SDK with your API key",
-        "Start integrating pay-per-byte payments",
-    ],
-    apiKeyPrefix: "XB-",
-};
-
-const onboardedSection = {
+const onboardedSection: SectionHeaderProps = {
     title: "Setup Complete!",
     description: "Your xByte integration is ready. Start monetizing your content today.",
 };
@@ -246,18 +205,11 @@ const errorMessages = {
     failedToConnectProvider: "Failed to connect provider:",
     failedToCheckVault: "Failed to check vault:",
     failedToCreateVault: "Failed to create vault:",
-    failedToLoadBuckets: "Failed to load buckets:",
-    failedToLoadObjects: "Failed to load objects:",
-    failedToSetPrice: "Failed to set price:",
 };
 
 const vaultConfig = {
     chainId: 84532,
     checkDelay: 3000,
-};
-
-const apiKeyConfig = {
-    generationDelay: 1000,
 };
 
 export default function SetupPage() {
@@ -283,8 +235,8 @@ export default function SetupPage() {
     );
 
     const NextButton = () => (
-        <Button onClick={handleNextStep} size="lg">
-            {step === SetupStep.SetSDK ? buttonTexts.completeSetup : buttonTexts.continue}
+        <Button onClick={handleNextStep}>
+            {step === SetupStep.SetWallet ? buttonTexts.completeSetup : buttonTexts.continue}
         </Button>
     );
 
@@ -493,11 +445,11 @@ function IntegrateProviderSection() {
             <Separator />
 
             <motion.div variants={staggerItem}>
-                <Paragraph {...paragraph} title={undefined} />
+                <Paragraph {...providerParagraph} />
             </motion.div>
 
             <motion.div
-                className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                className="grid grid-cols-1 md:grid-cols-2 gap-4"
                 variants={staggerContainer}
             >
                 {integrationOptions.map((option, index) => (
@@ -568,6 +520,11 @@ function IntegrateProviderSection() {
     );
 }
 
+const walletParagraph: ParagraphProps = {
+    title: "Deterministic Vault",
+    text: "Claim earnings from the vault at any time. All payments will be on-chain, transparent and immutable!",
+};
+
 function SetWalletSection() {
     const [isDeployed, setIsDeployed] = useState(false);
     const [isChecking, setIsChecking] = useState(true);
@@ -631,6 +588,10 @@ function SetWalletSection() {
             </motion.div>
 
             <Separator />
+
+            <motion.div variants={staggerItem}>
+                <Paragraph {...walletParagraph} />
+            </motion.div>
 
             <motion.div className="space-y-6" variants={staggerItem}>
                 <div className="space-y-2">
@@ -720,291 +681,23 @@ function SetWalletSection() {
     );
 }
 
-function SetPriceSection() {
-    const [buckets, setBuckets] = useState<string[]>([]);
-    const [objects, setObjects] = useState<string[]>([]);
-    const [selectedBucket, setSelectedBucket] = useState<string>("");
-    const [selectedObject, setSelectedObject] = useState<string>("");
-    const [price, setPrice] = useState<number>(setPriceSection.defaultPrice);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isSettingPrice, setIsSettingPrice] = useState(false);
-    const [priceSet, setPriceSet] = useState(false);
-
-    const loadBuckets = async () => {
-        setIsLoading(true);
-        try {
-            const result = await xbyteClient.getAllBuckets();
-            if (result.status === "Success") {
-                setBuckets(result.data);
-                if (result.data.length > 0) {
-                    setSelectedBucket(result.data[0]);
-                    await loadObjects(result.data[0]);
-                }
-            }
-        } catch (error) {
-            console.error(errorMessages.failedToLoadBuckets, error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const loadObjects = async (bucket: string) => {
-        setIsLoading(true);
-        try {
-            const result = await xbyteClient.getAllObjects(bucket);
-            if (result.status === "Success") {
-                setObjects(result.data);
-                if (result.data.length > 0) {
-                    setSelectedObject(result.data[0]);
-                }
-            }
-        } catch (error) {
-            console.error(errorMessages.failedToLoadObjects, error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleSetPrice = async () => {
-        if (!selectedBucket || !selectedObject) return;
-        setIsSettingPrice(true);
-        setPriceSet(false);
-        try {
-            const priceInDecimals = formatAmount(price, 6);
-            await xbyteClient.setPrice({
-                bucket: selectedBucket,
-                object: selectedObject,
-                price: priceInDecimals,
-            });
-            setPriceSet(true);
-        } catch (error) {
-            console.error(errorMessages.failedToSetPrice, error);
-        } finally {
-            setIsSettingPrice(false);
-        }
-    };
-
-    useEffect(() => {
-        loadBuckets();
-    }, []);
-
-    return (
-        <motion.div
-            className="space-y-8"
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-        >
-            <motion.div className="space-y-2" variants={staggerItem}>
-                <h2 className="text-2xl font-bold">{setPriceSection.title}</h2>
-                <p className="text-muted-foreground">{setPriceSection.description}</p>
-            </motion.div>
-
-            <Separator />
-
-            <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-4" variants={staggerItem}>
-                {integrationOptions.slice(0, 2).map((option, index) => (
-                    <Optionable key={index} {...option} onClick={loadBuckets} />
-                ))}
-            </motion.div>
-
-            <Separator />
-
-            <motion.div className="space-y-6" variants={staggerItem}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">
-                            {setPriceSection.selectBucketLabel}
-                        </label>
-                        <select
-                            value={selectedBucket}
-                            onChange={(e) => {
-                                setSelectedBucket(e.target.value);
-                                loadObjects(e.target.value);
-                            }}
-                            className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
-                            disabled={isLoading || buckets.length === 0}
-                        >
-                            {buckets.length === 0 ? (
-                                <option>{setPriceSection.noBucketsAvailable}</option>
-                            ) : (
-                                buckets.map((bucket) => (
-                                    <option key={bucket} value={bucket}>
-                                        {bucket}
-                                    </option>
-                                ))
-                            )}
-                        </select>
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">
-                            {setPriceSection.selectObjectLabel}
-                        </label>
-                        <select
-                            value={selectedObject}
-                            onChange={(e) => setSelectedObject(e.target.value)}
-                            className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
-                            disabled={isLoading || objects.length === 0}
-                        >
-                            {objects.length === 0 ? (
-                                <option>{setPriceSection.noObjectsAvailable}</option>
-                            ) : (
-                                objects.map((object) => (
-                                    <option key={object} value={object}>
-                                        {object}
-                                    </option>
-                                ))
-                            )}
-                        </select>
-                    </div>
-                </div>
-
-                <div className="space-y-2">
-                    <label className="text-sm font-medium">
-                        {setPriceSection.pricePerByteLabel}
-                    </label>
-                    <div className="flex gap-2">
-                        <Input
-                            placeholder={setPriceSection.pricePlaceholder}
-                            value={price}
-                            onChange={(e) => setPrice(Number(e.target.value))}
-                            type="number"
-                            step="0.00001"
-                            min="0"
-                            className="flex-1"
-                        />
-                        <Button
-                            onClick={handleSetPrice}
-                            disabled={isSettingPrice || !selectedObject}
-                        >
-                            {isSettingPrice ? (
-                                <>
-                                    <Loader2 className="size-4 animate-spin" />
-                                    {setPriceSection.settingPrice}
-                                </>
-                            ) : (
-                                setPriceSection.setPriceButton
-                            )}
-                        </Button>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{setPriceSection.priceHelper}</p>
-                </div>
-
-                <AnimatePresence>
-                    {priceSet && (
-                        <motion.div
-                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                            className="p-4 bg-primary/10 border border-primary/20 rounded-lg"
-                        >
-                            <div className="flex items-center gap-2">
-                                <CheckCircle2 className="size-5 text-primary" />
-                                <span className="font-medium">
-                                    {setPriceSection.priceSetSuccess}
-                                </span>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </motion.div>
-        </motion.div>
-    );
-}
-
-function SetSDKSection() {
-    const [apiKey, setApiKey] = useState<string>("");
-    const [isGenerating, setIsGenerating] = useState(false);
-
-    const generateApiKey = async () => {
-        setIsGenerating(true);
-        await new Promise((resolve) => setTimeout(resolve, apiKeyConfig.generationDelay));
-        setApiKey(
-            setSDKSection.apiKeyPrefix + Math.random().toString(36).substring(2, 15).toUpperCase(),
-        );
-        setIsGenerating(false);
-    };
-
-    return (
-        <motion.div
-            className="space-y-8"
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-        >
-            <motion.div className="space-y-2" variants={staggerItem}>
-                <h2 className="text-2xl font-bold">{setSDKSection.title}</h2>
-                <p className="text-muted-foreground">{setSDKSection.description}</p>
-            </motion.div>
-
-            <Separator />
-
-            <motion.div variants={staggerItem}>
-                <Paragraph {...paragraph} title={undefined} />
-            </motion.div>
-
-            <motion.div className="space-y-6" variants={staggerItem}>
-                <div className="space-y-2">
-                    <label className="text-sm font-medium">{setSDKSection.apiKeyLabel}</label>
-                    <div className="flex gap-2">
-                        <Input
-                            value={apiKey || setSDKSection.apiKeyPlaceholder}
-                            disabled
-                            className="font-mono"
-                        />
-                        <Button onClick={generateApiKey} disabled={isGenerating || !!apiKey}>
-                            {isGenerating ? (
-                                <>
-                                    <Loader2 className="size-4 animate-spin" />
-                                    {setSDKSection.generating}
-                                </>
-                            ) : (
-                                setSDKSection.generateButton
-                            )}
-                        </Button>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{setSDKSection.apiKeyHelper}</p>
-                </div>
-
-                <AnimatePresence>
-                    {apiKey && (
-                        <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="p-4 bg-muted rounded-lg space-y-2 overflow-hidden"
-                        >
-                            <h3 className="font-semibold">{setSDKSection.nextStepsTitle}</h3>
-                            <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                                {setSDKSection.nextSteps.map((step, index) => (
-                                    <li key={index}>{step}</li>
-                                ))}
-                            </ul>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                <Feature
-                    {...feature[0]}
-                    className="h-100"
-                    aspect="rectangle"
-                    title={undefined}
-                    description={undefined}
-                />
-            </motion.div>
-        </motion.div>
-    );
-}
-
 function OnboardedSection() {
+    const goToDocumentation = (
+        <Button size="lg" asChild>
+            <Link href="https://docs.xbyte.sh" target="_blank">
+                Install SDK <MoveRight />
+            </Link>
+        </Button>
+    );
+
     return (
         <motion.div
-            className="space-y-8 text-center"
+            className="space-y-4 text-center"
             initial="hidden"
             animate="visible"
             variants={staggerContainer}
         >
+            {/* Checkmark */}
             <motion.div
                 className="flex justify-center"
                 variants={scaleIn}
@@ -1020,13 +713,11 @@ function OnboardedSection() {
                     </motion.div>
                 </div>
             </motion.div>
-            <motion.div className="space-y-2" variants={staggerItem}>
-                <h2 className="text-3xl font-bold">{onboardedSection.title}</h2>
-                <p className="text-muted-foreground text-lg">{onboardedSection.description}</p>
-            </motion.div>
-            <Separator />
+
+            {/* Content */}
             <motion.div variants={staggerItem}>
-                <CallToAction {...heroSection} />
+                <SectionHeader {...onboardedSection} />
+                {goToDocumentation}
             </motion.div>
         </motion.div>
     );
