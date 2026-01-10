@@ -24,7 +24,6 @@ import {
     Archive,
     MoveRight,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { NoWalletAlert } from "@/components/privy/connect";
 import AppPageHeader, { PageProps } from "@/components/app/appPage";
 import { motion, Variants, AnimatePresence } from "motion/react";
