@@ -206,7 +206,7 @@ const keyFeatures: InfoCardProps[] = [
     {
         title: "Simple Integration",
         description:
-            "Drop-in SDK integration takes minutes. Works with any content type—audio, video, live, or VOD.",
+            "Drop-in SDK integration takes minutes. Works with any content type (audio, video, live, or VOD).",
         Icon: Code,
     },
     {
@@ -263,7 +263,7 @@ const howItWorksSteps: ProcessStep[] = [
 
 const paymentFlowSteps: FlowStep[] = [
     { label: "User consumes content", Icon: Play },
-    { label: "xByte SDK triggers x402 payment", Icon: Zap },
+    { label: "xByte triggers x402 payment", Icon: Zap },
     { label: "Payment sent to your vault", Icon: Lock },
     { label: "Funds accumulate", Icon: Layers },
     { label: "Withdraw anytime", Icon: Coins },
@@ -369,7 +369,7 @@ const faqItems: FAQItem[] = [
     },
     {
         question: "How do users pay?",
-        answer: "Fund accounts with card or PayPal. USDC and x402 run under the hood—users never need to know it's crypto.",
+        answer: "Fund accounts with card or PayPal. USDC and x402 run under the hood-users never need to know it's crypto.",
     },
     {
         question: "What are the fees?",
