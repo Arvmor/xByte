@@ -46,12 +46,12 @@ function getBalance(
 /** The header component for the app */
 export default function AppHeader() {
     const { authenticated, login } = usePrivy();
-    const { wallets } = useWallets();
+    const { ready, wallets } = useWallets();
     const wallet = wallets[0];
     const [balance, setBalance] = useState<string>("...");
 
     useEffect(() => {
-        if (!wallet?.address || !process.env.NEXT_PUBLIC_USDC_ADDRESS) return;
+        if (!ready || !wallet?.address || !process.env.NEXT_PUBLIC_USDC_ADDRESS) return;
         getBalance(
             xbyteEvmClient,
             setBalance,
@@ -59,7 +59,7 @@ export default function AppHeader() {
             process.env.NEXT_PUBLIC_USDC_ADDRESS,
             6n,
         );
-    }, [wallet?.address]);
+    }, [ready, wallet?.address]);
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">

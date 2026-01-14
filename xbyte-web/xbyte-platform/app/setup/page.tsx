@@ -303,12 +303,16 @@ function OnboardingSection() {
 }
 
 function IntegrateProviderSection() {
-    const { wallets } = useWallets();
+    const { ready, wallets } = useWallets();
     const wallet = wallets[0];
     const [buckets, setBuckets] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
+
+    if (!ready || !wallet) {
+        return <NoWalletAlert />;
+    }
 
     const SelectIcon = () => (
         <div className="absolute top-2 right-2">
@@ -463,15 +467,15 @@ function SetVaultSection() {
     const [deployedVault, setDeployedVault] = useState("");
     const [isCreating, setIsCreating] = useState(false);
     const { sendTransaction } = usePrivy();
-    const { wallets } = useWallets();
+    const { ready, wallets } = useWallets();
     const wallet = wallets[0];
     const walletAddress = wallet?.address as `0x${string}` | undefined;
 
     useEffect(() => {
-        if (walletAddress) {
+        if (ready && walletAddress) {
             checkVault();
         }
-    }, [walletAddress]);
+    }, [ready, walletAddress]);
 
     async function checkVault() {
         if (!walletAddress) return;
@@ -505,7 +509,7 @@ function SetVaultSection() {
         }
     }
 
-    if (!walletAddress) {
+    if (!ready || !walletAddress) {
         return <NoWalletAlert />;
     }
 

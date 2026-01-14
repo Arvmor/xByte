@@ -95,11 +95,11 @@ const historySection = {
 };
 
 export default function PayoutPage() {
-    const { wallets } = useWallets();
+    const { ready, wallets } = useWallets();
     const wallet = wallets[0];
     const walletAddress = wallet?.address as `0x${string}` | undefined;
 
-    if (!walletAddress) {
+    if (!ready || !walletAddress) {
         return <NoWalletAlert />;
     }
 
