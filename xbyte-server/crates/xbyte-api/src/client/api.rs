@@ -1,7 +1,6 @@
 use crate::{Client, Database, MemoryDB, ResultAPI};
 use actix_web::dev::HttpServiceFactory;
 use actix_web::{Responder, get, post, web};
-use uuid::Uuid;
 
 #[derive(Debug)]
 pub enum ClientRoute {
@@ -28,6 +27,12 @@ async fn create_client(
     // Create a new client
     let client = Client::new(data.name, data.wallet);
 
+    // Check for duplicate wallet
+    if db.get_client(&client.id.unwrap()).is_ok() {
+        tracing::warn!(?data.wallet, "Client already exists");
+        return ResultAPI::failure("Client already exists");
+    }
+
     // Insert to DB
     if let Err(error) = db.set_client(client.id.unwrap(), client.clone()) {
         tracing::error!(?error, ?client, "Failed to create client");
@@ -38,7 +43,16 @@ async fn create_client(
 }
 
 #[get("/client/{id}")]
-async fn get_client(id: web::Path<Uuid>, db: web::ThinData<MemoryDB>) -> impl Responder {
+async fn get_client(id: web::Path<String>, db: web::ThinData<MemoryDB>) -> impl Responder {
+    // Parse the ID
+    let id = match id.parse() {
+        Ok(a) => a,
+        Err(error) => {
+            tracing::error!(?error, ?id, "Invalid ID format");
+            return ResultAPI::failure("Invalid ID format");
+        }
+    };
+
     // Get the client
     match db.get_client(&id) {
         Ok(client) => ResultAPI::okay(client),
