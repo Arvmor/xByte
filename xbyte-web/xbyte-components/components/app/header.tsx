@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertCircle, Copy, Home, LogOut, User2, X } from "lucide-react";
-import { usePrivy, User } from "@privy-io/react-auth";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { xByteEvmClient } from "xbyte-sdk";
 import { formatFromDecimals } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -45,19 +45,21 @@ function getBalance(
 
 /** The header component for the app */
 export default function AppHeader() {
-    const { authenticated, user, login } = usePrivy();
+    const { authenticated, login } = usePrivy();
+    const { wallets } = useWallets();
+    const wallet = wallets[0];
     const [balance, setBalance] = useState<string>("...");
 
     useEffect(() => {
-        if (!user?.wallet?.address || !process.env.NEXT_PUBLIC_USDC_ADDRESS) return;
+        if (!wallet?.address || !process.env.NEXT_PUBLIC_USDC_ADDRESS) return;
         getBalance(
             xbyteEvmClient,
             setBalance,
-            user.wallet.address,
+            wallet.address,
             process.env.NEXT_PUBLIC_USDC_ADDRESS,
             6n,
         );
-    }, [user?.wallet?.address]);
+    }, [wallet?.address]);
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -88,7 +90,7 @@ export default function AppHeader() {
 
                     {/* User info*/}
                     <div className="flex items-center">
-                        {authenticated && user && <UserInfo user={user} balance={balance} />}
+                        {authenticated && wallet && <UserInfo wallet={wallet} balance={balance} />}
                         {!authenticated && <Onboarding onClick={login} />}
                     </div>
                 </div>
@@ -130,9 +132,15 @@ function AppAlert({ message, isHidden }: { message: React.ReactNode; isHidden: b
 }
 
 /** The user info component for the app */
-function UserInfo({ user, balance }: { user: User; balance: string }) {
+function UserInfo({
+    wallet,
+    balance,
+}: {
+    wallet: ReturnType<typeof useWallets>["wallets"][0];
+    balance: string;
+}) {
     const { logout } = usePrivy();
-    const address = user.wallet?.address as `0x${string}` | undefined;
+    const address = wallet?.address as `0x${string}` | undefined;
     const shortAddress = address ? `${address.slice(0, 8)}...${address.slice(-8)}` : "";
 
     /** Handle the copy of the address */
