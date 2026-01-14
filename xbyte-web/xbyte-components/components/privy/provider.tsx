@@ -10,7 +10,7 @@ const config: PrivyClientConfig = {
             createOnLogin: "users-without-wallets",
         },
     },
-    loginMethods: ["email"],
+    loginMethods: ["email", "wallet"],
 };
 
 export default function Providers({ children }: { children: React.ReactNode }) {
