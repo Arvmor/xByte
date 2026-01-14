@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import Paragraph, { ParagraphProps } from "@/components/platform/paragraph";
 import Feature, { FeatureProps } from "@/components/platform/feature";
 import Optionable, { OptionableProps } from "@/components/platform/optionable";
-import { xByteClient, xByteEvmClient, XBYTE_FACTORY_ADDRESS } from "xbyte-sdk";
+import { xByteClient, xByteEvmClient, XBYTE_FACTORY_ADDRESS, Client } from "xbyte-sdk";
 import { usePrivy } from "@privy-io/react-auth";
 import {
     CheckCircle2,
@@ -332,25 +332,29 @@ function IntegrateProviderSection() {
                 throw new Error("User not authenticated");
             }
 
-            const { status: clientStatus, data: client } = await xbyteClient.createClient({
+            let client: Client;
+            const { status: clientStatus, data: clientData } = await xbyteClient.createClient({
                 name: user.id,
                 wallet: user.wallet.address,
             });
-            if (clientStatus !== "Success" || !client.id) {
-                setIsLoading(false);
-                return;
+
+            if (clientStatus === "Success" && clientData.id) {
+                client = clientData;
+            } else {
+                const { status, data } = await xbyteClient.getClient(user.wallet.address);
+                if (status !== "Success") return setIsLoading(false);
+                client = data;
             }
 
             const { status, data } = await xbyteClient.getAllBuckets();
-            if (status !== "Success") {
-                setIsLoading(false);
-                return;
-            }
+            if (status !== "Success") return setIsLoading(false);
 
             setBuckets(data);
             setIsConnected(true);
 
             for (const bucket of data) {
+                if (!client.id) return;
+
                 await xbyteClient.registerBucket({
                     bucket,
                     client: client.id,

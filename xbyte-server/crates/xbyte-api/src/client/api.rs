@@ -1,7 +1,6 @@
 use crate::{Client, Database, MemoryDB, ResultAPI};
 use actix_web::dev::HttpServiceFactory;
 use actix_web::{Responder, get, post, web};
-use alloy_primitives::Address;
 
 #[derive(Debug)]
 pub enum ClientRoute {
@@ -44,7 +43,16 @@ async fn create_client(
 }
 
 #[get("/client/{id}")]
-async fn get_client(id: web::Path<Address>, db: web::ThinData<MemoryDB>) -> impl Responder {
+async fn get_client(id: web::Path<String>, db: web::ThinData<MemoryDB>) -> impl Responder {
+    // Parse the ID
+    let id = match id.parse() {
+        Ok(a) => a,
+        Err(error) => {
+            tracing::error!(?error, ?id, "Invalid ID format");
+            return ResultAPI::failure("Invalid ID format");
+        }
+    };
+
     // Get the client
     match db.get_client(&id) {
         Ok(client) => ResultAPI::okay(client),
