@@ -11,9 +11,9 @@ export default function ConnectPanel() {
 }
 
 export function Connect() {
-    const { connectOrCreateWallet } = usePrivy();
+    const { login } = usePrivy();
 
-    return <Button onClick={connectOrCreateWallet}>Login</Button>;
+    return <Button onClick={login}>Login</Button>;
 }
 
 export function Disconnect() {

@@ -45,7 +45,7 @@ function getBalance(
 
 /** The header component for the app */
 export default function AppHeader() {
-    const { authenticated, user, connectOrCreateWallet } = usePrivy();
+    const { authenticated, user, login } = usePrivy();
     const [balance, setBalance] = useState<string>("...");
 
     useEffect(() => {
@@ -89,7 +89,7 @@ export default function AppHeader() {
                     {/* User info*/}
                     <div className="flex items-center">
                         {authenticated && user && <UserInfo user={user} balance={balance} />}
-                        {!authenticated && <Onboarding onClick={connectOrCreateWallet} />}
+                        {!authenticated && <Onboarding onClick={login} />}
                     </div>
                 </div>
             </div>
