@@ -102,8 +102,8 @@ export const features: FeatureProps[] = [
  */
 enum SetupStep {
     Onboarding,
+    SetVault,
     SetupProvider,
-    SetWallet,
     Onboarded,
 }
 
@@ -143,12 +143,12 @@ const scaleIn: Variants = {
  */
 const stepSection = new Map<SetupStep, React.ReactNode>([
     [SetupStep.Onboarding, <OnboardingSection />],
+    [SetupStep.SetVault, <SetVaultSection />],
     [SetupStep.SetupProvider, <IntegrateProviderSection />],
-    [SetupStep.SetWallet, <SetWalletSection />],
     [SetupStep.Onboarded, <OnboardedSection />],
 ]);
 
-const stepLabels = ["Welcome", "Connect", "Set Wallet", "Complete"];
+const stepLabels = ["Welcome", "Set Vault", "Connect", "Complete"];
 
 const pageHeader: PageProps = {
     title: "Setup xByte Integration",
@@ -163,7 +163,7 @@ const buttonTexts = {
 
 const onboardingSection = {
     title: "Welcome to xByte",
-    description: "Connect your data, setup your wallet, and earn per byte.",
+    description: "Setup your vault, connect your data, and earn per byte.",
 };
 
 const providerParagraph: ParagraphProps = {
@@ -179,8 +179,8 @@ const integrateProviderSection = {
         "No buckets found. Please ensure your storage provider is properly configured.",
 };
 
-const setWalletSection = {
-    title: "Configure Your Wallet",
+const setVaultSection = {
+    title: "Set Up Vault",
     description: "Create a unique vault to receive monetized payments.",
     walletAddressLabel: "Your Wallet Address",
     walletAddressHelper: "This wallet will receive payments from content consumption.",
@@ -236,7 +236,7 @@ export default function SetupPage() {
 
     const NextButton = () => (
         <Button onClick={handleNextStep}>
-            {step === SetupStep.SetWallet ? buttonTexts.completeSetup : buttonTexts.continue}
+            {step === SetupStep.SetupProvider ? buttonTexts.completeSetup : buttonTexts.continue}
         </Button>
     );
 
@@ -458,7 +458,7 @@ const walletParagraph: ParagraphProps = {
     text: "Claim earnings from the vault at any time. All payments will be on-chain, transparent and immutable!",
 };
 
-function SetWalletSection() {
+function SetVaultSection() {
     const [isDeployed, setIsDeployed] = useState(false);
     const [isChecking, setIsChecking] = useState(true);
     const [deployedVault, setDeployedVault] = useState("");
@@ -516,8 +516,8 @@ function SetWalletSection() {
             variants={staggerContainer}
         >
             <motion.div className="space-y-2" variants={staggerItem}>
-                <h2 className="text-2xl font-bold">{setWalletSection.title}</h2>
-                <p className="text-muted-foreground">{setWalletSection.description}</p>
+                <h2 className="text-2xl font-bold">{setVaultSection.title}</h2>
+                <p className="text-muted-foreground">{setVaultSection.description}</p>
             </motion.div>
 
             <Separator />
@@ -529,34 +529,34 @@ function SetWalletSection() {
             <motion.div className="space-y-6" variants={staggerItem}>
                 <div className="space-y-2">
                     <label className="text-sm font-medium">
-                        {setWalletSection.walletAddressLabel}
+                        {setVaultSection.walletAddressLabel}
                     </label>
                     <Input value={wallet} disabled className="font-mono" />
                     <p className="text-xs text-muted-foreground">
-                        {setWalletSection.walletAddressHelper}
+                        {setVaultSection.walletAddressHelper}
                     </p>
                 </div>
 
                 <div className="space-y-2">
                     <label className="text-sm font-medium">
-                        {setWalletSection.vaultAddressLabel}
+                        {setVaultSection.vaultAddressLabel}
                     </label>
                     {isChecking ? (
                         <div className="flex items-center gap-2 p-3 bg-muted rounded border">
                             <Loader2 className="size-4 animate-spin text-muted-foreground" />
                             <span className="text-sm text-muted-foreground">
-                                {setWalletSection.checkingVaultStatus}
+                                {setVaultSection.checkingVaultStatus}
                             </span>
                         </div>
                     ) : (
                         <>
                             <Input
-                                value={deployedVault || setWalletSection.vaultNotComputed}
+                                value={deployedVault || setVaultSection.vaultNotComputed}
                                 disabled
                                 className="font-mono"
                             />
                             <p className="text-xs text-muted-foreground">
-                                {setWalletSection.vaultAddressHelper}
+                                {setVaultSection.vaultAddressHelper}
                             </p>
                         </>
                     )}
@@ -574,7 +574,7 @@ function SetWalletSection() {
                             <div className="flex items-center gap-2">
                                 <CheckCircle2 className="size-5 text-primary" />
                                 <span className="font-medium">
-                                    {setWalletSection.vaultDeployedMessage}
+                                    {setVaultSection.vaultDeployedMessage}
                                 </span>
                             </div>
                         </motion.div>
@@ -588,7 +588,7 @@ function SetWalletSection() {
                         >
                             <div className="p-4 bg-muted rounded-lg">
                                 <p className="text-sm text-muted-foreground">
-                                    {setWalletSection.createVaultDescription}
+                                    {setVaultSection.createVaultDescription}
                                 </p>
                             </div>
                             <Button
@@ -600,10 +600,10 @@ function SetWalletSection() {
                                 {isCreating ? (
                                     <>
                                         <Loader2 className="size-4 animate-spin" />
-                                        {setWalletSection.creatingVault}
+                                        {setVaultSection.creatingVault}
                                     </>
                                 ) : (
-                                    setWalletSection.createVaultButton
+                                    setVaultSection.createVaultButton
                                 )}
                             </Button>
                         </motion.div>
