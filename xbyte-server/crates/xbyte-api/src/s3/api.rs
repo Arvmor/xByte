@@ -139,7 +139,7 @@ pub struct RegisterRequest {
     /// The bucket
     pub bucket: String,
     /// The client ID
-    pub client: uuid::Uuid,
+    pub client: alloy_primitives::Address,
 }
 
 #[post("/s3/register")]

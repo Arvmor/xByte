@@ -1,7 +1,7 @@
 use crate::Client;
+use alloy_primitives::Address;
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
-use uuid::Uuid;
 
 /// A trait for a database
 pub trait Database {
@@ -36,17 +36,17 @@ pub trait Database {
 #[derive(Debug, Default, Clone)]
 pub struct MemoryDB {
     prices: Arc<RwLock<HashMap<(String, String), u64>>>,
-    clients: Arc<RwLock<HashMap<Uuid, Client>>>,
-    buckets: Arc<RwLock<HashMap<String, Uuid>>>,
+    clients: Arc<RwLock<HashMap<Address, Client>>>,
+    buckets: Arc<RwLock<HashMap<String, Address>>>,
 }
 
 impl Database for MemoryDB {
     type KeyPrice = (String, String);
     type Price = u64;
-    type KeyClient = Uuid;
+    type KeyClient = Address;
     type Client = Client;
     type KeyBucket = String;
-    type Bucket = Uuid;
+    type Bucket = Address;
 
     fn set_price(&self, key: Self::KeyPrice, price: Self::Price) -> anyhow::Result<()> {
         // Set the price
@@ -94,11 +94,14 @@ impl Database for MemoryDB {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use alloy_primitives::address;
+
+    const TEST_WALLET: Address = address!("1234567890123456789012345678901234567890");
 
     #[test]
     fn test_assign_bucket() -> anyhow::Result<()> {
         let db = MemoryDB::default();
-        let client = Client::new("test", Default::default());
+        let client = Client::new("test", TEST_WALLET);
 
         let bucket_key = String::from("test_bucket");
         db.assign_bucket(bucket_key, client.id.unwrap())?;
@@ -108,7 +111,7 @@ mod tests {
     #[test]
     fn test_assign_bucket_roundtrip() -> anyhow::Result<()> {
         let db = MemoryDB::default();
-        let client = Client::new("test".to_string(), Default::default());
+        let client = Client::new("test".to_string(), TEST_WALLET);
         db.set_client(client.id.unwrap(), client.clone())?;
 
         let bucket_key = String::from("test_bucket");

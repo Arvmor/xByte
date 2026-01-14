@@ -1,6 +1,5 @@
 use alloy_primitives::Address;
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 use xbyte_evm::Factory;
 
 /// xByte Client
@@ -11,7 +10,7 @@ where
     N: AsRef<str>,
 {
     /// Unique ID
-    pub id: Option<Uuid>,
+    pub id: Option<Address>,
     /// Nickname
     pub name: N,
     /// Wallet Address
@@ -23,11 +22,10 @@ where
 impl<N: AsRef<str>> Client<N> {
     /// Create a new client
     pub fn new(name: N, wallet: Address) -> Self {
-        let id = Some(Uuid::new_v4());
         let vault = Some(Factory::<()>::compute_vault(wallet));
 
         Self {
-            id,
+            id: Some(wallet),
             name,
             wallet,
             vault,
@@ -48,6 +46,7 @@ mod tests {
 
         assert_eq!(client.name, name);
         assert_eq!(client.wallet, wallet);
+        assert!(client.vault.is_some());
         Ok(())
     }
 }
