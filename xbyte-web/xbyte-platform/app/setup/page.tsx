@@ -20,7 +20,6 @@ import {
     Shield,
     Users,
     Zap,
-    Cloud,
     Archive,
     MoveRight,
 } from "lucide-react";
@@ -41,11 +40,6 @@ export const integrationOptions: OptionableProps[] = [
         titleText: "AWS",
         descriptionText: "Connect Amazon S3",
         Icon: Archive,
-    },
-    {
-        titleText: "xByte Hosting",
-        descriptionText: "Upload to xByte",
-        Icon: Cloud,
     },
 ];
 
@@ -168,7 +162,7 @@ const onboardingSection = {
 
 const providerParagraph: ParagraphProps = {
     title: "Read-only Permissions",
-    text: "Allow xByte to access your existing data storage providers or start uploading to xByte.",
+    text: "Allow xByte to access your existing data storage providers.",
 };
 
 const integrateProviderSection = {
