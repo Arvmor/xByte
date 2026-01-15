@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 import { xByteEvmClient } from "xbyte-sdk";
-import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { usePrivy } from "@privy-io/react-auth";
 import { CheckCircle2, Loader2, ArrowDownCircle, Coins, History, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Address, formatEther, formatUnits } from "viem";
@@ -95,11 +95,10 @@ const historySection = {
 };
 
 export default function PayoutPage() {
-    const { ready, wallets } = useWallets();
-    const wallet = wallets[0];
-    const walletAddress = wallet?.address as `0x${string}` | undefined;
+    const { user } = usePrivy();
+    const wallet = user?.wallet?.address as `0x${string}` | undefined;
 
-    if (!ready || !walletAddress) {
+    if (!wallet) {
         return <NoWalletAlert />;
     }
 
@@ -115,19 +114,19 @@ export default function PayoutPage() {
             </motion.div>
 
             <motion.div variants={staggerItem}>
-                <BalanceSection wallet={walletAddress} />
+                <BalanceSection wallet={wallet} />
             </motion.div>
 
             <motion.div variants={staggerItem}>
-                <WithdrawSection wallet={walletAddress} />
+                <WithdrawSection wallet={wallet} />
             </motion.div>
 
             <motion.div variants={staggerItem}>
-                <VaultStatusSection wallet={walletAddress} />
+                <VaultStatusSection wallet={wallet} />
             </motion.div>
 
             <motion.div variants={staggerItem}>
-                <HistorySection wallet={walletAddress} />
+                <HistorySection wallet={wallet} />
             </motion.div>
         </motion.div>
     );

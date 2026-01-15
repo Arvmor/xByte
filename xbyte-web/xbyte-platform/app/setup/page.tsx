@@ -8,7 +8,7 @@ import Paragraph, { ParagraphProps } from "@/components/platform/paragraph";
 import Feature, { FeatureProps } from "@/components/platform/feature";
 import Optionable, { OptionableProps } from "@/components/platform/optionable";
 import { xByteClient, xByteEvmClient, XBYTE_FACTORY_ADDRESS, Client } from "xbyte-sdk";
-import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { usePrivy } from "@privy-io/react-auth";
 import {
     CheckCircle2,
     Loader2,
@@ -303,16 +303,11 @@ function OnboardingSection() {
 }
 
 function IntegrateProviderSection() {
-    const { ready, wallets } = useWallets();
-    const wallet = wallets[0];
+    const { user } = usePrivy();
     const [buckets, setBuckets] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
-
-    if (!ready || !wallet) {
-        return <NoWalletAlert />;
-    }
 
     const SelectIcon = () => (
         <div className="absolute top-2 right-2">
@@ -327,20 +322,20 @@ function IntegrateProviderSection() {
         setIsConnected(false);
 
         try {
-            if (!wallet?.address) {
-                throw new Error("Wallet not connected");
+            if (!user?.id || !user?.wallet?.address) {
+                throw new Error("User not authenticated");
             }
 
             let client: Client;
             const { status: clientStatus, data: clientData } = await xbyteClient.createClient({
-                name: wallet.address,
-                wallet: wallet.address,
+                name: user.id,
+                wallet: user.wallet.address,
             });
 
             if (clientStatus === "Success" && clientData.id) {
                 client = clientData;
             } else {
-                const { status, data } = await xbyteClient.getClient(wallet.address);
+                const { status, data } = await xbyteClient.getClient(user.wallet.address);
                 if (status !== "Success") return setIsLoading(false);
                 client = data;
             }
@@ -466,23 +461,21 @@ function SetVaultSection() {
     const [isChecking, setIsChecking] = useState(true);
     const [deployedVault, setDeployedVault] = useState("");
     const [isCreating, setIsCreating] = useState(false);
-    const { sendTransaction } = usePrivy();
-    const { ready, wallets } = useWallets();
-    const wallet = wallets[0];
-    const walletAddress = wallet?.address as `0x${string}` | undefined;
+    const { sendTransaction, user } = usePrivy();
+    const wallet = user?.wallet?.address as `0x${string}`;
 
     useEffect(() => {
-        if (ready && walletAddress) {
+        if (wallet) {
             checkVault();
         }
-    }, [ready, walletAddress]);
+    }, [wallet]);
 
     async function checkVault() {
-        if (!walletAddress) return;
+        if (!wallet) return;
         setIsChecking(true);
         try {
-            const computedVault = await xbyteEvmClient.getComputeVaultAddress(walletAddress);
-            const vault = await xbyteEvmClient.getVault(walletAddress);
+            const computedVault = await xbyteEvmClient.getComputeVaultAddress(wallet);
+            const vault = await xbyteEvmClient.getVault(wallet);
             setDeployedVault(computedVault);
             setIsDeployed(vault.some((v) => v !== "0x0000000000000000000000000000000000000000"));
         } catch (error) {
@@ -493,7 +486,7 @@ function SetVaultSection() {
     }
 
     async function createVault() {
-        if (!walletAddress) return;
+        if (!wallet) return;
         setIsCreating(true);
         try {
             await sendTransaction({
@@ -509,7 +502,7 @@ function SetVaultSection() {
         }
     }
 
-    if (!ready || !walletAddress) {
+    if (!wallet) {
         return <NoWalletAlert />;
     }
 
@@ -536,7 +529,7 @@ function SetVaultSection() {
                     <label className="text-sm font-medium">
                         {setVaultSection.walletAddressLabel}
                     </label>
-                    <Input value={walletAddress} disabled className="font-mono" />
+                    <Input value={wallet} disabled className="font-mono" />
                     <p className="text-xs text-muted-foreground">
                         {setVaultSection.walletAddressHelper}
                     </p>
