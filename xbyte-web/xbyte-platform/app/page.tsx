@@ -228,7 +228,7 @@ const keyFeatures: InfoCardProps[] = [
     },
     {
         title: "Instant Settlement",
-        description: "Real-time payment processing. Receive payments as users consume content.",
+        description: "Real-time payment processing. Receive as users consume content.",
         Icon: Zap,
     },
 ];
@@ -263,9 +263,9 @@ const howItWorksSteps: ProcessStep[] = [
 ];
 
 const paymentFlowSteps: FlowStep[] = [
-    { label: "User consumes content", Icon: Play },
-    { label: "xByte triggers x402 payment", Icon: Zap },
-    { label: "Payment sent to your vault", Icon: Lock },
+    { label: "User consumes bytes", Icon: Play },
+    { label: "Triggers x402 payment", Icon: Zap },
+    { label: "Payments to your vault", Icon: Lock },
     { label: "Funds accumulate", Icon: Layers },
     { label: "Withdraw anytime", Icon: Coins },
 ];
@@ -307,6 +307,12 @@ const useCases: InfoCardProps[] = [
 
 const benifis: InfoCardProps[] = [
     {
+        title: "For End Users",
+        description:
+            "Pay only for what you consume. Web2-friendly payments (card or PayPal). USDC and x402 under the hood.",
+        Icon: Users,
+    },
+    {
         title: "For Streaming Platforms",
         items: [
             "Experiment with new pricing models without rebuilding billing",
@@ -316,12 +322,6 @@ const benifis: InfoCardProps[] = [
         ],
         Icon: Smartphone,
         variant: "highlight",
-    },
-    {
-        title: "For End Users",
-        description:
-            "Pay only for what you consume. Web2-friendly payments (card or PayPal). USDC and x402 under the hood.",
-        Icon: Users,
     },
     {
         title: "For Content Creators",
