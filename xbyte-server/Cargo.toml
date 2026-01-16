@@ -38,7 +38,7 @@ aws-config = { version = "1.8.5", features = [
     "rustls",
     "behavior-version-latest",
 ] }
-aws-sdk-s3 = { version = "1.119.0", features = ["behavior-version-latest"] }
+aws-sdk-s3 = { version = "1.120.0", features = ["behavior-version-latest"] }
 
 # x402 dependencies
 ureq = { version = "3.1.4", features = ["rustls", "json"] }
