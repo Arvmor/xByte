@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { User } from "@privy-io/react-auth";
 import { useXBytePrivy } from "@/hooks/useXBytePrivy";
-import { User2, Copy, LogOut, Wallet, Vault, ExternalLink, Check } from "lucide-react";
+import { User2, Copy, LogOut, Wallet, ExternalLink, Check, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
@@ -160,29 +160,8 @@ function VaultSectionContent({ state }: { state: ProfileState }) {
 function VaultSection({ state }: { state: ProfileState }) {
     return (
         <div className="space-y-3">
-            <SectionLabel Icon={Vault} label="Vault" />
+            <SectionLabel Icon={Info} label="Information" />
             <VaultSectionContent state={state} />
-        </div>
-    );
-}
-
-function NavigationLinks() {
-    const links = [
-        { href: "/setup", label: "Setup" },
-        { href: "/payout", label: "Payout" },
-    ];
-
-    return (
-        <div className="space-y-2">
-            {links.map(({ href, label }) => (
-                <Link
-                    key={href}
-                    href={href}
-                    className="block w-full text-sm text-center py-2 rounded-md hover:bg-accent transition-colors"
-                >
-                    {label}
-                </Link>
-            ))}
         </div>
     );
 }
@@ -209,7 +188,6 @@ function ProfileContent({ user, state }: { user: User; state: ProfileState }) {
             <Separator />
             <VaultSection state={state} />
             <Separator />
-            <NavigationLinks />
             <DisconnectButton />
         </div>
     );
