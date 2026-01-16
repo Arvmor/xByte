@@ -31,6 +31,7 @@
         "paths": {
             "@/components/*": ["../xbyte-components/components/*"],
             "@/lib/*": ["../xbyte-components/lib/*"],
+            "@/hooks/*": ["../xbyte-components/hooks/*"],
             "@/*": ["./*"]
         }
     },
