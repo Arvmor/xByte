@@ -7,6 +7,7 @@ import ProcessSteps, { ProcessStep } from "@/components/platform/processSteps";
 import PaymentFlow, { FlowStep } from "@/components/platform/paymentFlow";
 import FAQAccordion, { FAQItem } from "@/components/platform/faqAccordion";
 import Optionable, { OptionableProps } from "@/components/platform/optionable";
+import ContactBanner, { ContactBannerProps } from "@/components/platform/contactBanner";
 import { Separator } from "@/components/ui/separator";
 import {
     Building2,
@@ -393,6 +394,11 @@ const faqItems: FAQItem[] = [
     },
 ];
 
+const contactBanner: ContactBannerProps = {
+    message: "Want to learn more? Reach us at",
+    email: "contact@xbyte.sh",
+};
+
 export default function Home() {
     const router = useRouter();
 
@@ -442,6 +448,10 @@ export default function Home() {
                     ))}
                 </StaggeredGrid>
             </div>
+
+            <AnimatedSection variants={fadeInUp} className="mt-12">
+                <ContactBanner {...contactBanner} />
+            </AnimatedSection>
 
             <AnimatedSection variants={fadeIn}>
                 <Separator className="my-16" />
