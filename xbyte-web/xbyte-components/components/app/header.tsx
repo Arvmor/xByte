@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertCircle, Copy, Home, LogOut, User2, X } from "lucide-react";
-import { usePrivy, User } from "@privy-io/react-auth";
+import { useXBytePrivy, XBytePrivyState } from "@/hooks/useXBytePrivy";
 import { xByteEvmClient } from "xbyte-sdk";
 import { formatFromDecimals } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -45,19 +45,19 @@ function getBalance(
 
 /** The header component for the app */
 export default function AppHeader() {
-    const { authenticated, user, connectOrCreateWallet } = usePrivy();
+    const { authenticated, walletAddress, connectOrCreateWallet, logout } = useXBytePrivy();
     const [balance, setBalance] = useState<string>("...");
 
     useEffect(() => {
-        if (!user?.wallet?.address || !process.env.NEXT_PUBLIC_USDC_ADDRESS) return;
+        if (!walletAddress || !process.env.NEXT_PUBLIC_USDC_ADDRESS) return;
         getBalance(
             xbyteEvmClient,
             setBalance,
-            user.wallet.address,
+            walletAddress,
             process.env.NEXT_PUBLIC_USDC_ADDRESS,
             6n,
         );
-    }, [user?.wallet?.address]);
+    }, [walletAddress]);
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -88,7 +88,13 @@ export default function AppHeader() {
 
                     {/* User info*/}
                     <div className="flex items-center">
-                        {authenticated && user && <UserInfo user={user} balance={balance} />}
+                        {authenticated && (
+                            <UserInfo
+                                walletAddress={walletAddress}
+                                balance={balance}
+                                logout={logout}
+                            />
+                        )}
                         {!authenticated && <Onboarding onClick={connectOrCreateWallet} />}
                     </div>
                 </div>
@@ -130,15 +136,23 @@ function AppAlert({ message, isHidden }: { message: React.ReactNode; isHidden: b
 }
 
 /** The user info component for the app */
-function UserInfo({ user, balance }: { user: User; balance: string }) {
-    const { logout } = usePrivy();
-    const address = user.wallet?.address as `0x${string}` | undefined;
-    const shortAddress = address ? `${address.slice(0, 8)}...${address.slice(-8)}` : "";
+function UserInfo({
+    walletAddress,
+    balance,
+    logout,
+}: {
+    walletAddress: XBytePrivyState["walletAddress"];
+    balance: string;
+    logout: () => void;
+}) {
+    const shortAddress = walletAddress
+        ? `${walletAddress.slice(0, 8)}...${walletAddress.slice(-8)}`
+        : "";
 
     /** Handle the copy of the address */
     const handleCopy = async () => {
-        if (!address) return;
-        await navigator.clipboard.writeText(address);
+        if (!walletAddress) return;
+        await navigator.clipboard.writeText(walletAddress);
     };
 
     return (

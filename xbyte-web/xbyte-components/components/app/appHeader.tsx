@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import AppLogo from "@/components/app/appLogo";
-import ConnectPanel from "@/components/privy/connect";
+import { Connect } from "@/components/privy/connect";
+import ProfilePopover from "@/components/privy/profile";
+import { useXBytePrivy } from "@/hooks/useXBytePrivy";
 
 export interface HeaderLinkProps {
     label: string;
@@ -8,8 +12,14 @@ export interface HeaderLinkProps {
 }
 
 export default function AppHeader({ links }: { links: HeaderLinkProps[] }) {
+    const { authenticated } = useXBytePrivy();
+
     const headerLinks = links.map(({ label, href }, index) => (
-        <Link key={index} href={href ?? "#"} className="text-sm text-muted-foreground">
+        <Link
+            key={index}
+            href={href ?? "#"}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
             {label}
         </Link>
     ));
@@ -20,7 +30,7 @@ export default function AppHeader({ links }: { links: HeaderLinkProps[] }) {
 
             <div className="flex items-center gap-4">
                 {headerLinks}
-                <ConnectPanel />
+                {authenticated ? <ProfilePopover /> : <Connect />}
             </div>
         </div>
     );

@@ -1,23 +1,23 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { usePrivy } from "@privy-io/react-auth";
+import { useXBytePrivy } from "@/hooks/useXBytePrivy";
 import { Wallet } from "lucide-react";
 
 export default function ConnectPanel() {
-    const { authenticated } = usePrivy();
+    const { authenticated } = useXBytePrivy();
 
     return authenticated ? <Disconnect /> : <Connect />;
 }
 
 export function Connect() {
-    const { connectOrCreateWallet } = usePrivy();
+    const { connectOrCreateWallet } = useXBytePrivy();
 
     return <Button onClick={connectOrCreateWallet}>Login</Button>;
 }
 
 export function Disconnect() {
-    const { logout } = usePrivy();
+    const { logout } = useXBytePrivy();
 
     return <Button onClick={logout}>Logout</Button>;
 }
