@@ -89,8 +89,8 @@ function CompactLayout({
     const titleClass = cn("font-bold mb-2", description || items ? "text-xl mb-3" : "text-lg");
 
     return (
-        <CardContent className="pt-6">
-            <div className="flex flex-col h-full">
+        <CardContent>
+            <div className="flex flex-col h-full gap-2">
                 {Icon && <CardIcon Icon={Icon} highlight={highlight} />}
                 <h3 className={titleClass}>{title}</h3>
                 {description && (
