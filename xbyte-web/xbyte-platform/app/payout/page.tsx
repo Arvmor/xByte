@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 import { xByteEvmClient } from "xbyte-sdk";
-import { usePrivy } from "@privy-io/react-auth";
+import { useXBytePrivy } from "@/hooks/useXBytePrivy";
 import { CheckCircle2, Loader2, ArrowDownCircle, Coins, History, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Address, formatEther, formatUnits } from "viem";
@@ -95,10 +95,9 @@ const historySection = {
 };
 
 export default function PayoutPage() {
-    const { user } = usePrivy();
-    const wallet = user?.wallet?.address as `0x${string}` | undefined;
+    const { walletAddress } = useXBytePrivy();
 
-    if (!wallet) {
+    if (!walletAddress) {
         return <NoWalletAlert />;
     }
 
@@ -114,19 +113,19 @@ export default function PayoutPage() {
             </motion.div>
 
             <motion.div variants={staggerItem}>
-                <BalanceSection wallet={wallet} />
+                <BalanceSection wallet={walletAddress} />
             </motion.div>
 
             <motion.div variants={staggerItem}>
-                <WithdrawSection wallet={wallet} />
+                <WithdrawSection wallet={walletAddress} />
             </motion.div>
 
             <motion.div variants={staggerItem}>
-                <VaultStatusSection wallet={wallet} />
+                <VaultStatusSection wallet={walletAddress} />
             </motion.div>
 
             <motion.div variants={staggerItem}>
-                <HistorySection wallet={wallet} />
+                <HistorySection wallet={walletAddress} />
             </motion.div>
         </motion.div>
     );
@@ -371,7 +370,7 @@ function WithdrawSection({ wallet }: { wallet: `0x${string}` }) {
     const [isWithdrawingERC20, setIsWithdrawingERC20] = useState(false);
     const [tokenAddress, setTokenAddress] = useState<string>("");
     const [withdrawSuccess, setWithdrawSuccess] = useState(false);
-    const { sendTransaction } = usePrivy();
+    const { sendTransaction } = useXBytePrivy();
 
     useEffect(() => {
         loadVaultAddress();

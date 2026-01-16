@@ -24,7 +24,7 @@ import {
     InputGroupAddon,
     InputGroupButton,
 } from "@/components/ui/input-group";
-import { usePrivy } from "@privy-io/react-auth";
+import { useXBytePrivy } from "@/hooks/useXBytePrivy";
 
 const PLAY_URL = `${process.env.NEXT_PUBLIC_XBYTE_URL}/s3/bucket`;
 
@@ -63,7 +63,7 @@ interface StreamingPlayerProps {
 
 /** Streaming player with chunk-based payment */
 export function StreamingPlayer({ mimeType, contentKey }: StreamingPlayerProps) {
-    const { ready, authenticated, login } = usePrivy();
+    const { ready, authenticated, login } = useXBytePrivy();
     const [chunkSize, setChunkSize] = useState(0.5);
     const [chunkState, setChunkState] = useState<ChunkState | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);

@@ -4,7 +4,8 @@
     "exports": {
         "./styles/*": "./styles/*",
         "./components/*": "./components/*",
-        "./lib/*": "./lib/*"
+        "./lib/*": "./lib/*",
+        "./hooks/*": "./hooks/*"
     },
     "scripts": {
         "build": "tsc",

@@ -8,7 +8,7 @@ import Paragraph, { ParagraphProps } from "@/components/platform/paragraph";
 import Feature, { FeatureProps } from "@/components/platform/feature";
 import Optionable, { OptionableProps } from "@/components/platform/optionable";
 import { xByteClient, xByteEvmClient, XBYTE_FACTORY_ADDRESS, Client } from "xbyte-sdk";
-import { usePrivy } from "@privy-io/react-auth";
+import { useXBytePrivy } from "@/hooks/useXBytePrivy";
 import {
     CheckCircle2,
     Loader2,
@@ -303,7 +303,7 @@ function OnboardingSection() {
 }
 
 function IntegrateProviderSection() {
-    const { user } = usePrivy();
+    const { user, walletAddress } = useXBytePrivy();
     const [buckets, setBuckets] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
@@ -322,20 +322,20 @@ function IntegrateProviderSection() {
         setIsConnected(false);
 
         try {
-            if (!user?.id || !user?.wallet?.address) {
+            if (!user?.id || !walletAddress) {
                 throw new Error("User not authenticated");
             }
 
             let client: Client;
             const { status: clientStatus, data: clientData } = await xbyteClient.createClient({
                 name: user.id,
-                wallet: user.wallet.address,
+                wallet: walletAddress,
             });
 
             if (clientStatus === "Success" && clientData.id) {
                 client = clientData;
             } else {
-                const { status, data } = await xbyteClient.getClient(user.wallet.address);
+                const { status, data } = await xbyteClient.getClient(walletAddress);
                 if (status !== "Success") return setIsLoading(false);
                 client = data;
             }
@@ -461,21 +461,20 @@ function SetVaultSection() {
     const [isChecking, setIsChecking] = useState(true);
     const [deployedVault, setDeployedVault] = useState("");
     const [isCreating, setIsCreating] = useState(false);
-    const { sendTransaction, user } = usePrivy();
-    const wallet = user?.wallet?.address as `0x${string}`;
+    const { sendTransaction, walletAddress } = useXBytePrivy();
 
     useEffect(() => {
-        if (wallet) {
+        if (walletAddress) {
             checkVault();
         }
-    }, [wallet]);
+    }, [walletAddress]);
 
     async function checkVault() {
-        if (!wallet) return;
+        if (!walletAddress) return;
         setIsChecking(true);
         try {
-            const computedVault = await xbyteEvmClient.getComputeVaultAddress(wallet);
-            const vault = await xbyteEvmClient.getVault(wallet);
+            const computedVault = await xbyteEvmClient.getComputeVaultAddress(walletAddress);
+            const vault = await xbyteEvmClient.getVault(walletAddress);
             setDeployedVault(computedVault);
             setIsDeployed(vault.some((v) => v !== "0x0000000000000000000000000000000000000000"));
         } catch (error) {
@@ -486,7 +485,7 @@ function SetVaultSection() {
     }
 
     async function createVault() {
-        if (!wallet) return;
+        if (!walletAddress) return;
         setIsCreating(true);
         try {
             await sendTransaction({
@@ -502,7 +501,7 @@ function SetVaultSection() {
         }
     }
 
-    if (!wallet) {
+    if (!walletAddress) {
         return <NoWalletAlert />;
     }
 
@@ -529,7 +528,7 @@ function SetVaultSection() {
                     <label className="text-sm font-medium">
                         {setVaultSection.walletAddressLabel}
                     </label>
-                    <Input value={wallet} disabled className="font-mono" />
+                    <Input value={walletAddress} disabled className="font-mono" />
                     <p className="text-xs text-muted-foreground">
                         {setVaultSection.walletAddressHelper}
                     </p>

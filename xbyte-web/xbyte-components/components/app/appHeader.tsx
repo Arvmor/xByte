@@ -4,7 +4,7 @@ import Link from "next/link";
 import AppLogo from "@/components/app/appLogo";
 import { Connect } from "@/components/privy/connect";
 import ProfilePopover from "@/components/privy/profile";
-import { usePrivy } from "@privy-io/react-auth";
+import { useXBytePrivy } from "@/hooks/useXBytePrivy";
 
 export interface HeaderLinkProps {
     label: string;
@@ -12,7 +12,7 @@ export interface HeaderLinkProps {
 }
 
 export default function AppHeader({ links }: { links: HeaderLinkProps[] }) {
-    const { authenticated } = usePrivy();
+    const { authenticated } = useXBytePrivy();
 
     const headerLinks = links.map(({ label, href }, index) => (
         <Link

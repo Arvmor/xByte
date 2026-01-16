@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePrivy, User } from "@privy-io/react-auth";
+import { User } from "@privy-io/react-auth";
+import { useXBytePrivy } from "@/hooks/useXBytePrivy";
 import { User2, Copy, LogOut, Wallet, Vault, ExternalLink, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -187,7 +188,7 @@ function NavigationLinks() {
 }
 
 function DisconnectButton() {
-    const { logout } = usePrivy();
+    const { logout } = useXBytePrivy();
 
     return (
         <Button variant="outline" onClick={logout} className="w-full">
@@ -271,8 +272,8 @@ function useVaultInfo(walletAddress: string | undefined) {
 }
 
 export default function ProfilePopover() {
-    const { authenticated, user } = usePrivy();
-    const state = useVaultInfo(user?.wallet?.address);
+    const { authenticated, user, walletAddress } = useXBytePrivy();
+    const state = useVaultInfo(walletAddress);
 
     if (!authenticated || !user) return null;
 
