@@ -5,8 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertCircle, Copy, Home, LogOut, User2, X } from "lucide-react";
-import { User } from "@privy-io/react-auth";
-import { useXBytePrivy } from "@/hooks/useXBytePrivy";
+import { useXBytePrivy, XBytePrivyState } from "@/hooks/useXBytePrivy";
 import { xByteEvmClient } from "xbyte-sdk";
 import { formatFromDecimals } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -46,7 +45,7 @@ function getBalance(
 
 /** The header component for the app */
 export default function AppHeader() {
-    const { authenticated, user, walletAddress, connectOrCreateWallet } = useXBytePrivy();
+    const { authenticated, walletAddress, connectOrCreateWallet, logout } = useXBytePrivy();
     const [balance, setBalance] = useState<string>("...");
 
     useEffect(() => {
@@ -89,7 +88,13 @@ export default function AppHeader() {
 
                     {/* User info*/}
                     <div className="flex items-center">
-                        {authenticated && user && <UserInfo user={user} balance={balance} />}
+                        {authenticated && (
+                            <UserInfo
+                                walletAddress={walletAddress}
+                                balance={balance}
+                                logout={logout}
+                            />
+                        )}
                         {!authenticated && <Onboarding onClick={connectOrCreateWallet} />}
                     </div>
                 </div>
@@ -131,8 +136,15 @@ function AppAlert({ message, isHidden }: { message: React.ReactNode; isHidden: b
 }
 
 /** The user info component for the app */
-function UserInfo({ user, balance }: { user: User; balance: string }) {
-    const { logout, walletAddress } = useXBytePrivy();
+function UserInfo({
+    walletAddress,
+    balance,
+    logout,
+}: {
+    walletAddress: XBytePrivyState["walletAddress"];
+    balance: string;
+    logout: () => void;
+}) {
     const shortAddress = walletAddress
         ? `${walletAddress.slice(0, 8)}...${walletAddress.slice(-8)}`
         : "";
