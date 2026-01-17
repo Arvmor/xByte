@@ -28,6 +28,7 @@
         "next-themes": "*",
         "react": "*",
         "react-dom": "*",
+        "recharts": "*",
         "tailwind-merge": "*",
         "xbyte-sdk": "workspace:*"
     },
