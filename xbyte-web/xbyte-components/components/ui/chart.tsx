@@ -35,6 +35,7 @@ function ChartContainer({
     className,
     children,
     config,
+    style,
     ...props
 }: React.ComponentProps<"div"> & {
     config: ChartConfig;
@@ -42,21 +43,62 @@ function ChartContainer({
 }) {
     const uniqueId = React.useId();
     const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`;
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
+
+    React.useEffect(() => {
+        const updateDimensions = () => {
+            if (containerRef.current) {
+                const rect = containerRef.current.getBoundingClientRect();
+                if (rect.width > 0 && rect.height > 0) {
+                    setDimensions({ width: rect.width, height: rect.height });
+                }
+            }
+        };
+
+        updateDimensions();
+
+        const resizeObserver = new ResizeObserver(updateDimensions);
+        if (containerRef.current) {
+            resizeObserver.observe(containerRef.current);
+        }
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, []);
 
     return (
         <ChartContext.Provider value={{ config }}>
             <div
+                ref={containerRef}
                 data-chart={chartId}
                 className={cn(
-                    "[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-none [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none flex aspect-video justify-center text-xs",
+                    "[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-none [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none w-full text-xs",
                     className,
                 )}
+                style={{
+                    minWidth: 0,
+                    minHeight: 0,
+                    position: "relative",
+                    display: "block",
+                    ...style,
+                }}
                 {...props}
             >
                 <ChartStyle id={chartId} config={config} />
-                <RechartsPrimitive.ResponsiveContainer>
-                    {children}
-                </RechartsPrimitive.ResponsiveContainer>
+                {dimensions.width > 0 && dimensions.height > 0 ? (
+                    <RechartsPrimitive.ResponsiveContainer
+                        width={dimensions.width}
+                        height={dimensions.height}
+                        minWidth={0}
+                        minHeight={0}
+                    >
+                        {children}
+                    </RechartsPrimitive.ResponsiveContainer>
+                ) : (
+                    <div style={{ width: "100%", height: "100%", minHeight: 200 }} />
+                )}
             </div>
         </ChartContext.Provider>
     );
