@@ -1,4 +1,4 @@
-use crate::{ConfigX402, Database, MemoryDB, ResultAPI, XByteS3, utils, x402};
+use crate::{ConfigX402, Database, MemoryDB, ResultAPI, Storage, XByteS3, utils, x402};
 use actix_web::dev::HttpServiceFactory;
 use actix_web::{HttpRequest, Responder, get, post, web};
 use serde::{Deserialize, Serialize};
@@ -136,8 +136,8 @@ async fn get_object(
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RegisterRequest {
-    /// The bucket
-    pub bucket: String,
+    /// The storage information
+    pub storage: Storage<String>,
     /// The client ID
     pub client: alloy_primitives::Address,
 }
@@ -147,10 +147,10 @@ async fn register_bucket(
     db: web::ThinData<MemoryDB>,
     web::Json(payload): web::Json<RegisterRequest>,
 ) -> impl Responder {
-    if let Err(error) = db.assign_bucket(payload.bucket, payload.client) {
-        tracing::error!(?error, "Failed to register bucket");
-        return ResultAPI::failure("Failed to register bucket");
+    if let Err(error) = db.assign_storage(payload.client, payload.storage) {
+        tracing::error!(?error, "Failed to register storage");
+        return ResultAPI::failure("Failed to register storage");
     };
 
-    ResultAPI::okay("Bucket registered successfully")
+    ResultAPI::okay("Storage registered successfully")
 }
