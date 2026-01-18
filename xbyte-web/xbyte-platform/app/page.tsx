@@ -33,6 +33,7 @@ import {
 import { useRouter } from "next/navigation";
 import { motion, useInView, Variants } from "motion/react";
 import { useRef } from "react";
+import Image from "next/image";
 
 const fadeInUp: Variants = {
     hidden: { opacity: 0, y: 40 },
@@ -406,6 +407,29 @@ export default function Home() {
                     secondaryButtonAction={goToLearnMorePage}
                 />
             </motion.div>
+
+            {/* Demo GIF */}
+            <AnimatedSection className="my-16" variants={scaleIn}>
+                <div className="flex justify-center items-center w-full p-4">
+                    <Image
+                        src="demo.gif"
+                        alt="xByte Demo"
+                        width={2048}
+                        height={1080}
+                        className="w-full shadow-2xl rounded-[0.5rem] max-w-4xl h-auto object-contain select-none"
+                        style={{
+                            maxWidth: "100%",
+                            height: "auto",
+                            userSelect: "none",
+                            WebkitUserSelect: "none",
+                            MozUserSelect: "none",
+                            msUserSelect: "none",
+                        }}
+                        draggable={false}
+                        loading="eager"
+                    />
+                </div>
+            </AnimatedSection>
 
             {/* Payment Flow */}
             <AnimatedSection className="my-16" variants={scaleIn}>
