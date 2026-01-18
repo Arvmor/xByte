@@ -159,4 +159,24 @@ mod tests {
         assert_eq!(data.unwrap().into_bytes().len(), 1337);
         Ok(())
     }
+
+    #[actix_web::test]
+    async fn test_new_assumed_role() -> anyhow::Result<()> {
+        dotenv::dotenv().ok();
+
+        // Create a new client
+        let client = XByteS3::new().await;
+        let client = client
+            .new_assumed_role(
+                "arn:aws:iam::113586717446:role/S3AccessRoleCustom",
+                "test-session",
+                None,
+            )
+            .await?;
+
+        let buckets = client.list_buckets().await?;
+        dbg!(&buckets);
+
+        Ok(())
+    }
 }
