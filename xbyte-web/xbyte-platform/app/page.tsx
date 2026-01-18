@@ -6,33 +6,34 @@ import InfoCard, { InfoCardProps } from "@/components/platform/infoCard";
 import ProcessSteps, { ProcessStep } from "@/components/platform/processSteps";
 import PaymentFlow, { FlowStep } from "@/components/platform/paymentFlow";
 import FAQAccordion, { FAQItem } from "@/components/platform/faqAccordion";
-import Optionable, { OptionableProps } from "@/components/platform/optionable";
+import PlatformAnalytics from "@/components/platform/platformAnalytics";
 import ContactBanner, { ContactBannerProps } from "@/components/platform/contactBanner";
 import { Separator } from "@/components/ui/separator";
 import {
     Building2,
-    DollarSign,
-    Users,
-    Zap,
-    Shield,
-    Code,
     Cloud,
-    Wallet,
-    Settings,
-    Smartphone,
-    TrendingUp,
-    Layers,
+    Code,
+    Coins,
+    DollarSign,
     FileCode,
-    Podcast,
     GraduationCap,
     Briefcase,
-    Play,
-    Coins,
+    Layers,
     Lock,
+    Play,
+    Podcast,
+    Settings,
+    Shield,
+    Smartphone,
+    TrendingUp,
+    Users,
+    Wallet,
+    Zap,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion, useInView, Variants } from "motion/react";
 import { useRef } from "react";
+import Image from "next/image";
 
 const fadeInUp: Variants = {
     hidden: { opacity: 0, y: 40 },
@@ -146,9 +147,9 @@ const sectionPaymentFlow: SectionHeaderProps = {
     subtitle: "Simple & Transparent",
 };
 
-const sectionStorageOptions: SectionHeaderProps = {
-    title: "Storage Options",
-    subtitle: "Connect Your Data",
+const sectionAnalytics: SectionHeaderProps = {
+    title: "Platform Analytics",
+    subtitle: "Real-Time Insights",
 };
 
 const sectionUseCases: SectionHeaderProps = {
@@ -178,24 +179,6 @@ const ctaFinal: CallToActionProps = {
         "Integrate xByte SDK and begin earning from your content in minutes. Transform your streaming service with pay-per-byte monetization.",
     buttonText: "Get Started",
 };
-
-const integrationOptions: OptionableProps[] = [
-    {
-        titleText: "AWS S3",
-        descriptionText: "Connect your Amazon S3 buckets",
-        Icon: Cloud,
-    },
-    {
-        titleText: "Google Cloud",
-        descriptionText: "Integrate with Google Cloud Storage",
-        Icon: Cloud,
-    },
-    {
-        titleText: "Azure Blob",
-        descriptionText: "Link your Azure Blob Storage",
-        Icon: Cloud,
-    },
-];
 
 const keyFeatures: InfoCardProps[] = [
     {
@@ -425,6 +408,29 @@ export default function Home() {
                 />
             </motion.div>
 
+            {/* Demo GIF */}
+            <AnimatedSection className="my-16" variants={scaleIn}>
+                <div className="flex justify-center items-center w-full p-4">
+                    <Image
+                        src="demo.gif"
+                        alt="xByte Demo"
+                        width={2048}
+                        height={1080}
+                        className="w-full shadow-2xl rounded-[0.5rem] max-w-4xl h-auto object-contain select-none"
+                        style={{
+                            maxWidth: "100%",
+                            height: "auto",
+                            userSelect: "none",
+                            WebkitUserSelect: "none",
+                            MozUserSelect: "none",
+                            msUserSelect: "none",
+                        }}
+                        draggable={false}
+                        loading="eager"
+                    />
+                </div>
+            </AnimatedSection>
+
             {/* Payment Flow */}
             <AnimatedSection className="my-16" variants={scaleIn}>
                 <SectionHeader {...sectionPaymentFlow} />
@@ -449,6 +455,20 @@ export default function Home() {
                 </StaggeredGrid>
             </div>
 
+            <AnimatedSection variants={fadeIn}>
+                <Separator className="my-16" />
+            </AnimatedSection>
+
+            {/* Platform Analytics */}
+            <div>
+                <AnimatedSection>
+                    <SectionHeader {...sectionAnalytics} />
+                </AnimatedSection>
+                <AnimatedSection variants={fadeInUp} delay={0.2}>
+                    <PlatformAnalytics />
+                </AnimatedSection>
+            </div>
+
             <AnimatedSection variants={fadeInUp} className="mt-12">
                 <ContactBanner {...contactBanner} />
             </AnimatedSection>
@@ -465,24 +485,6 @@ export default function Home() {
                 <AnimatedSection variants={slideInFromLeft} delay={0.2}>
                     <ProcessSteps steps={howItWorksSteps} />
                 </AnimatedSection>
-            </div>
-
-            <AnimatedSection variants={fadeIn}>
-                <Separator className="my-16" />
-            </AnimatedSection>
-
-            {/* Storage Options */}
-            <div>
-                <AnimatedSection>
-                    <SectionHeader {...sectionStorageOptions} />
-                </AnimatedSection>
-                <StaggeredGrid className="flex flex-col md:flex-row gap-4">
-                    {integrationOptions.map((option, index) => (
-                        <motion.div key={index} variants={staggerItem} className="flex-1">
-                            <Optionable {...option} />
-                        </motion.div>
-                    ))}
-                </StaggeredGrid>
             </div>
 
             <AnimatedSection variants={fadeIn}>
