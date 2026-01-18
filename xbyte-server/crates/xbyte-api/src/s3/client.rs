@@ -1,7 +1,10 @@
 use crate::utils;
 use aws_sdk_s3::Client;
+use aws_sdk_s3::config::Credentials;
 use aws_sdk_s3::primitives::AggregatedBytes;
 use aws_sdk_s3::types::{Bucket, Object};
+use aws_sdk_sts::Client as StsClient;
+use std::time::SystemTime;
 
 /// A client for the xByte S3 handling the presigned requests
 #[derive(Debug, Clone)]
@@ -12,6 +15,46 @@ impl XByteS3 {
     pub async fn new() -> Self {
         let config = aws_config::load_from_env().await;
         Self(Client::new(&config))
+    }
+
+    /// Create a new xByte S3 client by assuming a role in another account/org
+    pub async fn new_assumed_role(
+        &self,
+        role_arn: &str,
+        session_name: &str,
+        region: Option<aws_config::Region>,
+    ) -> anyhow::Result<Self> {
+        let base_config = aws_config::load_from_env().await;
+        let sts_client = StsClient::new(&base_config);
+        let region = region
+            .or(base_config.region().cloned())
+            .ok_or(anyhow::anyhow!("no region found"))?;
+
+        let assumed_role = sts_client
+            .assume_role()
+            .role_arn(role_arn)
+            .role_session_name(session_name)
+            .send()
+            .await?;
+
+        let credentials = assumed_role
+            .credentials
+            .ok_or(anyhow::anyhow!("no credentials returned from assume role"))?;
+
+        let s3_credentials = Credentials::new(
+            credentials.access_key_id,
+            credentials.secret_access_key,
+            Some(credentials.session_token),
+            Some(SystemTime::try_from(credentials.expiration)?),
+            "assumed-role",
+        );
+
+        let config = aws_sdk_s3::Config::builder()
+            .credentials_provider(s3_credentials)
+            .region(region)
+            .build();
+
+        Ok(Self(Client::from_conf(config)))
     }
 
     /// Get a presigned request for a range of a file
