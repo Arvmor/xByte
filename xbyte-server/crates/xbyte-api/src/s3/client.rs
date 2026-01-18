@@ -5,26 +5,26 @@ use aws_sdk_s3::config::Credentials;
 use aws_sdk_s3::primitives::AggregatedBytes;
 use aws_sdk_s3::types::{Bucket, Object};
 use aws_sdk_sts::Client as StsClient;
+use std::borrow::Cow;
 use std::time::SystemTime;
 
 /// A client for the xByte S3 handling the presigned requests
 #[derive(Debug, Clone)]
-pub struct XByteS3(Client, SdkConfig);
+pub struct XByteS3(Client);
 
 impl XByteS3 {
     /// Create a new xByte S3 client
     pub async fn new() -> Self {
         let config = aws_config::load_from_env().await;
-        Self(Client::new(&config), config)
+        Self(Client::new(&config))
     }
 
     /// Create a new xByte S3 client by assuming a role in another account/org
     pub async fn new_assumed_role(
-        self,
         sts_client: &StsClient,
         role_arn: &str,
         session_name: &str,
-        region: Region,
+        region: impl Into<Cow<'static, str>>,
     ) -> anyhow::Result<Self> {
         let assumed_role = sts_client
             .assume_role()
@@ -47,10 +47,10 @@ impl XByteS3 {
 
         let config = aws_sdk_s3::Config::builder()
             .credentials_provider(credentials)
-            .region(region)
+            .region(Region::new(region))
             .build();
 
-        Ok(Self(Client::from_conf(config), self.1))
+        Ok(Self(Client::from_conf(config)))
     }
 
     /// Get a presigned request for a range of a file
@@ -92,6 +92,12 @@ impl XByteS3 {
         let objects = req.contents.ok_or(anyhow::anyhow!("no objects found"))?;
 
         Ok(objects)
+    }
+}
+
+impl From<&SdkConfig> for XByteS3 {
+    fn from(config: &SdkConfig) -> Self {
+        Self(Client::new(config))
     }
 }
 
@@ -161,15 +167,11 @@ mod tests {
         dotenv::dotenv().ok();
         const ROLE_ARN: &str = "arn:aws:iam::113586717446:role/S3AccessRoleCustom";
         const SESSION_NAME: &str = "test-session";
-        let region = Region::new("us-east-1");
+        const REGION: &str = "us-east-1";
 
         // Create a new client
         let sts_client = StsClient::new(&aws_config::load_from_env().await);
-        let client = XByteS3::new().await;
-
-        client
-            .new_assumed_role(&sts_client, ROLE_ARN, SESSION_NAME, region)
-            .await?;
+        XByteS3::new_assumed_role(&sts_client, ROLE_ARN, SESSION_NAME, REGION).await?;
 
         Ok(())
     }
