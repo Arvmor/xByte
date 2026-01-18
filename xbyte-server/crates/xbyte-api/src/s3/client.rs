@@ -1,4 +1,5 @@
 use crate::utils;
+use aws_config::{Region, SdkConfig};
 use aws_sdk_s3::Client;
 use aws_sdk_s3::config::Credentials;
 use aws_sdk_s3::primitives::AggregatedBytes;
@@ -8,27 +9,23 @@ use std::time::SystemTime;
 
 /// A client for the xByte S3 handling the presigned requests
 #[derive(Debug, Clone)]
-pub struct XByteS3(Client);
+pub struct XByteS3(Client, SdkConfig);
 
 impl XByteS3 {
     /// Create a new xByte S3 client
     pub async fn new() -> Self {
         let config = aws_config::load_from_env().await;
-        Self(Client::new(&config))
+        Self(Client::new(&config), config)
     }
 
     /// Create a new xByte S3 client by assuming a role in another account/org
     pub async fn new_assumed_role(
-        &self,
+        self,
         role_arn: &str,
         session_name: &str,
-        region: Option<aws_config::Region>,
+        region: Region,
     ) -> anyhow::Result<Self> {
-        let base_config = aws_config::load_from_env().await;
-        let sts_client = StsClient::new(&base_config);
-        let region = region
-            .or(base_config.region().cloned())
-            .ok_or(anyhow::anyhow!("no region found"))?;
+        let sts_client = StsClient::new(&self.1);
 
         let assumed_role = sts_client
             .assume_role()
@@ -37,24 +34,24 @@ impl XByteS3 {
             .send()
             .await?;
 
-        let credentials = assumed_role
-            .credentials
-            .ok_or(anyhow::anyhow!("no credentials returned from assume role"))?;
+        let Some(cred) = assumed_role.credentials else {
+            return Err(anyhow::anyhow!("no credentials returned from assume role"));
+        };
 
-        let s3_credentials = Credentials::new(
-            credentials.access_key_id,
-            credentials.secret_access_key,
-            Some(credentials.session_token),
-            Some(SystemTime::try_from(credentials.expiration)?),
+        let credentials = Credentials::new(
+            cred.access_key_id,
+            cred.secret_access_key,
+            Some(cred.session_token),
+            Some(SystemTime::try_from(cred.expiration)?),
             "assumed-role",
         );
 
         let config = aws_sdk_s3::Config::builder()
-            .credentials_provider(s3_credentials)
+            .credentials_provider(credentials)
             .region(region)
             .build();
 
-        Ok(Self(Client::from_conf(config)))
+        Ok(Self(Client::from_conf(config), self.1))
     }
 
     /// Get a presigned request for a range of a file
@@ -163,19 +160,16 @@ mod tests {
     #[actix_web::test]
     async fn test_new_assumed_role() -> anyhow::Result<()> {
         dotenv::dotenv().ok();
+        const ROLE_ARN: &str = "arn:aws:iam::113586717446:role/S3AccessRoleCustom";
+        const SESSION_NAME: &str = "test-session";
+        let region = Region::new("us-east-1");
 
         // Create a new client
         let client = XByteS3::new().await;
-        let client = client
-            .new_assumed_role(
-                "arn:aws:iam::113586717446:role/S3AccessRoleCustom",
-                "test-session",
-                None,
-            )
-            .await?;
 
-        let buckets = client.list_buckets().await?;
-        dbg!(&buckets);
+        client
+            .new_assumed_role(ROLE_ARN, SESSION_NAME, region)
+            .await?;
 
         Ok(())
     }
