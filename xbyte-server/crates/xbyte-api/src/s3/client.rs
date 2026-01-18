@@ -21,12 +21,11 @@ impl XByteS3 {
     /// Create a new xByte S3 client by assuming a role in another account/org
     pub async fn new_assumed_role(
         self,
+        sts_client: &StsClient,
         role_arn: &str,
         session_name: &str,
         region: Region,
     ) -> anyhow::Result<Self> {
-        let sts_client = StsClient::new(&self.1);
-
         let assumed_role = sts_client
             .assume_role()
             .role_arn(role_arn)
@@ -165,10 +164,11 @@ mod tests {
         let region = Region::new("us-east-1");
 
         // Create a new client
+        let sts_client = StsClient::new(&aws_config::load_from_env().await);
         let client = XByteS3::new().await;
 
         client
-            .new_assumed_role(ROLE_ARN, SESSION_NAME, region)
+            .new_assumed_role(&sts_client, ROLE_ARN, SESSION_NAME, region)
             .await?;
 
         Ok(())
