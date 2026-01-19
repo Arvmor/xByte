@@ -1,6 +1,6 @@
 {
     "name": "xbyte-sdk",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "TypeScript SDK for xByte Infra - The pay-per-byte content monetization protocol.",
     "keywords": [
         "blockchain",
