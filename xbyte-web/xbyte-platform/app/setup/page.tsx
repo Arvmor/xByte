@@ -192,17 +192,20 @@ const awsModalContent = {
     instructionsTitle: "Setup Instructions",
     step1: "Create an IAM role with the trust policy below",
     step2: "Attach the AmazonS3ReadOnlyAccess policy to the role",
-    step3: "Copy the Role ARN and enter it below",
-    roleArnLabel: "IAM Role ARN",
-    roleArnPlaceholder: "arn:aws:iam::123456789012:role/xbyte-s3-access",
+    step3: "Enter your AWS Account ID below",
+    accountIdLabel: "AWS Account ID",
+    accountIdPlaceholder: "123456789012",
+    accountIdHelper: "Your 12-digit AWS account ID",
     regionLabel: "AWS Region",
-    regionPlaceholder: "us-east-1",
     connectButton: "Connect Storage",
     connecting: "Connecting...",
-    copied: "Copied!",
 };
 
-const XBYTE_AWS_ACCOUNT_ID = "533267024986";
+const XBYTE_USER_NAME = "xByte-API";
+const XBYTE_AWS_ACCOUNT_ID = "022396637905";
+const XBYTE_IAM_ROLE_NAME = "xByteReadOnlyS3";
+
+const buildRoleArn = (accountId: string) => `arn:aws:iam::${accountId}:role/${XBYTE_IAM_ROLE_NAME}`;
 
 const awsTrustPolicy = `{
   "Version": "2012-10-17",
@@ -210,7 +213,7 @@ const awsTrustPolicy = `{
     {
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::${XBYTE_AWS_ACCOUNT_ID}:root"
+        "AWS": "arn:aws:iam::${XBYTE_AWS_ACCOUNT_ID}:user/${XBYTE_USER_NAME}"
       },
       "Action": "sts:AssumeRole",
       "Condition": {}
@@ -220,16 +223,11 @@ const awsTrustPolicy = `{
 
 const awsCliCommands = `# Create the IAM role with trust policy
 aws iam create-role \\
-  --role-name xbyte-s3-access \\
-  --assume-role-policy-document '${awsTrustPolicy.replace(/\n/g, "").replace(/\s+/g, " ")}'
-
-# Attach S3 read-only policy
-aws iam attach-role-policy \\
-  --role-name xbyte-s3-access \\
-  --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
-
-# Get the Role ARN (copy this value)
-aws iam get-role --role-name xbyte-s3-access --query 'Role.Arn' --output text`;
+  --role-name ${XBYTE_IAM_ROLE_NAME} \\
+  --assume-role-policy-document '${awsTrustPolicy.replace(/\n/g, "").replace(/\s+/g, " ")}' && \\
+  aws iam attach-role-policy \\
+  --role-name ${XBYTE_IAM_ROLE_NAME} \\
+  --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess`;
 
 const AWS_REGIONS = [
     "us-east-1",
@@ -400,7 +398,7 @@ function IntegrateProviderSection() {
     const [isConnected, setIsConnected] = useState(false);
     const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [roleArn, setRoleArn] = useState("");
+    const [accountId, setAccountId] = useState("");
     const [region, setRegion] = useState("us-east-1");
 
     const SelectIcon = () => (
@@ -415,8 +413,10 @@ function IntegrateProviderSection() {
         setIsModalOpen(true);
     };
 
+    const isValidAccountId = accountId.length === 12 && /^\d+$/.test(accountId);
+
     const handleConnect = async () => {
-        if (!roleArn || !region) return;
+        if (!isValidAccountId || !region) return;
 
         setIsLoading(true);
         setIsConnected(false);
@@ -442,6 +442,7 @@ function IntegrateProviderSection() {
 
             if (!client.id) return setIsLoading(false);
 
+            const roleArn = buildRoleArn(accountId);
             const { status: registerStatus } = await xbyteClient.registerStorage({
                 storage: {
                     s3: {
@@ -501,110 +502,101 @@ function IntegrateProviderSection() {
             </motion.div>
 
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+                <DialogContent>
                     <DialogHeader>
                         <DialogTitle>{awsModalContent.title}</DialogTitle>
                         <DialogDescription>{awsModalContent.description}</DialogDescription>
                     </DialogHeader>
 
-                    <div className="space-y-6 py-4">
-                        <div className="space-y-4">
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-2">
+                            <Info className="size-5 text-primary" />
+                            <h4 className="font-semibold">{awsModalContent.instructionsTitle}</h4>
+                        </div>
+
+                        <div className="space-y-3 text-sm">
+                            <div className="flex gap-3">
+                                <span className="shrink-0 size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-medium">
+                                    1
+                                </span>
+                                <span className="text-muted-foreground">
+                                    {awsModalContent.step1}
+                                </span>
+                            </div>
+                            <div className="flex gap-3">
+                                <span className="shrink-0 size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-medium">
+                                    2
+                                </span>
+                                <span className="text-muted-foreground">
+                                    {awsModalContent.step2}
+                                </span>
+                            </div>
+                            <div className="flex gap-3">
+                                <span className="shrink-0 size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-medium">
+                                    3
+                                </span>
+                                <span className="text-muted-foreground">
+                                    {awsModalContent.step3}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <Info className="size-5 text-primary" />
-                                <h4 className="font-semibold">
-                                    {awsModalContent.instructionsTitle}
-                                </h4>
+                                <Terminal className="size-4 text-muted-foreground" />
+                                <span className="text-sm font-medium">AWS CLI Commands</span>
                             </div>
-
-                            <div className="space-y-3 text-sm">
-                                <div className="flex gap-3">
-                                    <span className="shrink-0 size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-medium">
-                                        1
-                                    </span>
-                                    <span className="text-muted-foreground">
-                                        {awsModalContent.step1}
-                                    </span>
-                                </div>
-                                <div className="flex gap-3">
-                                    <span className="shrink-0 size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-medium">
-                                        2
-                                    </span>
-                                    <span className="text-muted-foreground">
-                                        {awsModalContent.step2}
-                                    </span>
-                                </div>
-                                <div className="flex gap-3">
-                                    <span className="shrink-0 size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-medium">
-                                        3
-                                    </span>
-                                    <span className="text-muted-foreground">
-                                        {awsModalContent.step3}
-                                    </span>
-                                </div>
-                            </div>
+                            <CopyButton text={awsCliCommands} />
                         </div>
 
-                        <div className="space-y-3">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <Terminal className="size-4 text-muted-foreground" />
-                                    <span className="text-sm font-medium">AWS CLI Commands</span>
-                                </div>
-                                <CopyButton text={awsCliCommands} />
-                            </div>
-                            <div className="relative">
-                                <pre className="bg-muted p-4 rounded-lg text-xs overflow-x-auto font-mono">
-                                    {awsCliCommands}
-                                </pre>
-                            </div>
-                        </div>
-
-                        <div className="space-y-3">
-                            <div className="flex items-center justify-between">
-                                <span className="text-sm font-medium">Trust Policy JSON</span>
-                                <CopyButton text={awsTrustPolicy} />
-                            </div>
+                        <div className="max-w-md mx-auto">
                             <pre className="bg-muted p-4 rounded-lg text-xs overflow-x-auto font-mono">
-                                {awsTrustPolicy}
+                                {awsCliCommands}
                             </pre>
                         </div>
+                    </div>
 
-                        <Separator />
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="accountId">{awsModalContent.accountIdLabel}</Label>
+                            <Input
+                                id="accountId"
+                                placeholder={awsModalContent.accountIdPlaceholder}
+                                value={accountId}
+                                onChange={(e) =>
+                                    setAccountId(e.target.value.replace(/\D/g, "").slice(0, 12))
+                                }
+                                className="font-mono"
+                                maxLength={12}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                {awsModalContent.accountIdHelper}
+                            </p>
+                        </div>
 
-                        <div className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="roleArn">{awsModalContent.roleArnLabel}</Label>
-                                <Input
-                                    id="roleArn"
-                                    placeholder={awsModalContent.roleArnPlaceholder}
-                                    value={roleArn}
-                                    onChange={(e) => setRoleArn(e.target.value)}
-                                    className="font-mono"
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="region">{awsModalContent.regionLabel}</Label>
-                                <select
-                                    id="region"
-                                    value={region}
-                                    onChange={(e) => setRegion(e.target.value)}
-                                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                                >
-                                    {AWS_REGIONS.map((r) => (
-                                        <option key={r} value={r}>
-                                            {r}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="region">{awsModalContent.regionLabel}</Label>
+                            <select
+                                id="region"
+                                value={region}
+                                onChange={(e) => setRegion(e.target.value)}
+                                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                            >
+                                {AWS_REGIONS.map((r) => (
+                                    <option key={r} value={r}>
+                                        {r}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     </div>
 
                     <DialogFooter>
                         <Button
                             onClick={handleConnect}
-                            disabled={isLoading || !roleArn || !region}
+                            disabled={isLoading || !isValidAccountId || !region}
                             className="w-full sm:w-auto"
                         >
                             {isLoading ? (
