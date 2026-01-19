@@ -501,7 +501,7 @@ function IntegrateProviderSection() {
                 ))}
             </motion.div>
 
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} modal={false}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>{awsModalContent.title}</DialogTitle>
