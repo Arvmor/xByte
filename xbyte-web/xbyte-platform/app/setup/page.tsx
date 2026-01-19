@@ -442,11 +442,11 @@ function IntegrateProviderSection() {
 
             if (!client.id) return setIsLoading(false);
 
-            const roleArn = buildRoleArn(accountId);
+            const role_arn = buildRoleArn(accountId);
             const { status: registerStatus } = await xbyteClient.registerStorage({
                 storage: {
                     s3: {
-                        roleArn,
+                        role_arn,
                         region,
                     },
                 },

@@ -1,6 +1,6 @@
 export type Storage = {
     s3: {
-        roleArn: string;
+        role_arn: string;
         region: string;
     };
 };
