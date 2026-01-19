@@ -409,8 +409,8 @@ export default function Home() {
             </motion.div>
 
             {/* Demo GIF */}
-            <AnimatedSection className="my-16" variants={scaleIn}>
-                <div className="flex justify-center items-center w-full p-4">
+            <AnimatedSection className="my-20" variants={scaleIn}>
+                <div className="flex justify-center items-center w-full bunpx-2">
                     <Image
                         src="demo.gif"
                         alt="xByte Demo"

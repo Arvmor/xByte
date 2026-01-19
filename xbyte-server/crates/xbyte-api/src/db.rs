@@ -1,4 +1,4 @@
-use crate::Client;
+use crate::{Client, Storage};
 use alloy_primitives::Address;
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
@@ -17,6 +17,8 @@ pub trait Database {
     type KeyBucket;
     /// The bucket type
     type Bucket;
+    /// The storage type
+    type Storage;
 
     /// Set the price
     fn set_price(&self, key: Self::KeyPrice, price: Self::Price) -> anyhow::Result<()>;
@@ -26,10 +28,18 @@ pub trait Database {
     fn set_client(&self, key: Self::KeyClient, client: Self::Client) -> anyhow::Result<bool>;
     /// Get client
     fn get_client(&self, key: &Self::KeyClient) -> anyhow::Result<Self::Client>;
+    /// Get all clients
+    fn get_all_clients(&self) -> anyhow::Result<Vec<Self::Client>>;
     /// Assign Bucket to Client
     fn assign_bucket(&self, key: Self::KeyBucket, client: Self::KeyClient) -> anyhow::Result<()>;
     /// Get Bucket from Client
     fn get_bucket(&self, key: &Self::KeyBucket) -> anyhow::Result<Self::Bucket>;
+    /// Assign Storage to Client
+    fn assign_storage(&self, key: Self::KeyClient, storage: Self::Storage) -> anyhow::Result<()>;
+    /// Get Storage from Client
+    fn get_storage(&self, key: &Self::KeyClient) -> anyhow::Result<Self::Storage>;
+    /// Get all storages
+    fn get_all_storages(&self) -> anyhow::Result<Vec<Self::Storage>>;
 }
 
 /// In-memory database
@@ -47,6 +57,7 @@ impl Database for MemoryDB {
     type Client = Client;
     type KeyBucket = String;
     type Bucket = Address;
+    type Storage = Storage<String>;
 
     fn set_price(&self, key: Self::KeyPrice, price: Self::Price) -> anyhow::Result<()> {
         // Set the price
@@ -76,6 +87,13 @@ impl Database for MemoryDB {
         Ok(result.clone())
     }
 
+    fn get_all_clients(&self) -> anyhow::Result<Vec<Self::Client>> {
+        let db = self.clients.read().unwrap();
+        let result = db.values().cloned().collect();
+
+        Ok(result)
+    }
+
     fn assign_bucket(&self, key: Self::KeyBucket, client: Self::KeyClient) -> anyhow::Result<()> {
         let mut db = self.buckets.write().unwrap();
         db.insert(key, client);
@@ -88,6 +106,33 @@ impl Database for MemoryDB {
         let result = db.get(key).ok_or(anyhow::anyhow!("Bucket not found"))?;
 
         Ok(*result)
+    }
+
+    fn assign_storage(&self, key: Self::KeyClient, storage: Self::Storage) -> anyhow::Result<()> {
+        let mut db = self.clients.write().unwrap();
+        match db.get_mut(&key) {
+            Some(c) => c.storage = Some(storage),
+            None => return Err(anyhow::anyhow!("Client not found")),
+        }
+
+        Ok(())
+    }
+
+    fn get_storage(&self, key: &Self::KeyClient) -> anyhow::Result<Self::Storage> {
+        let db = self.clients.read().unwrap();
+        let result = db
+            .get(key)
+            .and_then(|c| c.storage.clone())
+            .ok_or(anyhow::anyhow!("Storage not found"))?;
+
+        Ok(result)
+    }
+
+    fn get_all_storages(&self) -> anyhow::Result<Vec<Self::Storage>> {
+        let db = self.clients.read().unwrap();
+        let result = db.values().filter_map(|c| c.storage.clone()).collect();
+
+        Ok(result)
     }
 }
 
@@ -120,6 +165,39 @@ mod tests {
         let bucket_info = db.get_bucket(&bucket_key)?;
         let client_fetched = db.get_client(&bucket_info)?;
         assert_eq!(client_fetched, client);
+        Ok(())
+    }
+
+    #[test]
+    fn test_assign_storage() -> anyhow::Result<()> {
+        let db = MemoryDB::default();
+        let client = Client::new(Default::default(), TEST_WALLET);
+        db.set_client(client.id.unwrap(), client.clone())?;
+
+        let storage = Storage::S3 {
+            role_arn: Default::default(),
+            region: Default::default(),
+        };
+
+        db.assign_storage(client.id.unwrap(), storage)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_assign_storage_roundtrip() -> anyhow::Result<()> {
+        let db = MemoryDB::default();
+        let client = Client::new("test".to_string(), TEST_WALLET);
+        db.set_client(client.id.unwrap(), client.clone())?;
+
+        let storage = Storage::S3 {
+            role_arn: Default::default(),
+            region: Default::default(),
+        };
+
+        db.assign_storage(client.id.unwrap(), storage.clone())?;
+
+        let storage_info = db.get_storage(&client.id.unwrap())?;
+        assert_eq!(storage_info, storage);
         Ok(())
     }
 }

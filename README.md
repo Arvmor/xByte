@@ -13,15 +13,11 @@
 
 [Website](https://xbyte.sh) | [Demo](https://demo.xbyte.sh) | [Documentation](https://docs.xbyte.sh) | [API](https://api.xbyte.sh)
 
-xByte, the infra-as-a-service protocol.
-
-## Introduction
-
 Facilitates "Pay-per-Byte" x402 payments, allows content-agnostic monetization model for platforms (Netflix, Spotify, Twitch, etc.), instead of monthly subscriptions! [more information](./docs/xByte_slides.pdf)
 
-e.g.: Pay 0.001 USDC per 1MB of a movie.
+e.g. Pay 0.001 USDC per 1MB of a movie.
 
-### 🏆 2nd Place - AVAX x402 Hackathon
+### AVAX x402 Hackathon Winner
 
 ![xByte Demo](./docs/demo.gif)
 
