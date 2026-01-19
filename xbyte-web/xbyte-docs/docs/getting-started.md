@@ -96,18 +96,23 @@ if (clientResponse.status === "Success") {
 }
 ```
 
-### Registering a Bucket
+### Registering Storage
 
-After creating a client, register a bucket to store your content:
+After creating a client, register your S3 storage to allow xByte to access your content:
 
 ```typescript
-const bucketResponse = await client.registerBucket({
-    bucket: "my-content-bucket",
+const storageResponse = await client.registerStorage({
+    storage: {
+        s3: {
+            roleArn: "arn:aws:iam::123456789012:role/xbyte-access",
+            region: "us-east-1",
+        },
+    },
     client: clientId,
 });
 
-if (bucketResponse.status === "Success") {
-    console.log("Bucket registered:", bucketResponse.data);
+if (storageResponse.status === "Success") {
+    console.log("Storage registered:", storageResponse.data);
 }
 ```
 

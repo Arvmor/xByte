@@ -1,8 +1,13 @@
-import { UUID } from "crypto";
+export type Storage = {
+    s3: {
+        role_arn: string;
+        region: string;
+    };
+};
 
 export interface RegisterRequest {
-    bucket: string;
-    client: UUID;
+    storage: Storage;
+    client: string;
 }
 
 export interface SetPriceRequest {
@@ -17,9 +22,11 @@ export interface RangeRequest {
 }
 
 export interface Client {
-    id?: UUID;
+    id?: string;
     name: string;
     wallet: string;
+    vault?: string;
+    storage?: Storage;
 }
 
 /**

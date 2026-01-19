@@ -100,11 +100,11 @@ export class xByteClient {
     }
 
     /**
-     * Register a bucket
-     * @param request The request to register a bucket
+     * Register storage for a client
+     * @param request The request to register storage
      * @returns The response from the xByte API
      */
-    async registerBucket(request: RegisterRequest): Promise<ApiResponse<string, string>> {
+    async registerStorage(request: RegisterRequest): Promise<ApiResponse<string, string>> {
         const options: RequestInit = {
             method: "POST",
             headers: { "Content-Type": "application/json" },

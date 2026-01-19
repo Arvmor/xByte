@@ -22,7 +22,20 @@ import {
     Zap,
     Archive,
     MoveRight,
+    Copy,
+    Check,
+    Terminal,
+    Info,
 } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { NoWalletAlert } from "@/components/privy/connect";
 import AppPageHeader, { PageProps } from "@/components/app/appPage";
 import { motion, Variants, AnimatePresence } from "motion/react";
@@ -173,6 +186,66 @@ const integrateProviderSection = {
         "No buckets found. Please ensure your storage provider is properly configured.",
 };
 
+const awsModalContent = {
+    title: "Configure AWS S3 Access",
+    description: "Create an IAM role that allows xByte to read your S3 buckets.",
+    instructionsTitle: "Setup Instructions",
+    step1: "Create an IAM role with the trust policy below",
+    step2: "Attach the AmazonS3ReadOnlyAccess policy to the role",
+    step3: "Enter your AWS Account ID below",
+    accountIdLabel: "AWS Account ID",
+    accountIdPlaceholder: "123456789012",
+    accountIdHelper: "Your 12-digit AWS account ID",
+    regionLabel: "AWS Region",
+    connectButton: "Connect Storage",
+    connecting: "Connecting...",
+};
+
+const XBYTE_USER_NAME = "xByte-API";
+const XBYTE_AWS_ACCOUNT_ID = "022396637905";
+const XBYTE_IAM_ROLE_NAME = "xByteReadOnlyS3";
+
+const buildRoleArn = (accountId: string) => `arn:aws:iam::${accountId}:role/${XBYTE_IAM_ROLE_NAME}`;
+
+const awsTrustPolicy = `{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::${XBYTE_AWS_ACCOUNT_ID}:user/${XBYTE_USER_NAME}"
+      },
+      "Action": "sts:AssumeRole",
+      "Condition": {}
+    }
+  ]
+}`;
+
+const awsCliCommands = `# Create the IAM role with trust policy
+aws iam create-role \\
+  --role-name ${XBYTE_IAM_ROLE_NAME} \\
+  --assume-role-policy-document '${awsTrustPolicy.replace(/\n/g, "").replace(/\s+/g, " ")}' && \\
+  aws iam attach-role-policy \\
+  --role-name ${XBYTE_IAM_ROLE_NAME} \\
+  --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess`;
+
+const AWS_REGIONS = [
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "eu-central-1",
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-south-1",
+    "sa-east-1",
+];
+
 const setVaultSection = {
     title: "Set Up Vault",
     description: "Create a unique vault to receive monetized payments.",
@@ -302,12 +375,31 @@ function OnboardingSection() {
     );
 }
 
+function CopyButton({ text, className }: { text: string; className?: string }) {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async () => {
+        await navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    return (
+        <Button variant="ghost" size="icon" className={className} onClick={handleCopy}>
+            {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+        </Button>
+    );
+}
+
 function IntegrateProviderSection() {
     const { user, walletAddress } = useXBytePrivy();
     const [buckets, setBuckets] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [accountId, setAccountId] = useState("");
+    const [region, setRegion] = useState("us-east-1");
 
     const SelectIcon = () => (
         <div className="absolute top-2 right-2">
@@ -316,8 +408,16 @@ function IntegrateProviderSection() {
         </div>
     );
 
-    const handleProviderClick = async (providerName: string) => {
+    const handleProviderClick = (providerName: string) => {
         setSelectedProvider(providerName);
+        setIsModalOpen(true);
+    };
+
+    const isValidAccountId = accountId.length === 12 && /^\d+$/.test(accountId);
+
+    const handleConnect = async () => {
+        if (!isValidAccountId || !region) return;
+
         setIsLoading(true);
         setIsConnected(false);
 
@@ -340,20 +440,27 @@ function IntegrateProviderSection() {
                 client = data;
             }
 
+            if (!client.id) return setIsLoading(false);
+
+            const role_arn = buildRoleArn(accountId);
+            const { status: registerStatus } = await xbyteClient.registerStorage({
+                storage: {
+                    s3: {
+                        role_arn,
+                        region,
+                    },
+                },
+                client: client.id,
+            });
+
+            if (registerStatus !== "Success") return setIsLoading(false);
+
             const { status, data } = await xbyteClient.getAllBuckets();
             if (status !== "Success") return setIsLoading(false);
 
             setBuckets(data);
             setIsConnected(true);
-
-            for (const bucket of data) {
-                if (!client.id) return;
-
-                await xbyteClient.registerBucket({
-                    bucket,
-                    client: client.id,
-                });
-            }
+            setIsModalOpen(false);
         } catch (error) {
             console.error(errorMessages.failedToConnectProvider, error);
         } finally {
@@ -393,6 +500,117 @@ function IntegrateProviderSection() {
                     </motion.div>
                 ))}
             </motion.div>
+
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} modal={false}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{awsModalContent.title}</DialogTitle>
+                        <DialogDescription>{awsModalContent.description}</DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-2">
+                            <Info className="size-5 text-primary" />
+                            <h4 className="font-semibold">{awsModalContent.instructionsTitle}</h4>
+                        </div>
+
+                        <div className="space-y-3 text-sm">
+                            <div className="flex gap-3">
+                                <span className="shrink-0 size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-medium">
+                                    1
+                                </span>
+                                <span className="text-muted-foreground">
+                                    {awsModalContent.step1}
+                                </span>
+                            </div>
+                            <div className="flex gap-3">
+                                <span className="shrink-0 size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-medium">
+                                    2
+                                </span>
+                                <span className="text-muted-foreground">
+                                    {awsModalContent.step2}
+                                </span>
+                            </div>
+                            <div className="flex gap-3">
+                                <span className="shrink-0 size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-medium">
+                                    3
+                                </span>
+                                <span className="text-muted-foreground">
+                                    {awsModalContent.step3}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <Terminal className="size-4 text-muted-foreground" />
+                                <span className="text-sm font-medium">AWS CLI Commands</span>
+                            </div>
+                            <CopyButton text={awsCliCommands} />
+                        </div>
+
+                        <div className="max-w-md mx-auto">
+                            <pre className="bg-muted p-4 rounded-lg text-xs overflow-x-auto font-mono">
+                                {awsCliCommands}
+                            </pre>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="accountId">{awsModalContent.accountIdLabel}</Label>
+                            <Input
+                                id="accountId"
+                                placeholder={awsModalContent.accountIdPlaceholder}
+                                value={accountId}
+                                onChange={(e) =>
+                                    setAccountId(e.target.value.replace(/\D/g, "").slice(0, 12))
+                                }
+                                className="font-mono"
+                                maxLength={12}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                {awsModalContent.accountIdHelper}
+                            </p>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="region">{awsModalContent.regionLabel}</Label>
+                            <select
+                                id="region"
+                                value={region}
+                                onChange={(e) => setRegion(e.target.value)}
+                                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                            >
+                                {AWS_REGIONS.map((r) => (
+                                    <option key={r} value={r}>
+                                        {r}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    <DialogFooter>
+                        <Button
+                            onClick={handleConnect}
+                            disabled={isLoading || !isValidAccountId || !region}
+                            className="w-full sm:w-auto"
+                        >
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="size-4 animate-spin" />
+                                    {awsModalContent.connecting}
+                                </>
+                            ) : (
+                                awsModalContent.connectButton
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             <AnimatePresence>
                 {buckets.length > 0 && (
@@ -436,7 +654,7 @@ function IntegrateProviderSection() {
             </AnimatePresence>
 
             <AnimatePresence>
-                {buckets.length === 0 && !isLoading && selectedProvider && (
+                {buckets.length === 0 && !isLoading && isConnected && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
