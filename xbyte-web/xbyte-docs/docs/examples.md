@@ -27,13 +27,18 @@ async function setupContentPlatform() {
 
     const clientId = clientResponse.data.id!;
 
-    const bucketResponse = await client.registerBucket({
-        bucket: "music-content",
+    const storageResponse = await client.registerStorage({
+        storage: {
+            s3: {
+                roleArn: "arn:aws:iam::123456789012:role/xbyte-access",
+                region: "us-east-1",
+            },
+        },
         client: clientId,
     });
 
-    if (bucketResponse.status !== "Success") {
-        throw new Error(`Failed to register bucket: ${bucketResponse.data}`);
+    if (storageResponse.status !== "Success") {
+        throw new Error(`Failed to register storage: ${storageResponse.data}`);
     }
 
     console.log("Setup complete! Client ID:", clientId);

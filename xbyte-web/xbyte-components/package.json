@@ -16,6 +16,7 @@
     },
     "dependencies": {
         "@privy-io/react-auth": "*",
+        "@radix-ui/react-dialog": "^1.1.15",
         "@radix-ui/react-label": "*",
         "@radix-ui/react-popover": "*",
         "@radix-ui/react-separator": "*",
