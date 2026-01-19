@@ -1,4 +1,4 @@
-use crate::{ClientRoute, ConfigX402, HealthRoute, MemoryDB, PricingRoute, S3Route, XByteS3};
+use crate::{ClientRoute, ConfigX402, HealthRoute, MemoryDB, PricingRoute, S3Route};
 use actix_web::web::{Data, ThinData};
 use actix_web::{App, HttpServer};
 use std::net;
@@ -23,14 +23,15 @@ impl<A: net::ToSocketAddrs, R: AsRef<str>> Server<A, R> {
         let provider = xbyte_evm::Client::new(self.rpc.as_ref())?;
         let db = MemoryDB::default();
         let config = Data::new(ConfigX402::build());
-        let s3 = XByteS3::new().await;
+        let aws_config = aws_config::load_from_env().await;
+        let sts = aws_sdk_sts::Client::new(&aws_config);
 
         let app = move || {
             App::new()
                 .app_data(config.clone())
                 .app_data(ThinData(provider.clone()))
                 .app_data(ThinData(db.clone()))
-                .app_data(ThinData(s3.clone()))
+                .app_data(ThinData(sts.clone()))
                 // Health routes
                 .service(HealthRoute::Status)
                 .service(HealthRoute::Index)

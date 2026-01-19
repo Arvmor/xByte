@@ -34,11 +34,9 @@ actix-cors = "0.7.1"
 url = { version = "2.5.8", features = ["serde"] }
 
 # AWS dependencies
-aws-config = { version = "1.8.5", features = [
-    "rustls",
-    "behavior-version-latest",
-] }
+aws-config = { version = "1.8.5", features = ["rustls", "behavior-version-latest"] }
 aws-sdk-s3 = { version = "1.120.0", features = ["behavior-version-latest"] }
+aws-sdk-sts = { version = "1.96.0", features = ["behavior-version-latest"] }
 
 # x402 dependencies
 ureq = { version = "3.1.4", features = ["rustls", "json"] }

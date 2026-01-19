@@ -7,7 +7,7 @@ mod server;
 mod utils;
 mod x402;
 
-pub use client::{Client, ClientRoute};
+pub use client::{Client, ClientRoute, Storage};
 pub use db::{Database, MemoryDB};
 pub use health::HealthRoute;
 pub use pricing::PricingRoute;
