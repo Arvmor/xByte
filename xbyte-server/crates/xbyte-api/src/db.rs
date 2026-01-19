@@ -38,6 +38,8 @@ pub trait Database {
     fn assign_storage(&self, key: Self::KeyClient, storage: Self::Storage) -> anyhow::Result<()>;
     /// Get Storage from Client
     fn get_storage(&self, key: &Self::KeyClient) -> anyhow::Result<Self::Storage>;
+    /// Get all storages
+    fn get_all_storages(&self) -> anyhow::Result<Vec<Self::Storage>>;
 }
 
 /// In-memory database
@@ -122,6 +124,13 @@ impl Database for MemoryDB {
             .get(key)
             .and_then(|c| c.storage.clone())
             .ok_or(anyhow::anyhow!("Storage not found"))?;
+
+        Ok(result)
+    }
+
+    fn get_all_storages(&self) -> anyhow::Result<Vec<Self::Storage>> {
+        let db = self.clients.read().unwrap();
+        let result = db.values().filter_map(|c| c.storage.clone()).collect();
 
         Ok(result)
     }
