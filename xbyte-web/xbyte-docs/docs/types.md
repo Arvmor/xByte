@@ -49,17 +49,21 @@ Represents a client in the xByte system.
 
 ```typescript
 interface Client {
-    id?: UUID;
+    id?: string;
     name: string;
     wallet: string;
+    vault?: string;
+    storage?: Storage;
 }
 ```
 
 **Properties:**
 
-- `id` (optional): The unique identifier for the client (UUID)
+- `id` (optional): The unique identifier for the client (wallet address)
 - `name`: The name of the client
 - `wallet`: The wallet address associated with the client
+- `vault` (optional): The vault contract address for receiving payments
+- `storage` (optional): Storage configuration for the client's content
 
 **Example:**
 
@@ -70,30 +74,64 @@ const client: Client = {
 };
 ```
 
+### `Storage`
+
+Represents storage configuration for a client.
+
+```typescript
+type Storage = {
+    s3: {
+        roleArn: string;
+        region: string;
+    };
+};
+```
+
+**Properties:**
+
+- `s3.roleArn`: The ARN of the IAM role to assume for S3 access
+- `s3.region`: The AWS region where the S3 buckets are located
+
+**Example:**
+
+```typescript
+const storage: Storage = {
+    s3: {
+        roleArn: "arn:aws:iam::123456789012:role/xbyte-access",
+        region: "us-east-1",
+    },
+};
+```
+
 ## Request Types
 
 ### `RegisterRequest`
 
-Request to register a new bucket.
+Request to register storage for a client.
 
 ```typescript
 interface RegisterRequest {
-    bucket: string;
-    client: UUID;
+    storage: Storage;
+    client: string;
 }
 ```
 
 **Properties:**
 
-- `bucket`: The name of the bucket to register
-- `client`: The UUID of the client that owns the bucket
+- `storage`: Storage configuration with S3 credentials
+- `client`: The wallet address of the client
 
 **Example:**
 
 ```typescript
 const request: RegisterRequest = {
-    bucket: "my-content-bucket",
-    client: "550e8400-e29b-41d4-a716-446655440000",
+    storage: {
+        s3: {
+            roleArn: "arn:aws:iam::123456789012:role/xbyte-access",
+            region: "us-east-1",
+        },
+    },
+    client: "0x1234567890123456789012345678901234567890",
 };
 ```
 
@@ -210,20 +248,6 @@ const payment: X402PaymentPayload = {
 ```
 
 ## Utility Types
-
-### `UUID`
-
-A type alias for UUID strings (from the `crypto` module).
-
-```typescript
-import { UUID } from "crypto";
-```
-
-**Example:**
-
-```typescript
-const clientId: UUID = "550e8400-e29b-41d4-a716-446655440000";
-```
 
 ### `Address`
 

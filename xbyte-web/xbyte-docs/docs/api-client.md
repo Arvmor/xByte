@@ -88,43 +88,48 @@ Retrieves a client by its ID.
 
 **Parameters:**
 
-- `id`: The UUID of the client
+- `id`: The wallet address of the client
 
 **Returns:** `Promise<ApiResponse<Client, string>>`
 
 **Example:**
 
 ```typescript
-const response = await client.getClient("550e8400-e29b-41d4-a716-446655440000");
+const response = await client.getClient("0x1234567890123456789012345678901234567890");
 if (response.status === "Success") {
     console.log("Client:", response.data);
 }
 ```
 
-## Bucket Management
+## Storage Management
 
-### `registerBucket(request: RegisterRequest)`
+### `registerStorage(request: RegisterRequest)`
 
-Registers a new bucket for storing content.
+Registers storage configuration for a client. This allows xByte to access the client's S3 buckets.
 
 **Parameters:**
 
 - `request`: A `RegisterRequest` object with:
-    - `bucket`: The name of the bucket
-    - `client`: The UUID of the client that owns the bucket
+    - `storage`: Storage configuration with S3 credentials
+    - `client`: The wallet address of the client
 
 **Returns:** `Promise<ApiResponse<string, string>>`
 
 **Example:**
 
 ```typescript
-const response = await client.registerBucket({
-    bucket: "my-content-bucket",
-    client: "550e8400-e29b-41d4-a716-446655440000",
+const response = await client.registerStorage({
+    storage: {
+        s3: {
+            roleArn: "arn:aws:iam::123456789012:role/xbyte-access",
+            region: "us-east-1",
+        },
+    },
+    client: "0x1234567890123456789012345678901234567890",
 });
 
 if (response.status === "Success") {
-    console.log("Bucket registered:", response.data);
+    console.log("Storage registered:", response.data);
 }
 ```
 
