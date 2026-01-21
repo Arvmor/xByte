@@ -18,21 +18,8 @@
         "format": "oxfmt",
         "format:check": "oxfmt --check"
     },
-    "dependencies": {
-        "@docusaurus/core": "*",
-        "@docusaurus/preset-classic": "*",
-        "@mdx-js/react": "*",
-        "clsx": "*",
-        "prism-react-renderer": "*",
-        "react": "*",
-        "react-dom": "*"
-    },
-    "devDependencies": {
-        "@docusaurus/module-type-aliases": "*",
-        "@docusaurus/tsconfig": "*",
-        "@docusaurus/types": "*",
-        "typescript": "*"
-    },
+    "dependencies": {},
+    "devDependencies": {},
     "browserslist": {
         "production": [
             ">0.5%",

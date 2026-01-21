@@ -12,28 +12,8 @@
         "format:check": "oxfmt --check"
     },
     "dependencies": {
-        "@privy-io/react-auth": "*",
-        "@radix-ui/react-separator": "*",
-        "@radix-ui/react-slot": "*",
-        "class-variance-authority": "*",
-        "clsx": "*",
-        "lucide-react": "*",
-        "motion": "*",
-        "next": "*",
-        "react": "*",
-        "react-dom": "*",
-        "tailwind-merge": "*",
-        "viem": "*",
         "xbyte-components": "workspace:*",
         "xbyte-sdk": "workspace:*"
     },
-    "devDependencies": {
-        "@tailwindcss/postcss": "*",
-        "@types/node": "*",
-        "@types/react": "*",
-        "@types/react-dom": "*",
-        "tailwindcss": "*",
-        "tw-animate-css": "*",
-        "typescript": "*"
-    }
+    "devDependencies": {}
 }
