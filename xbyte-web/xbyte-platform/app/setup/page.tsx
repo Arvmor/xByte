@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 import Paragraph, { ParagraphProps } from "@/components/platform/paragraph";
-import Feature, { FeatureProps } from "@/components/platform/feature";
+import { FeatureProps } from "@/components/platform/feature";
+import { VaultEarningsChart, StorageConnectionChart } from "@/components/platform/setupCharts";
 import Optionable, { OptionableProps } from "@/components/platform/optionable";
 import { xByteClient, xByteEvmClient, XBYTE_FACTORY_ADDRESS, Client } from "xbyte-sdk";
 import { useXBytePrivy } from "@/hooks/useXBytePrivy";
@@ -53,19 +54,6 @@ export const integrationOptions: OptionableProps[] = [
         titleText: "AWS",
         descriptionText: "Connect Amazon S3",
         Icon: Archive,
-    },
-];
-
-export const feature: FeatureProps[] = [
-    {
-        title: "Connect Your Data",
-        description: "Connect your data storage provider to xByte.",
-        Icon: Building2,
-    },
-    {
-        title: "Monetize Your Content",
-        description: "Monetize your content as users consume.",
-        Icon: Building2,
     },
 ];
 
@@ -362,14 +350,15 @@ function OnboardingSection() {
                 <Paragraph {...paragraph} title={undefined} />
             </motion.div>
             <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                className="grid grid-cols-1 lg:grid-cols-2 gap-6"
                 variants={staggerContainer}
             >
-                {feature.map((option, index) => (
-                    <motion.div key={index} variants={staggerItem}>
-                        <Feature {...option} />
-                    </motion.div>
-                ))}
+                <motion.div variants={staggerItem}>
+                    <VaultEarningsChart />
+                </motion.div>
+                <motion.div variants={staggerItem}>
+                    <StorageConnectionChart />
+                </motion.div>
             </motion.div>
         </motion.div>
     );

@@ -1,6 +1,6 @@
 {
     "name": "xbyte-sdk",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "TypeScript SDK for xByte Infra - The pay-per-byte content monetization protocol.",
     "keywords": [
         "blockchain",
@@ -18,8 +18,24 @@
         "url": "https://github.com/Arvmor/xbyte.git",
         "directory": "xbyte-web/xbyte-sdk"
     },
+    "files": [
+        "LICENSE",
+        "README.md",
+        "dist/**/*.d.ts",
+        "dist/**/*.js"
+    ],
     "type": "module",
-    "exports": "./src/index.ts",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        }
+    },
+    "publishConfig": {
+        "access": "public"
+    },
     "scripts": {
         "build": "tsc",
         "lint": "oxlint",
@@ -28,12 +44,15 @@
         "format:check": "oxfmt --check"
     },
     "dependencies": {
-        "viem": "*"
+        "viem": "^2.44.4"
     },
     "devDependencies": {
         "@types/bun": "*"
     },
     "peerDependencies": {
-        "typescript": "*"
+        "typescript": ">=5.0.0"
+    },
+    "engines": {
+        "node": ">=18.0.0"
     }
 }

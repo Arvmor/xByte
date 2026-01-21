@@ -12,32 +12,8 @@
         "format:check": "oxfmt --check"
     },
     "dependencies": {
-        "@privy-io/react-auth": "*",
-        "@radix-ui/react-label": "*",
-        "@radix-ui/react-popover": "*",
-        "@radix-ui/react-slider": "*",
-        "@radix-ui/react-slot": "*",
-        "@solana-program/system": "*",
-        "@solana-program/token": "*",
-        "@solana/kit": "*",
-        "class-variance-authority": "*",
-        "clsx": "*",
-        "lucide-react": "*",
-        "next": "*",
-        "next-themes": "*",
-        "react": "*",
-        "react-dom": "*",
-        "tailwind-merge": "*",
         "xbyte-components": "workspace:*",
         "xbyte-sdk": "workspace:*"
     },
-    "devDependencies": {
-        "@tailwindcss/postcss": "*",
-        "@types/node": "*",
-        "@types/react": "*",
-        "@types/react-dom": "*",
-        "tailwindcss": "*",
-        "tw-animate-css": "*",
-        "typescript": "*"
-    }
+    "devDependencies": {}
 }

@@ -10,13 +10,18 @@
         "baseUrl": ".",
         "skipLibCheck": true,
         "strict": true,
-        "noEmit": true,
         "esModuleInterop": true,
         "moduleResolution": "bundler",
         "resolveJsonModule": true,
         "isolatedModules": true,
-        "incremental": true
+        "incremental": true,
+        // Output configuration for library builds
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "outDir": "./dist",
+        "rootDir": "./src"
     },
     "include": ["src/**/*"],
-    "exclude": ["node_modules"]
+    "exclude": ["node_modules", "dist"]
 }
