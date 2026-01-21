@@ -19,7 +19,26 @@
         "directory": "xbyte-web/xbyte-sdk"
     },
     "type": "module",
-    "exports": "./src/index.ts",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        }
+    },
+    "files": [
+        "dist/**/*.js",
+        "dist/**/*.d.ts",
+        "README.md",
+        "LICENSE"
+    ],
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
     "scripts": {
         "build": "tsc",
         "lint": "oxlint",
@@ -28,12 +47,12 @@
         "format:check": "oxfmt --check"
     },
     "dependencies": {
-        "viem": "*"
+        "viem": "^2.0.0"
     },
     "devDependencies": {
         "@types/bun": "*"
     },
     "peerDependencies": {
-        "typescript": "*"
+        "typescript": ">=5.0.0"
     }
 }
