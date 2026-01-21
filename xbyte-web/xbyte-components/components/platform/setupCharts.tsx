@@ -80,7 +80,9 @@ function VaultEarningsChart() {
                                     formatter={(value, name) =>
                                         value != null ? (
                                             <div className="flex items-center justify-between gap-2">
-                                                <span className="text-muted-foreground">{name}</span>
+                                                <span className="text-muted-foreground">
+                                                    {name}
+                                                </span>
                                                 <span className="font-mono font-medium">
                                                     ${Number(value).toLocaleString()}
                                                 </span>
@@ -93,8 +95,16 @@ function VaultEarningsChart() {
                         <ChartLegend content={<ChartLegendContent />} verticalAlign="bottom" />
                         <defs>
                             <linearGradient id="fillPotential" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="var(--color-potential)" stopOpacity={0.8} />
-                                <stop offset="95%" stopColor="var(--color-potential)" stopOpacity={0.1} />
+                                <stop
+                                    offset="5%"
+                                    stopColor="var(--color-potential)"
+                                    stopOpacity={0.8}
+                                />
+                                <stop
+                                    offset="95%"
+                                    stopColor="var(--color-potential)"
+                                    stopOpacity={0.1}
+                                />
                             </linearGradient>
                         </defs>
                         <Area
@@ -144,7 +154,9 @@ function StorageConnectionChart() {
                                     formatter={(value, name) =>
                                         value != null ? (
                                             <div className="flex items-center justify-between gap-2">
-                                                <span className="text-muted-foreground">{name}</span>
+                                                <span className="text-muted-foreground">
+                                                    {name}
+                                                </span>
                                                 <span className="font-mono font-medium">
                                                     {name === "Size (GB)"
                                                         ? `${value} GB`

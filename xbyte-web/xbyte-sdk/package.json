@@ -18,6 +18,12 @@
         "url": "https://github.com/Arvmor/xbyte.git",
         "directory": "xbyte-web/xbyte-sdk"
     },
+    "files": [
+        "LICENSE",
+        "README.md",
+        "dist/**/*.d.ts",
+        "dist/**/*.js"
+    ],
     "type": "module",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
@@ -26,15 +32,6 @@
             "types": "./dist/index.d.ts",
             "import": "./dist/index.js"
         }
-    },
-    "files": [
-        "dist/**/*.js",
-        "dist/**/*.d.ts",
-        "README.md",
-        "LICENSE"
-    ],
-    "engines": {
-        "node": ">=18.0.0"
     },
     "publishConfig": {
         "access": "public"
@@ -54,5 +51,8 @@
     },
     "peerDependencies": {
         "typescript": ">=5.0.0"
+    },
+    "engines": {
+        "node": ">=18.0.0"
     }
 }
