@@ -9,6 +9,7 @@
         "xbyte-docs"
     ],
     "scripts": {
+        "prebuild": "bun run --filter xbyte-sdk build",
         "build": "bun run --workspaces build",
         "lint": "bun run --workspaces lint",
         "lint:fix": "bun run --workspaces lint:fix",
