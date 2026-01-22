@@ -71,7 +71,10 @@ function HeroSection() {
         <div className="text--center margin-bottom--xl">
             <h1 className="hero__title">{HERO_SECTION.title}</h1>
             <p className="hero__subtitle">{HERO_SECTION.description}</p>
-            <p className="text--lg margin-top--md" style={{ maxWidth: "600px", margin: "1rem auto 0" }}>
+            <p
+                className="text--lg margin-top--md"
+                style={{ maxWidth: "600px", margin: "1rem auto 0" }}
+            >
                 {HERO_SECTION.content}
             </p>
         </div>
@@ -83,13 +86,16 @@ function InstallationSection() {
         <div className="text--center margin-top--xl">
             <h2>{QUICK_INSTALLATION.title}</h2>
             <div className="margin-top--md">
-                <pre className="language-bash" style={{ 
-                    padding: "1rem 1.5rem",
-                    borderRadius: "1.25rem",
-                    textAlign: "left",
-                    display: "inline-block",
-                    margin: "0 auto"
-                }}>
+                <pre
+                    className="language-bash"
+                    style={{
+                        padding: "1rem 1.5rem",
+                        borderRadius: "1.25rem",
+                        textAlign: "left",
+                        display: "inline-block",
+                        margin: "0 auto",
+                    }}
+                >
                     <code>{QUICK_INSTALLATION.content}</code>
                 </pre>
             </div>
