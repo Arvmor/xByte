@@ -5,8 +5,8 @@ import type * as Preset from "@docusaurus/preset-classic";
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-    title: "xByte SDK",
-    tagline: "TypeScript SDK for pay-per-byte content monetization",
+    title: "xByte",
+    tagline: "Infra for Pay-per-Byte Monetization",
     favicon: "img/favicon.ico",
 
     // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -58,10 +58,11 @@ const config: Config = {
             respectPrefersColorScheme: true,
         },
         navbar: {
-            title: "xByte SDK",
+            title: "xByte",
             logo: {
-                alt: "xByte SDK Logo",
-                src: "img/logo.svg",
+                alt: "xByte Logo",
+                src: "img/logo.png",
+                srcDark: "img/logo-foreground.png",
             },
             items: [
                 {
@@ -70,34 +71,60 @@ const config: Config = {
                     position: "left",
                     label: "Documentation",
                 },
+                {
+                    label: "Platform",
+                    href: "https://xbyte.sh",
+                    position: "right",
+                },
             ],
         },
         footer: {
             style: "dark",
             links: [
                 {
-                    title: "Docs",
+                    title: "Get Started",
                     items: [
                         {
                             label: "Getting Started",
                             to: "/docs/getting-started",
                         },
                         {
-                            label: "API Reference",
+                            label: "Setup",
+                            href: "https://xbyte.sh/setup",
+                        },
+                        {
+                            label: "Payout",
+                            href: "https://xbyte.sh/payout",
+                        },
+                    ],
+                },
+                {
+                    title: "Platform",
+                    items: [
+                        {
+                            label: "API Docs",
                             to: "/docs/api-client",
                         },
                         {
                             label: "Examples",
                             to: "/docs/examples",
                         },
+                        {
+                            label: "xByte SDK",
+                            href: "https://github.com/Arvmor/xByte",
+                        },
                     ],
                 },
                 {
-                    title: "Project",
+                    title: "Legal",
                     items: [
                         {
-                            label: "GitHub",
-                            href: "https://github.com/Arvmor/xbyte",
+                            label: "Terms",
+                            href: "https://xbyte.sh/terms",
+                        },
+                        {
+                            label: "Privacy",
+                            href: "https://xbyte.sh/privacy",
                         },
                     ],
                 },
