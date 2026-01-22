@@ -7,7 +7,7 @@ import type * as Preset from "@docusaurus/preset-classic";
 const config: Config = {
     title: "xByte",
     tagline: "Infra for Pay-per-Byte Monetization",
-    favicon: "img/favicon.ico",
+    favicon: "img/logo-foreground.png",
 
     // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
     future: {
