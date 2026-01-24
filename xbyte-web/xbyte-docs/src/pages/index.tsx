@@ -31,9 +31,9 @@ const DOCUMENTATION_CARDS: CardData[] = [
 
 const HERO_SECTION = {
     title: "xByte SDK",
-    description: "TypeScript SDK for pay-per-byte content monetization through x402 payments",
+    description: "Infra for Pay-per-Byte Monetization",
     content:
-        "Enable content creators to monetize their content on a per-byte basis using x402 payment authorization. Perfect for audio, video, and file streaming.",
+        "TypeScript SDK for pay-per-byte content monetization through x402 payments. Enable content creators to monetize their content on a per-byte basis. Perfect for audio, video, and file streaming.",
 };
 
 const QUICK_INSTALLATION = {
@@ -71,7 +71,12 @@ function HeroSection() {
         <div className="text--center margin-bottom--xl">
             <h1 className="hero__title">{HERO_SECTION.title}</h1>
             <p className="hero__subtitle">{HERO_SECTION.description}</p>
-            <p className="text--lg">{HERO_SECTION.content}</p>
+            <p
+                className="text--lg margin-top--md"
+                style={{ maxWidth: "600px", margin: "1rem auto 0" }}
+            >
+                {HERO_SECTION.content}
+            </p>
         </div>
     );
 }
@@ -81,12 +86,21 @@ function InstallationSection() {
         <div className="text--center margin-top--xl">
             <h2>{QUICK_INSTALLATION.title}</h2>
             <div className="margin-top--md">
-                <pre className="language-bash">
+                <pre
+                    className="language-bash"
+                    style={{
+                        padding: "1rem 1.5rem",
+                        borderRadius: "1.25rem",
+                        textAlign: "left",
+                        display: "inline-block",
+                        margin: "0 auto",
+                    }}
+                >
                     <code>{QUICK_INSTALLATION.content}</code>
                 </pre>
             </div>
             <div className="margin-top--md">
-                <Link className="button button--primary button--lg" to="/docs/intro">
+                <Link className="button button--primary button--lg" to="/docs/getting-started">
                     {QUICK_INSTALLATION.buttonText}
                 </Link>
             </div>
@@ -107,8 +121,8 @@ function DocumentationGrid() {
 export default function Home() {
     return (
         <Layout
-            title="xByte SDK Documentation"
-            description="TypeScript SDK for pay-per-byte content monetization through x402 payments"
+            title="xByte Documentation"
+            description="Infra for Pay-per-Byte Monetization - TypeScript SDK for pay-per-byte content monetization through x402 payments"
         >
             <div className="container margin-vert--xl">
                 <div className="row">
