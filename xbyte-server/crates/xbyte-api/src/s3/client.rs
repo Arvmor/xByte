@@ -165,7 +165,7 @@ mod tests {
     #[actix_web::test]
     async fn test_new_assumed_role() -> anyhow::Result<()> {
         dotenv::dotenv().ok();
-        const ROLE_ARN: &str = "arn:aws:iam::113586717446:role/S3AccessRoleCustom";
+        const ROLE_ARN: &str = "arn:aws:iam::113586717446:role/xByteReadOnlyS3";
         const SESSION_NAME: &str = "test-session";
         const REGION: &str = "us-east-1";
 
