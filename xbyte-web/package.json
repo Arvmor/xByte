@@ -40,6 +40,7 @@
         "recharts": "^3.6.0",
         "tailwind-merge": "^3.4.0",
         "viem": "^2.44.4",
+        "vocs": "^1.4.1",
         "xbyte-components": "workspace:*",
         "xbyte-docs": "workspace:*",
         "xbyte-sdk": "workspace:*"

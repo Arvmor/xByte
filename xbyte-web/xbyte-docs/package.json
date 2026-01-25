@@ -12,8 +12,6 @@
         "format": "oxfmt",
         "format:check": "oxfmt --check"
     },
-    "dependencies": {
-        "vocs": "latest"
-    },
+    "dependencies": {},
     "devDependencies": {}
 }
