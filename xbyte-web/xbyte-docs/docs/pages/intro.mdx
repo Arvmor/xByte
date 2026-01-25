@@ -1,0 +1,49 @@
+# xByte SDK
+
+Infra for Pay-per-Byte Monetization
+
+TypeScript SDK for pay-per-byte content monetization through x402 payments. Enable content creators to monetize their content on a per-byte basis. Perfect for audio, video, and file streaming.
+
+## What is xByte?
+
+xByte is a decentralized infrastructure protocol that allows content creators to monetize their content (audio, video, files, etc.) on a per-byte basis. Users pay for exactly what they consume using x402 payment authorization, enabling micro-payments for content streaming.
+
+## Features
+
+- **Pay-per-byte monetization**: Set prices for your content and get paid for every byte consumed
+- **x402 payment integration**: Seamless payment authorization using the x402 standard
+- **EVM contract support**: Interact with xByte smart contracts on Base Sepolia
+- **Type-safe SDK**: Full TypeScript support with comprehensive type definitions
+- **Simple API**: Easy-to-use client interfaces for both API and blockchain interactions
+
+## SDK Components
+
+The xByte SDK consists of two main clients:
+
+1. **xByteClient**: Interact with the xByte API server for content management and retrieval
+2. **xByteEvmClient**: Interact with xByte smart contracts on the blockchain
+
+## Quick Start
+
+```typescript
+import { xByteClient } from "xbyte-sdk";
+
+const client = new xByteClient();
+
+const health = await client.health();
+console.log(health); // { status: "Success", data: "OK" }
+```
+
+## Quick Installation
+
+```bash
+npm install xbyte-sdk
+```
+
+## What's Next?
+
+- [Get Started](/getting-started) - Set up the SDK and make your first API call
+- [API Client Reference](/api-client) - Learn about the xByteClient methods
+- [EVM Client Reference](/evm-client) - Learn about blockchain interactions
+- [Types Reference](/types) - Understand the TypeScript types and interfaces
+- [Examples](/examples) - See practical code examples

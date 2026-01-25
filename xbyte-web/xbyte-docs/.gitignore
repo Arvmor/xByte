@@ -1,9 +1,10 @@
 # Production
 /build
+/dist
+/.vocs
 
 # Generated files
-.docusaurus
-.cache-loader
+node_modules
 
 npm-debug.log*
 yarn-debug.log*

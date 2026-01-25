@@ -30,6 +30,10 @@ const headerLinks: HeaderLinkProps[] = [
         href: "/payout",
     },
     {
+        label: "Demo",
+        href: "https://demo.xbyte.sh",
+    },
+    {
         label: "API Docs",
         href: "https://docs.xbyte.sh",
     },

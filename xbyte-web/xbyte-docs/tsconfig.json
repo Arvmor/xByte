@@ -1,8 +1,22 @@
 {
-    // This file is not used in compilation. It is here just for a nice editor experience.
-    "extends": "@docusaurus/tsconfig",
     "compilerOptions": {
+        "target": "ES2020",
+        "useDefineForClassFields": true,
+        "lib": ["ES2020", "DOM", "DOM.Iterable"],
+        "module": "ESNext",
+        "skipLibCheck": true,
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "react-jsx",
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
         "baseUrl": "."
     },
-    "exclude": [".docusaurus", "build"]
+    "include": ["vocs.config.ts", "docs"],
+    "exclude": ["node_modules", "dist", ".vocs"]
 }
