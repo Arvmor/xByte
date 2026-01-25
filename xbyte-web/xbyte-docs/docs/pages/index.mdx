@@ -1,6 +1,6 @@
 ---
 content:
-  width: 100%
+    width: 100%
 layout: landing
 showLogo: false
 description: xByte SDK - Infra for Pay-per-Byte Monetization. TypeScript SDK for pay-per-byte content monetization through x402 payments.
@@ -41,6 +41,7 @@ import { HomePage } from "vocs/components";
             :::
           </div>
     </div>
+
   </div>
   <div className="flex justify-between flex-wrap mt-10">
       <div className="pr-2 w-1/4 max-lg:pb-3 max-sm:px-0 max-lg:w-1/2 max-sm:w-full z-0">
@@ -124,24 +125,24 @@ import { xByteClient } from "xbyte-sdk";
 const client = new xByteClient();
 
 const response = await client.createClient({
-  name: "My Content Platform",
-  wallet: "0x1234...",
+    name: "My Content Platform",
+    wallet: "0x1234...",
 });
 ```
 
 ```typescript [Set pricing]
 const pricingResponse = await client.setPricing({
-  clientId: "your-client-id",
-  pricePerMb: "1000000",
+    clientId: "your-client-id",
+    pricePerMb: "1000000",
 });
 ```
 
 ```typescript [Get content]
 const content = await client.getContent({
-  clientId: "your-client-id",
-  objectKey: "video.mp4",
-  offset: 0,
-  length: 1048576,
+    clientId: "your-client-id",
+    objectKey: "video.mp4",
+    offset: 0,
+    length: 1048576,
 });
 ```
 
@@ -161,7 +162,7 @@ const evmClient = new xByteEvmClient("https://sepolia.base.org");
 
 ```typescript [Compute vault address]
 const vaultAddress = await evmClient.computeVaultAddress(
-  "0x1234567890123456789012345678901234567890"
+    "0x1234567890123456789012345678901234567890",
 );
 ```
 
