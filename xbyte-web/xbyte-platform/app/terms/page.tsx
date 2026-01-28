@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import AppLegal, { LegalProps, LegalSection } from "@/components/app/appLegal";
+
+export const metadata: Metadata = {
+    title: "Terms of Service",
+    description: "Read the terms and conditions for using the xByte platform.",
+};
 
 const TERMS_SECTIONS: LegalSection[] = [
     {
