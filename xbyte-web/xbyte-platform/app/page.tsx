@@ -1,5 +1,6 @@
 "use client";
 
+import Script from "next/script";
 import CallToAction, { CallToActionProps } from "@/components/platform/callToAction";
 import SectionHeader, { SectionHeaderProps } from "@/components/platform/sectionHeader";
 import InfoCard, { InfoCardProps } from "@/components/platform/infoCard";
@@ -382,6 +383,19 @@ const contactBanner: ContactBannerProps = {
     email: "contact@xbyte.sh",
 };
 
+const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+            "@type": "Answer",
+            text: item.answer,
+        },
+    })),
+};
+
 export default function Home() {
     const router = useRouter();
 
@@ -395,6 +409,11 @@ export default function Home() {
 
     return (
         <>
+            <Script
+                id="faq-json-ld"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+            />
             {/* Start Integrating */}
             <motion.div
                 initial={{ opacity: 0, y: 30 }}
