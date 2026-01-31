@@ -23,7 +23,7 @@ export const metadata: Metadata = {
         template: "%s | xByte",
     },
     description:
-        "Transform your streaming platform with pay-per-byte monetization. xByte enables content creators and platforms to charge users for exactly what they consume—whether it's music, movies, or live streams. No more subscriptions, no more account sharing. Just transparent, usage-based revenue that scales with consumption. Powered by x402 and on-chain payments, xByte delivers instant settlement with 1% platform fees. Get started today and unlock a new era of fair, flexible content monetization.",
+        "Pay-per-byte content monetization for streaming platforms. Charge users for exactly what they consume. Powered by x402 with 1% fees. Get started today.",
     keywords: [
         "pay-per-byte",
         "content monetization",
@@ -44,14 +44,14 @@ export const metadata: Metadata = {
         siteName: "xByte",
         title: "xByte - Monetize Every Byte Your Users Consume",
         description:
-            "Transform your streaming platform with pay-per-byte monetization. xByte enables content creators and platforms to charge users for exactly what they consume—whether it's music, movies, or live streams. No more subscriptions, no more account sharing. Just transparent, usage-based revenue that scales with consumption. Powered by x402 and on-chain payments, xByte delivers instant settlement with 1% platform fees. Get started today and unlock a new era of fair, flexible content monetization.",
+            "Pay-per-byte monetization for streaming. Users pay only for what they consume—music, movies, or live streams. Powered by x402, instant settlement, 1% fees. Get started today.",
         url: "https://xbyte.sh",
     },
     twitter: {
         card: "summary_large_image",
         title: "xByte - Monetize Every Byte Your Users Consume",
         description:
-            "Transform your streaming platform with pay-per-byte monetization. xByte enables content creators and platforms to charge users for exactly what they consume—whether it's music, movies, or live streams. No more subscriptions, no more account sharing. Just transparent, usage-based revenue that scales with consumption. Powered by x402 and on-chain payments, xByte delivers instant settlement with 1% platform fees. Get started today and unlock a new era of fair, flexible content monetization.",
+            "Pay-per-byte monetization for streaming. Users pay only for what they consume—music, movies, or live streams. Powered by x402, instant settlement, 1% fees. Get started today.",
     },
 };
 
