@@ -13,9 +13,11 @@
 
 [Website](https://xbyte.sh) | [Demo](https://demo.xbyte.sh) | [Documentation](https://docs.xbyte.sh) | [API](https://api.xbyte.sh)
 
-Facilitates "Pay-per-Byte" x402 payments, allows content-agnostic monetization model for platforms (Netflix, Spotify, Twitch, etc.), instead of monthly subscriptions! [more information](./docs/xByte_slides.pdf)
+## Monetize Every Byte Your Users Consume
 
-e.g. Pay 0.001 USDC per 1MB of a movie.
+Transform your streaming platform with pay-per-byte monetization. xByte enables content creators and platforms to charge users for exactly what they consume—whether it's music, movies, or live streams. No more subscriptions, no more account sharing. Just transparent, usage-based revenue that scales with consumption. Powered by x402 and on-chain payments, xByte delivers instant settlement with 1% platform fees. **[Get started today](https://xbyte.sh/setup)** and unlock a new era of fair, flexible content monetization.
+
+**Example:** Pay 0.001 USDC per 1MB of a movie.
 
 ### AVAX x402 Hackathon Winner
 

@@ -19,11 +19,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
     metadataBase: new URL("https://xbyte.sh"),
     title: {
-        default: "xByte - Pay-per-Byte Content Monetization",
+        default: "xByte - Monetize Every Byte Your Users Consume",
         template: "%s | xByte",
     },
     description:
-        "Infrastructure for pay-per-byte content monetization. Add metered billing to your streaming platform in minutes with transparent, on-chain payments.",
+        "Transform your streaming platform with pay-per-byte monetization. xByte enables content creators and platforms to charge users for exactly what they consume—whether it's music, movies, or live streams. No more subscriptions, no more account sharing. Just transparent, usage-based revenue that scales with consumption. Powered by x402 and on-chain payments, xByte delivers instant settlement with 1% platform fees. Get started today and unlock a new era of fair, flexible content monetization.",
     keywords: [
         "pay-per-byte",
         "content monetization",
@@ -42,16 +42,16 @@ export const metadata: Metadata = {
     openGraph: {
         type: "website",
         siteName: "xByte",
-        title: "xByte - Pay-per-Byte Content Monetization",
+        title: "xByte - Monetize Every Byte Your Users Consume",
         description:
-            "Infrastructure for pay-per-byte content monetization. Add metered billing to your streaming platform in minutes with transparent, on-chain payments.",
+            "Transform your streaming platform with pay-per-byte monetization. xByte enables content creators and platforms to charge users for exactly what they consume—whether it's music, movies, or live streams. No more subscriptions, no more account sharing. Just transparent, usage-based revenue that scales with consumption. Powered by x402 and on-chain payments, xByte delivers instant settlement with 1% platform fees. Get started today and unlock a new era of fair, flexible content monetization.",
         url: "https://xbyte.sh",
     },
     twitter: {
         card: "summary_large_image",
-        title: "xByte - Pay-per-Byte Content Monetization",
+        title: "xByte - Monetize Every Byte Your Users Consume",
         description:
-            "Infrastructure for pay-per-byte content monetization. Add metered billing to your streaming platform in minutes with transparent, on-chain payments.",
+            "Transform your streaming platform with pay-per-byte monetization. xByte enables content creators and platforms to charge users for exactly what they consume—whether it's music, movies, or live streams. No more subscriptions, no more account sharing. Just transparent, usage-based revenue that scales with consumption. Powered by x402 and on-chain payments, xByte delivers instant settlement with 1% platform fees. Get started today and unlock a new era of fair, flexible content monetization.",
     },
 };
 

@@ -127,9 +127,10 @@ function StaggeredGrid({ children, className }: StaggeredGridProps) {
 }
 
 const heroSection: CallToActionProps = {
-    titleText: "Infra for Pay-per-Byte Monetization",
-    subtitleText: "Add metered billing to your content platform in minutes.",
-    buttonText: "Start Integrating",
+    titleText: "Monetize Every Byte Your Users Consume",
+    subtitleText:
+        "Transform your streaming platform with pay-per-byte monetization. xByte enables content creators and platforms to charge users for exactly what they consume—whether it's music, movies, or live streams. No more subscriptions, no more account sharing. Just transparent, usage-based revenue that scales with consumption. Powered by x402 and on-chain payments, xByte delivers instant settlement with 1% platform fees.",
+    buttonText: "Get Started Today",
     secondaryButtonText: "Learn More",
 };
 
@@ -177,8 +178,8 @@ const sectionFAQ: SectionHeaderProps = {
 const ctaFinal: CallToActionProps = {
     titleText: "Ready to Start Monetizing?",
     descriptionText:
-        "Integrate xByte SDK and begin earning from your content in minutes. Transform your streaming service with pay-per-byte monetization.",
-    buttonText: "Get Started",
+        "Integrate xByte SDK and begin earning from your content in minutes. Transform your streaming service with pay-per-byte monetization. Join the future of fair, flexible content revenue.",
+    buttonText: "Get Started Today",
 };
 
 const keyFeatures: InfoCardProps[] = [
