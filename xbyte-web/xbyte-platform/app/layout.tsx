@@ -19,11 +19,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
     metadataBase: new URL("https://xbyte.sh"),
     title: {
-        default: "xByte - Pay-per-Byte Content Monetization",
+        default: "xByte - Monetize Every Byte Your Users Consume",
         template: "%s | xByte",
     },
     description:
-        "Infrastructure for pay-per-byte content monetization. Add metered billing to your streaming platform in minutes with transparent, on-chain payments.",
+        "Pay-per-byte content monetization for streaming platforms. Charge users for exactly what they consume. Powered by x402 with 1% fees. Get started today.",
     keywords: [
         "pay-per-byte",
         "content monetization",
@@ -42,16 +42,16 @@ export const metadata: Metadata = {
     openGraph: {
         type: "website",
         siteName: "xByte",
-        title: "xByte - Pay-per-Byte Content Monetization",
+        title: "xByte - Monetize Every Byte Your Users Consume",
         description:
-            "Infrastructure for pay-per-byte content monetization. Add metered billing to your streaming platform in minutes with transparent, on-chain payments.",
+            "Pay-per-byte monetization for streaming. Users pay only for what they consume—music, movies, or live streams. Powered by x402, instant settlement, 1% fees. Get started today.",
         url: "https://xbyte.sh",
     },
     twitter: {
         card: "summary_large_image",
-        title: "xByte - Pay-per-Byte Content Monetization",
+        title: "xByte - Monetize Every Byte Your Users Consume",
         description:
-            "Infrastructure for pay-per-byte content monetization. Add metered billing to your streaming platform in minutes with transparent, on-chain payments.",
+            "Pay-per-byte monetization for streaming. Users pay only for what they consume—music, movies, or live streams. Powered by x402, instant settlement, 1% fees. Get started today.",
     },
 };
 
