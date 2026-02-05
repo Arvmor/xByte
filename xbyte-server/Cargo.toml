@@ -35,7 +35,7 @@ url = { version = "2.5.8", features = ["serde"] }
 
 # AWS dependencies
 aws-config = { version = "1.8.5", features = ["rustls", "behavior-version-latest"] }
-aws-sdk-s3 = { version = "1.121.0", features = ["behavior-version-latest"] }
+aws-sdk-s3 = { version = "1.122.0", features = ["behavior-version-latest"] }
 aws-sdk-sts = { version = "1.97.0", features = ["behavior-version-latest"] }
 
 # x402 dependencies
