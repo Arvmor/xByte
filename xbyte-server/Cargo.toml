@@ -39,7 +39,7 @@ aws-sdk-s3 = { version = "1.122.0", features = ["behavior-version-latest"] }
 aws-sdk-sts = { version = "1.97.0", features = ["behavior-version-latest"] }
 
 # x402 dependencies
-ureq = { version = "3.1.4", features = ["rustls", "json"] }
+ureq = { version = "3.2.0", features = ["rustls", "json"] }
 alloy-sol-types = "1.5.4"
 alloy-contract = "1.6.1"
 alloy-provider = "1.5.2"
