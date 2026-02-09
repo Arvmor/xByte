@@ -44,7 +44,7 @@
         "format:check": "oxfmt --check"
     },
     "dependencies": {
-        "viem": "^2.45.1"
+        "viem": "^2.45.2"
     },
     "devDependencies": {
         "@types/bun": "*"
