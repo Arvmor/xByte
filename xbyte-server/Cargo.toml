@@ -40,7 +40,7 @@ aws-sdk-sts = { version = "1.98.0", features = ["behavior-version-latest"] }
 
 # x402 dependencies
 ureq = { version = "3.2.0", features = ["rustls", "json"] }
-alloy-sol-types = "1.5.4"
+alloy-sol-types = "1.5.6"
 alloy-contract = "1.7.3"
 alloy-provider = "1.6.3"
 alloy-primitives = { version = "1.5.6", features = ["serde"] }
