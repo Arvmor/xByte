@@ -28,7 +28,7 @@ tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 uuid = { version = "1.21.0", features = ["v4", "serde"] }
 
 # API dependencies
-actix-web = { version = "4.12.1", features = ["rustls"] }
+actix-web = { version = "4.13.0", features = ["rustls"] }
 actix-multipart = "0.7.2"
 actix-cors = "0.7.1"
 url = { version = "2.5.8", features = ["serde"] }
